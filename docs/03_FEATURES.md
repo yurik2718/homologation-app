@@ -24,8 +24,20 @@ After registration, student fills a short profile:
 - **F2.3** Phone (optional, if different from WhatsApp)
 - **F2.4** Birthday
 - **F2.5** Country of origin
+- **F2.6** "I am under 18" checkbox → if checked, show guardian fields:
+  - Guardian name (required)
+  - Guardian email (required — Stripe invoices go here)
+  - Guardian phone
+  - Guardian WhatsApp (required — AmoCRM uses this instead of student's)
 
 These fields are saved in `users` table and pre-filled in future requests.
+
+**Minor logic:**
+- `is_minor` auto-calculated from birthday OR manual checkbox
+- If minor → Stripe invoices → `guardian_email`
+- If minor → AmoCRM WhatsApp → `guardian_whatsapp`
+- If minor → notifications duplicated to `guardian_email`
+- If minor → GDPR consent signed by guardian
 
 ### F3. Submit a Homologation Request (Step 2 — per request)
 - **F3.1** Student sees "Submit a request" form
@@ -81,14 +93,26 @@ These fields are saved in `users` table and pre-filled in future requests.
   - Student gets notification "Payment confirmed, processing started"
 - **F5.9** CRM sync indicator: shows if synced / syncing / error
 
-### F6. Coordinator Dashboard
-- **F6.1** List of all requests assigned to coordinator
-- **F6.2** List of unassigned requests (can self-assign)
-- **F6.3** Filter/search by status, student name, date
-- **F6.4** Can download any student document
-- **F6.5** Can respond in chat
-- **F6.6** Can change request status
-- **F6.7** Receives notifications on new requests and messages
+### F6. Coordinator Workspace
+See `docs/14_COORDINATOR_WORKSPACE.md` for full wireframes.
+
+**Inbox** (`/inbox`) — main working page, 80% of coordinator's time:
+- **F6.1** Unified chat: all conversations in one list (request chats + teacher-student chats)
+- **F6.2** 3-column layout: conversation list → chat → context panel (status, files, actions)
+- **F6.3** Filters: All / Requests / Teacher chats / Unread only
+- **F6.4** Change request status directly from chat context panel
+- **F6.5** Confirm payment from chat context panel
+- **F6.6** Download student documents from chat context panel
+- **F6.7** Real-time: new messages appear instantly via Action Cable
+- **F6.8** Unread badges on conversation list
+
+**Teachers** (`/teachers`) — teacher management:
+- **F6.9** Teacher cards: name, level, rate, student count, lessons this week
+- **F6.10** Assign student to teacher (dialog with search)
+- **F6.11** Remove student from teacher
+- **F6.12** View teacher's calendar
+- **F6.13** Edit teacher profile (level, rate, permanent link)
+- **F6.14** Receives notifications on new requests and messages
 
 ### F7. Notifications
 - **F7.1** In-app notifications (bell icon with badge count)

@@ -129,9 +129,41 @@ All dropdowns read from `config/select_options.yml`. This file has multi-languag
 - Files served through controller (Pundit checks access)
 - PII filtered from logs
 
-### 9. Keep it simple
+### 9. Mobile-first responsive design
+Every page MUST work on mobile (360px+). Students and teachers primarily use phones.
+- Use Tailwind responsive prefixes: base = mobile, `md:` = tablet, `lg:` = desktop
+- Sidebar: use shadcn/ui `Sheet` on mobile (slide-out), fixed sidebar on `lg:`
+- Inbox 3-column layout: on mobile show only conversation list → tap → full-screen chat → back button
+- Tables: on mobile use card/list view instead of `<Table>` (tables are unreadable on phones)
+- Forms: full-width inputs, large touch targets (min 44px height)
+- File upload: "Add file" button works on mobile (no drag & drop needed, it's a bonus on desktop)
+- Calendar: on mobile show day view only (not week grid)
+- Test every page at 360px, 768px, 1280px
+
+```tsx
+// ❌ WRONG — desktop-only layout
+<div className="grid grid-cols-3 gap-4">
+
+// ✅ CORRECT — mobile-first
+<div className="flex flex-col lg:grid lg:grid-cols-3 gap-4">
+
+// ❌ WRONG — small touch target
+<Button size="sm">
+
+// ✅ CORRECT — mobile-friendly
+<Button size="default" className="min-h-[44px]">
+
+// ❌ WRONG — table on mobile
+<Table> always
+
+// ✅ CORRECT — responsive
+<div className="hidden md:block"><Table>...</Table></div>
+<div className="md:hidden"><CardList>...</CardList></div>
+```
+
+### 10. Keep it simple
 - `<textarea>` not rich text editor
-- shadcn/ui `<Table>` not TanStack Table
+- shadcn/ui `<Table>` on desktop, card list on mobile
 - Light mode only
 - No command menu, no audit log, no dark mode
 - Minimum viable security (~30 lines)
@@ -164,17 +196,27 @@ AmoCRM Lead created at `payment_confirmed`. Pre-payment statuses exist only in o
 | Role | Key capabilities |
 |---|---|
 | `super_admin` | Everything + Stripe billing + user management + teacher config |
-| `coordinator` | Manage requests, assign teachers to students, confirm payments |
+| `coordinator` | Inbox (unified chat), manage requests, assign teachers, confirm payments |
 | `teacher` | Calendar of lessons, meeting links, chat with students, see assigned students |
 | `student` | Submit requests, upload docs, chat, view lessons |
 
 ## Teachers & Lessons
 
-- `teacher_profiles`: level (junior/mid/senior/native), hourly_rate (€), permanent_meeting_link
+- `teacher_profiles`: level, hourly_rate (private, super_admin only), bio, permanent_meeting_link (public)
 - `teacher_students`: many-to-many, assigned by coordinator
 - `lessons`: scheduled_at, duration, meeting_link (overrides permanent if set), status, notes
 - If lesson has no meeting_link → use teacher's permanent link from profile
 - Teacher shares changing links via chat
+- Teachers only do lessons + chat. No access to documents or homologation.
+
+## Minors & Guardians (Variant 1.5)
+
+- `users.is_minor` — true if student is under 18
+- Guardian fields on users: `guardian_name`, `guardian_email`, `guardian_phone`, `guardian_whatsapp`
+- If minor → Stripe invoice → `guardian_email`, AmoCRM → `guardian_whatsapp`
+- `guardian_user_id` (FK → users) — optional, for future parent login
+- MVP: parent has no login, receives invoices/notifications by email
+- Future: parent registers, links via `guardian_user_id`, sees child's status
 
 ## Documentation
 
@@ -192,3 +234,5 @@ Full docs in `/docs`:
 - `10_TECHNICAL_DETAILS.md` — Select options YAML, Faraday, Active Storage, Action Cable
 - `11_I18N_MULTILANGUAGE.md` — i18n setup, translation files, React rules
 - `12_SECURITY_GDPR.md` — EU compliance, encryption, rate limiting
+- `13_LESSONS_CALENDAR.md` — Calendar flow, lesson booking, meeting links, UI per role
+- `14_COORDINATOR_WORKSPACE.md` — Inbox (unified chat) + Teachers management panel

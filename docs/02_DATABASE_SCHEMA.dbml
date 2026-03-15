@@ -21,6 +21,15 @@ Table users [headercolor: #3498db] {
   identity_card varchar [note: '🔒 encrypted, DNI/NIE']
   passport varchar [note: '🔒 encrypted']
   locale varchar [default: 'es', note: 'es / en / ru']
+
+  // ── Minor / Guardian (Variant 1.5) ──
+  is_minor boolean [not null, default: false]
+  guardian_name varchar [note: 'Parent name, if minor']
+  guardian_email varchar [note: 'Parent email for invoices']
+  guardian_phone varchar [note: '🔒 encrypted']
+  guardian_whatsapp varchar [note: '🔒 encrypted, for AmoCRM if minor']
+  guardian_user_id integer [note: 'FK → users, optional parent account for future']
+
   amo_crm_contact_id varchar
   privacy_accepted_at datetime
   created_at datetime [not null]
@@ -29,7 +38,18 @@ Table users [headercolor: #3498db] {
   indexes {
     email_address [unique]
     (provider, uid) [unique]
+    guardian_user_id
   }
+
+  Note: '''
+  If is_minor = true:
+    • Stripe invoice → guardian_email
+    • AmoCRM WhatsApp → guardian_whatsapp
+    • Notifications → both student + guardian_email
+    • GDPR consent → guardian signs
+  If guardian_user_id set:
+    • Parent can log in and see child status (future)
+  '''
 }
 
 Table roles [headercolor: #3498db] {
@@ -62,12 +82,22 @@ Table sessions [headercolor: #3498db] {
 Table teacher_profiles [headercolor: #e67e22] {
   id integer [pk, increment]
   user_id integer [not null, unique, note: 'User with teacher role']
-  level varchar [not null, note: 'junior / mid / senior / native']
-  hourly_rate decimal [not null, note: '€ per hour']
-  permanent_meeting_link varchar [note: 'Zoom/Meet link if fixed']
-  bio text
+
+  // ── Public (visible to students & all) ──
+  bio text [note: 'About the teacher']
+  permanent_meeting_link varchar [note: 'Zoom/Meet link for lessons']
+
+  // ── Private (visible to super_admin only) ──
+  level varchar [not null, note: '🔒 junior / mid / senior / native']
+  hourly_rate decimal [not null, note: '🔒 € per hour']
+
   created_at datetime [not null]
   updated_at datetime [not null]
+
+  Note: '''
+  Public fields: bio, permanent_meeting_link
+  Private fields (super_admin only): level, hourly_rate
+  '''
 }
 
 Table teacher_students [headercolor: #e67e22] {
@@ -235,10 +265,11 @@ Table amo_crm_tokens [headercolor: #9b59b6] {
 // RELATIONSHIPS
 // =============================================
 
-// Auth
+// Auth & Guardian
 Ref: user_roles.user_id > users.id
 Ref: user_roles.role_id > roles.id
 Ref: sessions.user_id > users.id
+Ref: users.guardian_user_id > users.id
 
 // Teachers
 Ref: teacher_profiles.user_id - users.id

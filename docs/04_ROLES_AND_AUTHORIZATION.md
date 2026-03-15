@@ -20,24 +20,24 @@
 | Manage users (CRUD)                 |     ✅      |      —      |    —    |    —    |
 | Stripe billing                      |     ✅      |      —      |    —    |    —    |
 | Set teacher level / rate            |     ✅      |      —      |    —    |    —    |
-| **📋 Homologation Requests**       |             |             |         |         |
+| **📋 Homologation & Documents**    |             |             |         |         |
 | View all requests                   |     ✅      |     ✅      |    —    |    —    |
-| View assigned students' requests    |     ✅      |     ✅      |   ✅    |    —    |
-| View own requests                   |     ✅      |     ✅      |   ✅    |   ✅    |
+| View own requests                   |     ✅      |     ✅      |    —    |   ✅    |
 | Submit new request                  |      —      |      —      |    —    |   ✅    |
 | Change request status               |     ✅      |     ✅      |    —    |    —    |
 | Confirm payment                     |     ✅      |     ✅      |    —    |    —    |
 | Upload documents                    |     ✅      |     ✅      |    —    |   ✅    |
-| Download documents                  |     ✅      |     ✅      |   ✅    |    —    |
-| **👩‍🏫 Teachers & Lessons**          |             |              |         |         |
+| Download documents                  |     ✅      |     ✅      |    —    |    —    |
+| **👩‍🏫 Teachers & Lessons**          |             |             |         |         |
 | Assign teacher to student           |     ✅      |     ✅      |    —    |    —    |
 | View teacher calendar               |     ✅      |     ✅      |   ✅    |    —    |
-| View own lessons                    |     ✅      |     ✅      |   ✅    |   ✅    |
+| View own lessons                    |      —      |      —      |   ✅    |   ✅    |
 | Create / edit lessons               |     ✅      |     ✅      |   ✅    |    —    |
-| Share meeting link in chat          |     ✅      |     ✅      |   ✅    |    —    |
+| Share meeting link in chat          |      —      |      —      |   ✅    |    —    |
 | **💬 Chat**                         |             |             |         |         |
 | Chat in request conversation        |     ✅      |     ✅      |    —    |   ✅    |
 | Chat teacher ↔ student             |     ✅      |     ✅      |   ✅    |   ✅    |
+| Read all chats (oversight)          |     ✅      |     ✅      |    —    |    —    |
 
 ## Implementation
 
