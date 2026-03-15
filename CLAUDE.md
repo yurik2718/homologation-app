@@ -169,6 +169,256 @@ Every page MUST work on mobile (360px+). Students and teachers primarily use pho
 - No command menu, no audit log, no dark mode
 - Minimum viable security (~30 lines)
 
+## Coding Patterns (Rails + Inertia.js + React)
+
+### 1. Centralized routes — no hardcoded paths in components
+
+Create `app/frontend/lib/routes.ts` on day one. Every URL goes through this file.
+
+```ts
+// app/frontend/lib/routes.ts
+export const routes = {
+  dashboard:        ()  => "/",
+  requests:         ()  => "/requests",
+  requestNew:       ()  => "/requests/new",
+  request:          (id: number) => `/requests/${id}`,
+  confirmPayment:   (id: number) => `/requests/${id}/confirm_payment`,
+  inbox:            ()  => "/inbox",
+  inboxConversation:(id: number) => `/inbox/${id}`,
+  conversations:    ()  => "/conversations",
+  conversation:     (id: number) => `/conversations/${id}`,
+  teachers:         ()  => "/teachers",
+  lessons:          ()  => "/lessons",
+  lesson:           (id: number) => `/lessons/${id}`,
+  profile:          ()  => "/profile",
+  profileEdit:      ()  => "/profile/edit",
+  notifications:    ()  => "/notifications",
+  privacyPolicy:    ()  => "/privacy-policy",
+  // Admin
+  admin:            ()  => "/admin",
+  adminUsers:       ()  => "/admin/users",
+  adminUser:        (id: number) => `/admin/users/${id}`,
+  adminLessons:     ()  => "/admin/lessons",
+  // Auth
+  login:            ()  => "/session/new",
+  register:         ()  => "/registration/new",
+} as const;
+```
+
+```tsx
+// ❌ WRONG — hardcoded paths
+<Link href={`/requests/${id}`}>View</Link>
+router.post(`/requests/${id}/confirm_payment`, data)
+
+// ✅ CORRECT — centralized
+<Link href={routes.request(id)}>View</Link>
+router.post(routes.confirmPayment(id), data)
+```
+
+### 2. Serialization — private `_json` methods, explicit camelCase
+
+Never use `.as_json` in controllers. Always define private methods with explicit camelCase keys.
+
+```ruby
+# ❌ WRONG — leaks fields, snake_case breaks TypeScript types
+render inertia: "Requests/Show", props: { request: @request.as_json }
+
+# ✅ CORRECT — explicit contract, camelCase
+render inertia: "Requests/Show", props: { request: request_json(@request) }
+
+private
+
+def request_json(r)
+  {
+    id:               r.id,
+    subject:          r.subject,
+    serviceType:      r.service_type,
+    status:           r.status,
+    paymentAmount:    r.payment_amount,
+    createdAt:        r.created_at.iso8601,
+    statusChangedAt:  r.status_changed_at&.iso8601,
+    user:             user_json(r.user),
+    crmSyncedAt:      r.amo_crm_synced_at&.iso8601,
+    crmSyncError:     r.amo_crm_sync_error,
+  }
+end
+
+def user_json(u)
+  {
+    id:        u.id,
+    name:      u.name,
+    email:     u.email_address,
+    avatarUrl: u.avatar_url,
+  }
+end
+```
+
+Dates are always ISO 8601 strings. One `_json` method = one TypeScript interface.
+
+### 3. Shared Props — typed, available everywhere
+
+```ruby
+# app/controllers/application_controller.rb
+inertia_share do
+  {
+    auth: {
+      user: current_user ? auth_user_json(current_user) : nil,
+    },
+    flash: {
+      notice: flash.notice,
+      alert:  flash.alert,
+    },
+    features:                current_user ? build_features(current_user) : {},
+    unreadNotificationsCount: current_user&.notifications&.unread&.count || 0,
+    selectOptions:           YAML.load_file(Rails.root.join("config/select_options.yml")),
+  }
+end
+```
+
+```ts
+// app/frontend/types/index.ts
+export interface SharedProps extends PageProps {
+  auth: { user: AuthUser | null };
+  flash: { notice?: string; alert?: string };
+  features: Features;
+  unreadNotificationsCount: number;
+  selectOptions: SelectOptions;
+}
+```
+
+Never pass `current_user` data again through page props — it's already in `auth.user`.
+
+### 4. Page props — TypeScript interfaces that mirror controller props
+
+```ts
+// app/frontend/types/pages.ts
+export interface RequestsIndexProps {
+  requests: Request[];
+  statusFilter: string | null;
+}
+
+export interface RequestsShowProps {
+  request: RequestDetail;
+  messages: Message[];
+  conversation: Conversation;
+}
+
+export interface InboxIndexProps {
+  conversations: ConversationPreview[];
+  activeFilter: string;
+}
+
+// Usage in page component:
+export default function RequestsShow() {
+  const { request, messages, conversation } = usePage<SharedProps & RequestsShowProps>().props;
+}
+```
+
+Every page has a props interface. This is the only way to catch Rails ↔ TypeScript drift at compile time.
+
+### 5. Controller pattern — authorize → build → render
+
+```ruby
+def show
+  @request = HomologationRequest.find(params[:id])
+  authorize @request                              # 1. Always first
+
+  props = {
+    request:      request_detail_json(@request),  # 2. Private _json methods
+    messages:     @request.conversation.messages.map { |m| message_json(m) },
+    conversation: conversation_json(@request.conversation),
+  }
+
+  # 3. Conditional props by role
+  if current_user.coordinator? || current_user.super_admin?
+    props[:adminActions] = { canConfirmPayment: @request.awaiting_payment? }
+  end
+
+  render inertia: "Requests/Show", props: props   # 4. Render
+end
+```
+
+`after_action :verify_authorized` in ApplicationController is mandatory. Public endpoints: `skip_after_action :verify_authorized`.
+
+### 6. Feature flags in shared props — not role checks in components
+
+```ruby
+# app/controllers/application_controller.rb
+def build_features(user)
+  {
+    canCreateRequest:    user.student?,
+    canConfirmPayment:   user.coordinator? || user.super_admin?,
+    canManageUsers:      user.super_admin?,
+    canManageTeachers:   user.coordinator? || user.super_admin?,
+    canCreateLessons:    user.teacher? || user.coordinator? || user.super_admin?,
+    canViewAllRequests:  user.coordinator? || user.super_admin?,
+  }
+end
+```
+
+```tsx
+// ❌ WRONG — role logic scattered across frontend
+{currentUser.roles.includes('coordinator') && <ConfirmPaymentButton />}
+
+// ✅ CORRECT — server decides, frontend just reads
+const { features } = usePage<SharedProps>().props;
+{features.canConfirmPayment && <ConfirmPaymentButton />}
+```
+
+### 7. Navigation and mutations — only through Inertia
+
+```tsx
+// Links — always Inertia <Link>
+<Link href={routes.request(id)}>View</Link>          // ✅
+<a href={`/requests/${id}`}>View</a>                  // ❌
+
+// Mutations — always router.*
+router.post(routes.confirmPayment(id), { paymentAmount: amount })  // ✅
+router.delete(routes.lesson(id), { onSuccess: () => {} })          // ✅
+window.location.href = routes.dashboard()              // ❌ never
+await fetch("/requests", { method: "POST" })           // ❌ never (use router)
+```
+
+Exception: Action Cable receives (WebSocket) are not Inertia — that's fine.
+
+### 8. Flash messages — always through I18n
+
+```ruby
+# ❌ WRONG — hardcoded string
+redirect_to request_path(@request), notice: "Payment confirmed"
+
+# ✅ CORRECT — I18n key
+redirect_to request_path(@request), notice: t("flash.payment_confirmed")
+```
+
+Key naming: `flash.{entity}_{past_tense}` — `flash.request_created`, `flash.payment_confirmed`, `flash.lesson_cancelled`.
+
+Add flash keys to `config/locales/{es,en,ru}.yml`.
+
+### 9. N+1 — solve in controller, never in serializer
+
+```ruby
+# ❌ WRONG — N+1 inside _json method
+def index
+  @requests = policy_scope(HomologationRequest)
+  # each request_json(r) calls r.user → separate query per request
+end
+
+# ✅ CORRECT — eager load in controller
+def index
+  @requests = policy_scope(HomologationRequest)
+                .includes(:user, :conversation)
+                .order(updated_at: :desc)
+  # now request_json(r) uses preloaded data
+end
+```
+
+For lookups in loops, use `index_by`:
+```ruby
+users = User.where(id: user_ids).index_by(&:id)  # one query → hash
+items.map { |i| { ...item_json(i), userName: users[i.user_id]&.name } }
+```
+
 ## Dropdown Options
 
 All defined in `config/select_options.yml`:
