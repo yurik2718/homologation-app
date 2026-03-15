@@ -1,9 +1,12 @@
 export const routes = {
   root: "/",
   login: "/session/new",
+  logout: "/session",          // POST: create session | DELETE: destroy session (same Rails resource URL)
   register: "/registration/new",
-  logout: "/session",
+  registration: "/registration",
   forgotPassword: "/passwords/new",
+  passwords: "/passwords",
+  password: (token: string) => `/passwords/${token}`,
   profile: "/profile",
   editProfile: "/profile/edit",
   requests: "/requests",

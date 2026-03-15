@@ -36,6 +36,13 @@ es:
     lesson_updated: "Clase actualizada correctamente"
     lesson_cancelled: "Clase cancelada correctamente"
     notification_read: "Notificación marcada como leída"
+    registered: "Cuenta creada correctamente"
+    invalid_credentials: "Email o contraseña incorrectos"
+    rate_limit_exceeded: "Demasiados intentos. Por favor, inténtalo más tarde"
+    password_reset_sent: "Instrucciones de restablecimiento enviadas (si ese email existe)"
+    password_reset: "Contraseña restablecida"
+    password_mismatch: "Las contraseñas no coinciden"
+    password_reset_invalid: "El enlace de restablecimiento es inválido o ha expirado"
   mailers:
     request_mailer:
       new_request:

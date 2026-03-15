@@ -25,7 +25,6 @@
     "error": "Ошибка",
     "success": "Успешно"
   },
-
   "auth": {
     "sign_in": "Войти",
     "sign_up": "Создать аккаунт",
@@ -39,9 +38,9 @@
     "continue_with_apple": "Войти через Apple",
     "no_account": "Нет аккаунта?",
     "has_account": "Уже есть аккаунт?",
-    "accept_privacy": "Я прочитал(а) и принимаю политику конфиденциальности"
+    "accept_privacy": "Я прочитал(а) и принимаю политику конфиденциальности",
+    "name": "Полное имя"
   },
-
   "profile": {
     "complete_title": "Заполните профиль",
     "whatsapp": "Номер WhatsApp",
@@ -58,14 +57,12 @@
     "telegram_connected": "Telegram подключён",
     "telegram_hint": "Получайте мгновенные уведомления в Telegram — бесплатно"
   },
-
   "requests": {
     "title": "Мои заявки",
     "new_request": "Новая заявка",
     "submit_request": "Отправить заявку",
     "save_draft": "Сохранить черновик",
     "no_requests": "У вас пока нет заявок",
-
     "status": {
       "draft": "Черновик",
       "submitted": "Отправлена",
@@ -77,7 +74,6 @@
       "resolved": "Завершена",
       "closed": "Закрыта"
     },
-
     "table": {
       "subject": "Тема",
       "id": "ID",
@@ -86,7 +82,6 @@
       "status": "Статус",
       "status_filter": "Статус"
     },
-
     "form": {
       "section_about": "О вас",
       "section_request": "Ваша заявка",
@@ -117,7 +112,6 @@
       "max_size": "Максимум {{size}} МБ на файл"
     }
   },
-
   "chat": {
     "title": "Переписка",
     "type_message": "Введите сообщение...",
@@ -125,7 +119,6 @@
     "attach_file": "Прикрепить файл",
     "no_messages": "Сообщений пока нет. Начните переписку!"
   },
-
   "notifications": {
     "title": "Уведомления",
     "mark_all_read": "Отметить все как прочитанные",
@@ -135,7 +128,6 @@
     "status_changed": "Статус обновлён: {{status}}",
     "payment_confirmed": "Оплата подтверждена: €{{amount}}"
   },
-
   "coordinator": {
     "confirm_payment": "Подтвердить оплату",
     "payment_amount": "Сумма (€)",
@@ -151,7 +143,6 @@
     "crm_retry": "Повторить синхронизацию",
     "crm_not_synced": "Не синхронизировано"
   },
-
   "admin": {
     "dashboard": "Панель управления",
     "users": "Пользователи",
@@ -177,7 +168,6 @@
       "avg_response_time": "Среднее время ответа"
     }
   },
-
   "inbox": {
     "title": "Входящие",
     "all": "Все",
@@ -187,7 +177,6 @@
     "search": "Поиск по чатам...",
     "no_conversations": "Нет разговоров"
   },
-
   "teachers": {
     "title": "Учителя",
     "add_teacher": "Добавить учителя",
@@ -205,7 +194,6 @@
     "search_student": "Поиск ученика...",
     "available_students": "Доступные ученики"
   },
-
   "lessons": {
     "title": "Мои уроки",
     "new_lesson": "Новый урок",
@@ -230,7 +218,6 @@
       "cancelled": "Отменён"
     }
   },
-
   "calendar": {
     "title": "Мой календарь",
     "week": "Неделя",
@@ -241,7 +228,6 @@
     "link_needed": "Нужна ссылка",
     "done": "Завершено"
   },
-
   "nav": {
     "dashboard": "Главная",
     "inbox": "Входящие",

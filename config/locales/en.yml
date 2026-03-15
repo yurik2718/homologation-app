@@ -36,6 +36,13 @@ en:
     lesson_updated: "Lesson updated successfully"
     lesson_cancelled: "Lesson cancelled successfully"
     notification_read: "Notification marked as read"
+    registered: "Account created successfully"
+    invalid_credentials: "Invalid email or password"
+    rate_limit_exceeded: "Too many attempts. Please try again later"
+    password_reset_sent: "Password reset instructions sent (if that email exists)"
+    password_reset: "Password has been reset"
+    password_mismatch: "Passwords did not match"
+    password_reset_invalid: "Password reset link is invalid or has expired"
   mailers:
     request_mailer:
       new_request:

@@ -1,6 +1,12 @@
 Rails.application.routes.draw do
-  resource :session
-  resources :passwords, param: :token
+  resource :session, only: [:new, :create, :destroy]
+  resource :registration, only: [:new, :create]
+  resources :passwords, param: :token, only: [:new, :create, :edit, :update]
+
+  # OAuth
+  post "/auth/:provider/callback", to: "auth/omniauth_callbacks#create"
+  get  "/auth/:provider/callback", to: "auth/omniauth_callbacks#create"
+  get  "/auth/failure",            to: "auth/omniauth_callbacks#failure"
 
   # Redirect to localhost from 127.0.0.1 to use same IP address with Vite server
   constraints(host: "127.0.0.1") do

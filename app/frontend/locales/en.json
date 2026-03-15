@@ -25,7 +25,6 @@
     "error": "Error",
     "success": "Success"
   },
-
   "auth": {
     "sign_in": "Sign In",
     "sign_up": "Create Account",
@@ -39,9 +38,9 @@
     "continue_with_apple": "Continue with Apple",
     "no_account": "Don't have an account?",
     "has_account": "Already have an account?",
-    "accept_privacy": "I have read and accept the privacy policy"
+    "accept_privacy": "I have read and accept the privacy policy",
+    "name": "Full Name"
   },
-
   "profile": {
     "complete_title": "Complete Your Profile",
     "whatsapp": "WhatsApp Number",
@@ -58,14 +57,12 @@
     "telegram_connected": "Telegram connected",
     "telegram_hint": "Receive instant notifications in Telegram — free"
   },
-
   "requests": {
     "title": "My Requests",
     "new_request": "New Request",
     "submit_request": "Submit Request",
     "save_draft": "Save Draft",
     "no_requests": "You don't have any requests yet",
-
     "status": {
       "draft": "Draft",
       "submitted": "Submitted",
@@ -77,7 +74,6 @@
       "resolved": "Resolved",
       "closed": "Closed"
     },
-
     "table": {
       "subject": "Subject",
       "id": "ID",
@@ -86,7 +82,6 @@
       "status": "Status",
       "status_filter": "Status"
     },
-
     "form": {
       "section_about": "About You",
       "section_request": "Your Request",
@@ -117,7 +112,6 @@
       "max_size": "Maximum {{size}} MB per file"
     }
   },
-
   "chat": {
     "title": "Conversation",
     "type_message": "Type a message...",
@@ -125,7 +119,6 @@
     "attach_file": "Attach file",
     "no_messages": "No messages yet. Start the conversation!"
   },
-
   "notifications": {
     "title": "Notifications",
     "mark_all_read": "Mark all as read",
@@ -135,7 +128,6 @@
     "status_changed": "Status updated to {{status}}",
     "payment_confirmed": "Payment confirmed: €{{amount}}"
   },
-
   "coordinator": {
     "confirm_payment": "Confirm Payment",
     "payment_amount": "Amount (€)",
@@ -151,7 +143,6 @@
     "crm_retry": "Retry Sync",
     "crm_not_synced": "Not Synced"
   },
-
   "admin": {
     "dashboard": "Admin Dashboard",
     "users": "Users",
@@ -177,7 +168,6 @@
       "avg_response_time": "Average Response Time"
     }
   },
-
   "inbox": {
     "title": "Inbox",
     "all": "All",
@@ -187,7 +177,6 @@
     "search": "Search conversation...",
     "no_conversations": "No conversations"
   },
-
   "teachers": {
     "title": "Teachers",
     "add_teacher": "Add Teacher",
@@ -205,7 +194,6 @@
     "search_student": "Search student...",
     "available_students": "Available students"
   },
-
   "lessons": {
     "title": "My Lessons",
     "new_lesson": "New Lesson",
@@ -230,7 +218,6 @@
       "cancelled": "Cancelled"
     }
   },
-
   "calendar": {
     "title": "My Calendar",
     "week": "Week",
@@ -241,7 +228,6 @@
     "link_needed": "Link needed",
     "done": "Done"
   },
-
   "nav": {
     "dashboard": "Dashboard",
     "inbox": "Inbox",

@@ -36,6 +36,13 @@ ru:
     lesson_updated: "Урок обновлён успешно"
     lesson_cancelled: "Урок отменён успешно"
     notification_read: "Уведомление отмечено как прочитанное"
+    registered: "Аккаунт успешно создан"
+    invalid_credentials: "Неверный email или пароль"
+    rate_limit_exceeded: "Слишком много попыток. Попробуйте позже"
+    password_reset_sent: "Инструкции по сбросу пароля отправлены (если email существует)"
+    password_reset: "Пароль сброшен"
+    password_mismatch: "Пароли не совпадают"
+    password_reset_invalid: "Ссылка для сброса пароля недействительна или истекла"
   mailers:
     request_mailer:
       new_request:

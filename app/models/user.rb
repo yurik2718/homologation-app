@@ -41,10 +41,11 @@ class User < ApplicationRecord
       name:          auth.info.name || auth.info.email,
       avatar_url:    auth.info.image,
       password:      SecureRandom.hex(16)
-    ).tap do |u|
-      student_role = Role.find_by!(name: "student")
-      u.user_roles.create!(role: student_role)
-    end
+    ).tap(&:assign_student_role!)
+  end
+
+  def assign_student_role!
+    user_roles.create!(role: Role.find_by!(name: "student"))
   end
 
   def profile_complete?
