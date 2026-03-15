@@ -24,7 +24,7 @@ service_types:
     label_en: "Other"
     label_ru: "Другое"
 
-education_systems:
+education_systems:  # Country whose education system the student studied in (NOT country of origin — that's `countries`)
   - { key: "argentina", label: "Argentina" }
   - { key: "colombia", label: "Colombia" }
   - { key: "mexico", label: "México" }

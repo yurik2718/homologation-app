@@ -327,23 +327,28 @@ class HomologationRequestsController < InertiaController
     @request = HomologationRequest.find(params[:id])
     authorize @request, :confirm_payment?
 
-    @request.update!(
-      status: "payment_confirmed",
-      payment_amount: params[:payment_amount],
-      payment_confirmed_at: Time.current,
-      payment_confirmed_by: current_user.id
-    )
+    ActiveRecord::Base.transaction do
+      @request.update!(
+        payment_amount: params[:payment_amount],
+        payment_confirmed_by: current_user.id
+      )
+      # Use transition_to! — never update!(status: ...) directly.
+      # This enforces the state machine and sets status_changed_at/by.
+      @request.transition_to!("payment_confirmed", changed_by: current_user)
+    end
 
     AmoCrmSyncJob.perform_later(@request.id)
 
     NotificationJob.perform_later(
       user_id: @request.user_id,
-      title: "Payment confirmed",
-      body: "Your payment of €#{@request.payment_amount} for '#{@request.subject}' has been confirmed."
+      title: I18n.t("notifications.payment_confirmed"),
+      body: I18n.t("notifications.payment_confirmed_body",
+                    amount: @request.payment_amount, subject: @request.subject),
+      notifiable: @request
     )
 
     redirect_to homologation_request_path(@request),
-      notice: "Payment confirmed. Syncing to AmoCRM..."
+      notice: t("flash.payment_confirmed")
   end
 end
 ```
@@ -359,7 +364,7 @@ function ConfirmPaymentDialog({ requestId }: { requestId: number }) {
 
   const handleConfirm = () => {
     setSubmitting(true)
-    router.post(`/requests/${requestId}/confirm_payment`, {
+    router.post(routes.confirmPayment(requestId), {
       payment_amount: amount
     }, {
       onFinish: () => { setSubmitting(false); setOpen(false) }

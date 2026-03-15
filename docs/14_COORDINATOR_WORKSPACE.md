@@ -74,8 +74,8 @@ class InboxController < InertiaController
     authorize :inbox
 
     conversations = Conversation
-      .includes(:messages, :homologation_request, :teacher_student)
-      .order("messages.created_at DESC")
+      .includes(:homologation_request, :teacher_student, :conversation_participants)
+      .order(last_message_at: :desc)
 
     render inertia: "inbox/Index", props: {
       conversations: conversations.map { |c| serialize_conversation(c) }

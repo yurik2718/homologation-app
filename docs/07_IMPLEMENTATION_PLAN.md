@@ -140,6 +140,8 @@ export const routes = {
   lesson: (id: number) => `/lessons/${id}`,
   notifications: "/notifications",
   markAllRead: "/notifications/mark_all_read",
+  connectTelegram: "/profile/connect_telegram",
+  disconnectTelegram: "/profile/disconnect_telegram",
   privacyPolicy: "/privacy-policy",
   admin: {
     root: "/admin",
@@ -517,13 +519,14 @@ Add the generated keys to Rails credentials: `bin/rails credentials:edit`.
 ### 1.5 — Create models with validations & associations
 
 **`app/models/user.rb`:**
-- `has_secure_password validations: false` (allows OAuth-only users without password)
+- `has_secure_password` with conditional validation: `validates :password, length: { minimum: 8 }, if: -> { password_digest_changed? || (new_record? && provider.blank?) }` — allows OAuth-only users (no password) while still validating for email+password users
 - Associations: `has_many :user_roles`, `has_many :roles, through: :user_roles`, `has_one :teacher_profile`, `has_many :homologation_requests`, teacher-student links (see `docs/04_ROLES_AND_AUTHORIZATION.md`), lesson links (taught_lessons, booked_lessons), `has_many :notifications`
 - `encrypts :phone, :whatsapp, :guardian_phone, :guardian_whatsapp`
 - Role helpers: `super_admin?`, `coordinator?`, `teacher?`, `student?` — each calls `has_role?(name)` which does `roles.exists?(name: name)`
 - `self.find_or_create_from_oauth(auth)` — finds by provider+uid, then by email, creates with student role if new
 - `profile_complete?` — `whatsapp.present? && birthday.present? && country.present?`
 - Soft delete: `scope :kept, -> { where(discarded_at: nil) }`, `scope :discarded, -> { where.not(discarded_at: nil) }`, `def discard`, `def undiscard`, `def discarded?`
+- **Important:** `.kept` is NOT a default scope — every Pundit scope and controller query on `User` and `HomologationRequest` MUST explicitly chain `.kept` to exclude soft-deleted records. Example: `policy_scope(HomologationRequest).kept.includes(:user)`.
 - Validations: `email_address` presence + uniqueness, `name` presence
 
 **`app/models/role.rb`:**
@@ -569,15 +572,26 @@ Add the generated keys to Rails credentials: `bin/rails credentials:edit`.
   def transition_to!(new_status, changed_by:)
     allowed = VALID_TRANSITIONS[status] || []
     raise InvalidTransition, "Cannot transition from #{status} to #{new_status}" unless allowed.include?(new_status)
-    update!(status: new_status, status_changed_at: Time.current, status_changed_by: changed_by.id)
+    attrs = { status: new_status, status_changed_at: Time.current, status_changed_by: changed_by.id }
+    attrs[:payment_confirmed_at] = Time.current if new_status == "payment_confirmed"
+    update!(attrs)
   end
   ```
 - Custom exception: `class InvalidTransition < StandardError; end` (define in model or `app/models/concerns/`)
 - Soft delete: `scope :kept, -> { where(discarded_at: nil) }`, `scope :discarded, -> { where.not(discarded_at: nil) }`, `def discard`, `def undiscard`, `def discarded?`
-- Auto-create conversation when request is submitted:
+- Auto-create conversation with participants when request becomes "submitted":
   ```ruby
-  after_create :create_conversation!, if: -> { status == "submitted" }
+  after_save :create_request_conversation!, if: -> { saved_change_to_status? && status == "submitted" }
+
+  private
+
+  def create_request_conversation!
+    conv = Conversation.create!(homologation_request: self)
+    conv.conversation_participants.create!(user: user)  # student
+    # Coordinator is added as participant when they first open the request (see controller)
+  end
   ```
+  **Important:** Uses `after_save` + `saved_change_to_status?`, NOT `after_create` — because requests are created as "draft" first, then transitioned to "submitted" via `transition_to!` (an update, not a create).
 - Validations: `subject` presence, `service_type` presence + inclusion, `privacy_accepted` acceptance (on create when status != draft)
 
 **`app/models/conversation.rb`:**
@@ -587,6 +601,12 @@ Add the generated keys to Rails credentials: `bin/rails credentials:edit`.
 - `has_many :conversation_participants, dependent: :destroy`
 - `has_many :participants, through: :conversation_participants, source: :user`
 - Custom validation: `validate :must_have_one_association` — either `homologation_request_id` or `teacher_student_id` must be present (but not both)
+- Helper to add participant:
+  ```ruby
+  def add_participant!(user)
+    conversation_participants.find_or_create_by!(user: user)
+  end
+  ```
 - Note: `last_message_at` is updated via a callback on `Message` after create (see Message model)
 
 **`app/models/conversation_participant.rb`:**
@@ -633,7 +653,7 @@ Add the generated keys to Rails credentials: `bin/rails credentials:edit`.
 - `update?` — coordinator OR super_admin
 - `confirm_payment?` — (coordinator OR super_admin) AND status == "awaiting_payment"
 - `download_document?` — same as `show?`
-- Scope: students → `scope.where(user: user)`, coordinators/admins → `scope.all`
+- Scope: students → `scope.kept.where(user: user)`, coordinators/admins → `scope.kept` (always chain `.kept` to exclude soft-deleted)
 
 **`app/policies/message_policy.rb`:**
 - `create?` — user must be participant in conversation (check via request owner, coordinator, or teacher-student link)
@@ -1146,6 +1166,8 @@ end
 
 ## Step 4: Homologation Requests (CRUD + Status Machine + Files)
 
+> **Note:** This is the largest step (~15 files, ~12 tests). If it feels too big, split into **Step 4a** (controller + CRUD + status transitions + pages without file upload) and **Step 4b** (FileDropZone + FileList + download + Dashboard). Both halves are independently testable.
+
 **Goal:** Students create/view/submit requests with file uploads. Coordinators view all requests and change status. Status transitions enforced. File download works with authorization.
 
 ### 4.1 — Create HomologationRequestsController
@@ -1153,10 +1175,10 @@ end
 **File:** `app/controllers/homologation_requests_controller.rb`:
 
 Actions:
-- `index` — `policy_scope(HomologationRequest).includes(:user).order(updated_at: :desc)`. Props: `requests` array (list JSON).
+- `index` — `policy_scope(HomologationRequest).kept.includes(:user).order(updated_at: :desc)`. Props: `requests` array (list JSON). **Note:** Always chain `.kept` to exclude soft-deleted records.
 - `new` — `authorize HomologationRequest.new`. Props: none (form uses selectOptions from shared props).
-- `create` — build from `current_user.homologation_requests`, set status based on `params[:commit]` ("draft" or "submitted"). Redirect to show. Note: Conversation is auto-created by model callback when status is "submitted" — no manual conversation creation needed in the controller.
-- `show` — `find` with includes (user, conversation.messages.user). Props: `request` detail JSON.
+- `create` — build from `current_user.homologation_requests`, set status based on `params[:commit]` ("draft" or "submitted"). Redirect to show. Note: Conversation is auto-created by model callback when status becomes "submitted" — no manual conversation creation needed in the controller.
+- `show` — `find` with includes (user, conversation.messages.user). Props: `request` detail JSON. **Important:** If coordinator/super_admin opens a request with a conversation, auto-add them as conversation participant (for unread tracking): `@request.conversation&.add_participant!(current_user) if current_user.coordinator? || current_user.super_admin?`
 - `update` — handle status changes via `transition_to!` and field updates.
 - `confirm_payment` — within a transaction: set `payment_amount` and `payment_confirmed_by`, call `@request.transition_to!("payment_confirmed", changed_by: current_user)` (which sets `payment_confirmed_at` via `status_changed_at`), then enqueue `AmoCrmSyncJob`. Use `transition_to!` — never `update!(status: ...)` directly.
 - `download_document` — find blob by ID, authorize, redirect to proxy URL.
@@ -1675,11 +1697,12 @@ class TeachersController < InertiaController
   def assign_student
     teacher = User.find(params[:id])
     authorize teacher, :assign_student?
-    TeacherStudent.create!(teacher_id: teacher.id, student_id: params[:student_id],
-                           assigned_by: current_user.id)
-    # Auto-create teacher-student conversation
-    ts = TeacherStudent.find_by(teacher_id: teacher.id, student_id: params[:student_id])
-    Conversation.find_or_create_by!(teacher_student_id: ts.id)
+    ts = TeacherStudent.create!(teacher_id: teacher.id, student_id: params[:student_id],
+                                assigned_by: current_user.id)
+    # Auto-create teacher-student conversation with participants
+    conv = Conversation.create!(teacher_student_id: ts.id)
+    conv.conversation_participants.create!(user: teacher)
+    conv.conversation_participants.create!(user_id: params[:student_id])
     redirect_to teachers_path, notice: t("flash.student_assigned")
   end
 
@@ -2051,6 +2074,42 @@ Add `NotificationJob.perform_later(...)` calls to:
 - **`LessonsController#create`** → notify student
 - **`LessonsController#update`** (cancelled) → notify student + teacher
 
+### 8.7b — Create LessonReminderJob (recurring)
+
+**`app/jobs/lesson_reminder_job.rb`:**
+```ruby
+class LessonReminderJob < ApplicationJob
+  queue_as :default
+
+  def perform
+    # Find lessons starting in ~1 hour (55–65 min window to avoid missed reminders)
+    upcoming = Lesson.where(status: "scheduled")
+                     .where(scheduled_at: 55.minutes.from_now..65.minutes.from_now)
+
+    upcoming.find_each do |lesson|
+      [lesson.teacher_id, lesson.student_id].each do |user_id|
+        NotificationJob.perform_later(
+          user_id: user_id,
+          title: I18n.t("notifications.lesson_reminder"),
+          body: I18n.t("notifications.lesson_starts_soon",
+                       time: I18n.l(lesson.scheduled_at, format: :short)),
+          notifiable: lesson
+        )
+      end
+    end
+  end
+end
+```
+
+**`config/recurring.yml`** (Solid Queue recurring tasks):
+```yaml
+lesson_reminders:
+  class: LessonReminderJob
+  schedule: every 5 minutes
+```
+
+This fulfills requirement F7.5: "Lesson reminder 1h before (→ student + teacher)".
+
 ### 8.8 — Add "Connect Telegram" to profile page
 
 **Update `app/controllers/profiles_controller.rb`:**
@@ -2216,6 +2275,27 @@ test "does not send telegram when user has it disabled" do
 end
 ```
 
+**`test/jobs/lesson_reminder_job_test.rb`:**
+```ruby
+test "sends reminder for lessons starting in ~1 hour" do
+  lesson = lessons(:ivan_ana_lesson)
+  lesson.update!(scheduled_at: 60.minutes.from_now, status: "scheduled")
+
+  assert_difference "Notification.count", 2 do  # teacher + student
+    LessonReminderJob.perform_now
+  end
+end
+
+test "does not send reminder for cancelled lessons" do
+  lesson = lessons(:ivan_ana_lesson)
+  lesson.update!(scheduled_at: 60.minutes.from_now, status: "cancelled")
+
+  assert_no_difference "Notification.count" do
+    LessonReminderJob.perform_now
+  end
+end
+```
+
 **`test/controllers/telegram_controller_test.rb`:**
 ```ruby
 test "webhook links telegram to user" do
@@ -2265,7 +2345,7 @@ end
 
 ### Done criteria for Step 8
 
-- [ ] `bin/rails test` — all notification tests pass (minimum 8 tests)
+- [ ] `bin/rails test` — all notification tests pass (minimum 9 tests)
 - [ ] `npm run check` — TypeScript compiles
 - [ ] Bell icon shows correct unread count
 - [ ] New notification appears in real-time (count updates without refresh)
@@ -2279,6 +2359,8 @@ end
 - [ ] Telegram notification NOT sent when disabled or no chat_id
 - [ ] "Disconnect Telegram" clears chat_id and disables toggle
 - [ ] Notification preferences (email/telegram toggles) save correctly
+- [ ] `LessonReminderJob` is configured in `config/recurring.yml` and runs every 5 minutes
+- [ ] Lesson reminder notifications sent ~1h before lesson to both student and teacher
 
 ---
 
@@ -2712,3 +2794,28 @@ npm install recharts lucide-react date-fns
 | AmoCRM API | CRM sync after payment | Included in AmoCRM plan | Integration in AmoCRM settings |
 | Telegram Bot API | Push notifications | **Free forever** | @BotFather → create bot → set webhook |
 | Stripe | Invoicing (future) | Per transaction | Stripe Dashboard |
+
+---
+
+## SQLite Production Considerations
+
+SQLite is used for 3 subsystems simultaneously: main DB, Solid Cable (WebSocket pub/sub), and Solid Queue (background jobs). This works well for MVP but has known limitations:
+
+**Potential issue:** SQLite allows only one writer at a time. Under heavy real-time chat usage + background AmoCRM sync + notifications, write contention may cause occasional `SQLITE_BUSY` errors.
+
+**Mitigations (built into Rails 8):**
+- WAL mode is enabled by default (`PRAGMA journal_mode=WAL`)
+- `busy_timeout` is set in `config/database.yml` (default 5000ms)
+
+**If contention becomes a problem (>10 concurrent chat users):**
+1. Use separate SQLite files for Solid Cable and Solid Queue (Rails 8 supports this via `connects_to`):
+   ```yaml
+   # config/database.yml
+   cable:
+     adapter: sqlite3
+     database: storage/cable.sqlite3
+   queue:
+     adapter: sqlite3
+     database: storage/queue.sqlite3
+   ```
+2. Or migrate to PostgreSQL for production (straightforward — no SQLite-specific code in the app)
