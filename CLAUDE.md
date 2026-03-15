@@ -48,40 +48,42 @@ bin/rails db:seed                    # Seeds roles
 bin/rails db:encryption:init         # Setup Active Record Encryption keys
 ```
 
+## Current State
+> Update this section as steps are completed. See `docs/07_IMPLEMENTATION_PLAN.md` for details.
+
+- [ ] Step 0: Foundation — shadcn/ui init, i18n setup, layouts, select_options.yml, routes.ts
+- [ ] Step 1: Authentication — Rails 8 generator, OmniAuth (Google/Apple), CompleteProfile
+- [ ] Step 2: Roles & Authorization — Pundit, 4 roles seeded, RoleGuard component
+- [ ] Step 3: Homologation Requests — CRUD, Active Storage uploads, FileDropZone
+- [ ] Step 4: Chat — Conversations, Messages, Action Cable, real-time UI
+- [ ] Step 5: Notifications — in-app bell, NotificationChannel, email (later)
+- [ ] Step 6: Teachers & Lessons — profiles, assignments, calendar, lesson CRUD
+- [ ] Step 7: Coordinator Workspace — Inbox (unified chat), Teachers management panel
+- [ ] Step 8: Admin Dashboard — stats, charts, user management, lessons overview
+- [ ] Step 9: AmoCRM Integration — Faraday client, sync job, token refresh
+- [ ] Step 10: Polish — privacy policy, profile edit, email notifications, brakeman scan
+
 ## Project Structure
+
+> Full directory tree in `docs/01_ARCHITECTURE.md`.
 
 ```
 app/
-├── controllers/           # Rails controllers (render Inertia responses, NOT JSON API)
-├── models/                # ActiveRecord models
-├── policies/              # Pundit authorization policies
-├── channels/              # Action Cable (ConversationChannel, NotificationChannel)
-├── jobs/                  # Background jobs (AmoCrmSyncJob, NotificationJob)
-├── services/              # AmoCrmClient (Faraday HTTP client)
-├── mailers/               # Email notifications
-├── frontend/              # ← All React/TypeScript code lives here
-│   ├── entrypoints/       # Vite entrypoints (inertia.tsx, application.ts/css)
-│   ├── components/        # Reusable React components
-│   │   ├── layout/        # AppSidebar, Header, AuthenticatedLayout, AuthLayout
-│   │   ├── ui/            # shadcn/ui primitives (auto-generated)
-│   │   ├── common/        # LanguageSwitcher, StatusBadge, RoleGuard, etc.
-│   │   ├── chat/          # ChatWindow, MessageBubble, MessageInput
-│   │   ├── documents/     # FileDropZone, FileList
-│   │   └── admin/         # StatsCard, Charts
-│   ├── pages/             # Inertia pages (mapped to Rails routes)
-│   │   ├── auth/          # Login, Register, ForgotPassword
-│   │   ├── profile/       # Complete, Edit
-│   │   ├── dashboard/     # Index
-│   │   ├── requests/      # Index, New, Show
-│   │   └── admin/         # Dashboard, Users
-│   ├── hooks/             # useActionCable, useFileUpload
-│   ├── lib/               # utils.ts (cn function), i18n.ts
-│   ├── locales/           # es.json, en.json, ru.json
-│   └── types/             # TypeScript type definitions
+├── controllers/     # Inertia responses (NOT JSON API). Pattern: authorize → build → render
+├── models/          # ActiveRecord + Pundit policies in app/policies/
+├── channels/        # ConversationChannel, NotificationChannel (Action Cable)
+├── jobs/            # AmoCrmSyncJob, NotificationJob (Solid Queue)
+├── services/        # AmoCrmClient (Faraday)
+├── frontend/
+│   ├── components/  # layout/, ui/ (shadcn), common/, chat/, documents/, inbox/, teachers/, lessons/
+│   ├── pages/       # auth/, profile/, dashboard/, requests/, inbox/, teachers/, calendar/, chat/, admin/
+│   ├── hooks/       # useActionCable, useFileUpload
+│   ├── lib/         # routes.ts, utils.ts, i18n.ts
+│   ├── locales/     # es.json, en.json, ru.json
+│   └── types/       # index.ts (SharedProps), pages.ts (page props), models.d.ts
 config/
-├── select_options.yml     # All dropdown options (single source of truth)
-├── locales/               # Rails I18n (es.yml, en.yml, ru.yml)
-docs/                      # Architecture, features, DB schema, implementation plan
+├── select_options.yml   # All dropdown options (single source of truth)
+├── locales/             # Rails I18n (es.yml, en.yml, ru.yml)
 ```
 
 ## Core Rules
@@ -171,12 +173,9 @@ Every page MUST work on mobile (360px+). Students and teachers primarily use pho
 
 ## Coding Patterns (Rails + Inertia.js + React)
 
-### 1. Centralized routes — no hardcoded paths in components
-
-Create `app/frontend/lib/routes.ts` on day one. Every URL goes through this file.
+### 1. Centralized routes — `app/frontend/lib/routes.ts`
 
 ```ts
-// app/frontend/lib/routes.ts
 export const routes = {
   dashboard:        ()  => "/",
   requests:         ()  => "/requests",
@@ -194,83 +193,50 @@ export const routes = {
   profileEdit:      ()  => "/profile/edit",
   notifications:    ()  => "/notifications",
   privacyPolicy:    ()  => "/privacy-policy",
-  // Admin
   admin:            ()  => "/admin",
   adminUsers:       ()  => "/admin/users",
   adminUser:        (id: number) => `/admin/users/${id}`,
   adminLessons:     ()  => "/admin/lessons",
-  // Auth
   login:            ()  => "/session/new",
   register:         ()  => "/registration/new",
 } as const;
 ```
 
 ```tsx
-// ❌ WRONG — hardcoded paths
-<Link href={`/requests/${id}`}>View</Link>
-router.post(`/requests/${id}/confirm_payment`, data)
-
-// ✅ CORRECT — centralized
-<Link href={routes.request(id)}>View</Link>
-router.post(routes.confirmPayment(id), data)
+// ❌ <Link href={`/requests/${id}`}>  ✅ <Link href={routes.request(id)}>
+// ❌ router.post(`/requests/${id}/confirm_payment`)  ✅ router.post(routes.confirmPayment(id))
 ```
 
 ### 2. Serialization — private `_json` methods, explicit camelCase
 
-Never use `.as_json` in controllers. Always define private methods with explicit camelCase keys.
-
 ```ruby
-# ❌ WRONG — leaks fields, snake_case breaks TypeScript types
-render inertia: "Requests/Show", props: { request: @request.as_json }
-
-# ✅ CORRECT — explicit contract, camelCase
-render inertia: "Requests/Show", props: { request: request_json(@request) }
+# ❌ render inertia: "Requests/Show", props: { request: @request.as_json }
+# ✅ render inertia: "Requests/Show", props: { request: request_json(@request) }
 
 private
 
 def request_json(r)
   {
-    id:               r.id,
-    subject:          r.subject,
-    serviceType:      r.service_type,
-    status:           r.status,
-    paymentAmount:    r.payment_amount,
-    createdAt:        r.created_at.iso8601,
-    statusChangedAt:  r.status_changed_at&.iso8601,
-    user:             user_json(r.user),
-    crmSyncedAt:      r.amo_crm_synced_at&.iso8601,
-    crmSyncError:     r.amo_crm_sync_error,
-  }
-end
-
-def user_json(u)
-  {
-    id:        u.id,
-    name:      u.name,
-    email:     u.email_address,
-    avatarUrl: u.avatar_url,
+    id: r.id, subject: r.subject, serviceType: r.service_type,
+    status: r.status, paymentAmount: r.payment_amount,
+    createdAt: r.created_at.iso8601, user: user_json(r.user),
   }
 end
 ```
 
-Dates are always ISO 8601 strings. One `_json` method = one TypeScript interface.
+Dates = ISO 8601 strings. One `_json` method = one TypeScript interface.
 
-### 3. Shared Props — typed, available everywhere
+### 3. Shared Props — typed, never duplicate current_user in page props
 
 ```ruby
 # app/controllers/application_controller.rb
 inertia_share do
   {
-    auth: {
-      user: current_user ? auth_user_json(current_user) : nil,
-    },
-    flash: {
-      notice: flash.notice,
-      alert:  flash.alert,
-    },
-    features:                current_user ? build_features(current_user) : {},
+    auth:     { user: current_user ? auth_user_json(current_user) : nil },
+    flash:    { notice: flash.notice, alert: flash.alert },
+    features: current_user ? build_features(current_user) : {},
     unreadNotificationsCount: current_user&.notifications&.unread&.count || 0,
-    selectOptions:           YAML.load_file(Rails.root.join("config/select_options.yml")),
+    selectOptions: YAML.load_file(Rails.root.join("config/select_options.yml")),
   }
 end
 ```
@@ -286,35 +252,18 @@ export interface SharedProps extends PageProps {
 }
 ```
 
-Never pass `current_user` data again through page props — it's already in `auth.user`.
-
-### 4. Page props — TypeScript interfaces that mirror controller props
+### 4. Page props — TypeScript interfaces mirroring controller props
 
 ```ts
-// app/frontend/types/pages.ts
-export interface RequestsIndexProps {
-  requests: Request[];
-  statusFilter: string | null;
-}
-
+// app/frontend/types/pages.ts — every page gets one
 export interface RequestsShowProps {
   request: RequestDetail;
   messages: Message[];
   conversation: Conversation;
 }
 
-export interface InboxIndexProps {
-  conversations: ConversationPreview[];
-  activeFilter: string;
-}
-
-// Usage in page component:
-export default function RequestsShow() {
-  const { request, messages, conversation } = usePage<SharedProps & RequestsShowProps>().props;
-}
+// Usage: const { request } = usePage<SharedProps & RequestsShowProps>().props;
 ```
-
-Every page has a props interface. This is the only way to catch Rails ↔ TypeScript drift at compile time.
 
 ### 5. Controller pattern — authorize → build → render
 
@@ -322,115 +271,130 @@ Every page has a props interface. This is the only way to catch Rails ↔ TypeSc
 def show
   @request = HomologationRequest.find(params[:id])
   authorize @request                              # 1. Always first
-
   props = {
-    request:      request_detail_json(@request),  # 2. Private _json methods
-    messages:     @request.conversation.messages.map { |m| message_json(m) },
-    conversation: conversation_json(@request.conversation),
+    request:  request_detail_json(@request),      # 2. Private _json methods
+    messages: @request.conversation.messages.map { |m| message_json(m) },
   }
-
-  # 3. Conditional props by role
   if current_user.coordinator? || current_user.super_admin?
     props[:adminActions] = { canConfirmPayment: @request.awaiting_payment? }
   end
-
-  render inertia: "Requests/Show", props: props   # 4. Render
+  render inertia: "Requests/Show", props: props   # 3. Render
 end
 ```
 
-`after_action :verify_authorized` in ApplicationController is mandatory. Public endpoints: `skip_after_action :verify_authorized`.
-
-### 6. Feature flags in shared props — not role checks in components
+### 6. Feature flags — server decides, frontend reads
 
 ```ruby
-# app/controllers/application_controller.rb
 def build_features(user)
   {
-    canCreateRequest:    user.student?,
-    canConfirmPayment:   user.coordinator? || user.super_admin?,
-    canManageUsers:      user.super_admin?,
-    canManageTeachers:   user.coordinator? || user.super_admin?,
-    canCreateLessons:    user.teacher? || user.coordinator? || user.super_admin?,
-    canViewAllRequests:  user.coordinator? || user.super_admin?,
+    canCreateRequest:   user.student?,
+    canConfirmPayment:  user.coordinator? || user.super_admin?,
+    canManageUsers:     user.super_admin?,
+    canManageTeachers:  user.coordinator? || user.super_admin?,
+    canCreateLessons:   user.teacher? || user.coordinator? || user.super_admin?,
+    canViewAllRequests: user.coordinator? || user.super_admin?,
   }
 end
 ```
 
 ```tsx
-// ❌ WRONG — role logic scattered across frontend
-{currentUser.roles.includes('coordinator') && <ConfirmPaymentButton />}
-
-// ✅ CORRECT — server decides, frontend just reads
-const { features } = usePage<SharedProps>().props;
-{features.canConfirmPayment && <ConfirmPaymentButton />}
+// ❌ {currentUser.roles.includes('coordinator') && <Button />}
+// ✅ {features.canConfirmPayment && <Button />}
 ```
 
-### 7. Navigation and mutations — only through Inertia
+### 7. Navigation and mutations — only Inertia
 
 ```tsx
-// Links — always Inertia <Link>
-<Link href={routes.request(id)}>View</Link>          // ✅
-<a href={`/requests/${id}`}>View</a>                  // ❌
-
-// Mutations — always router.*
+<Link href={routes.request(id)}>View</Link>                        // ✅
 router.post(routes.confirmPayment(id), { paymentAmount: amount })  // ✅
-router.delete(routes.lesson(id), { onSuccess: () => {} })          // ✅
-window.location.href = routes.dashboard()              // ❌ never
-await fetch("/requests", { method: "POST" })           // ❌ never (use router)
+// ❌ <a href>, window.location, fetch(), axios
 ```
 
-Exception: Action Cable receives (WebSocket) are not Inertia — that's fine.
+Exception: Action Cable WebSocket receives are not Inertia — that's fine.
 
-### 8. Flash messages — always through I18n
+### 8. Flash messages — always I18n
 
 ```ruby
-# ❌ WRONG — hardcoded string
-redirect_to request_path(@request), notice: "Payment confirmed"
-
-# ✅ CORRECT — I18n key
-redirect_to request_path(@request), notice: t("flash.payment_confirmed")
+# ❌ redirect_to path, notice: "Payment confirmed"
+# ✅ redirect_to path, notice: t("flash.payment_confirmed")
 ```
 
 Key naming: `flash.{entity}_{past_tense}` — `flash.request_created`, `flash.payment_confirmed`, `flash.lesson_cancelled`.
 
-Add flash keys to `config/locales/{es,en,ru}.yml`.
-
-### 9. N+1 — solve in controller, never in serializer
+### 9. N+1 — `.includes()` in controller, never lazy load in `_json`
 
 ```ruby
-# ❌ WRONG — N+1 inside _json method
-def index
-  @requests = policy_scope(HomologationRequest)
-  # each request_json(r) calls r.user → separate query per request
-end
+# ❌ policy_scope(HomologationRequest)  — then r.user triggers N+1
+# ✅ policy_scope(HomologationRequest).includes(:user, :conversation).order(updated_at: :desc)
+```
 
-# ✅ CORRECT — eager load in controller
-def index
-  @requests = policy_scope(HomologationRequest)
-                .includes(:user, :conversation)
-                .order(updated_at: :desc)
-  # now request_json(r) uses preloaded data
+For lookups: `users = User.where(id: ids).index_by(&:id)` — one query, O(1) access.
+
+## Testing Patterns (Minitest)
+
+### What to test where
+
+| Layer | Test for | Don't test |
+|---|---|---|
+| **Models** | Validations, `transition_to!` guards, scopes, associations | Controller logic, rendering |
+| **Controllers** | HTTP status, Inertia component name, authorization (Pundit), redirects | Business logic (push to model) |
+| **Jobs** | Side effects (AmoCRM sync), error handling | HTTP internals (mock with WebMock) |
+| **System** | Critical user journeys: login, submit request, chat | Every edge case |
+
+### Rules
+
+- **Fixtures only** — no FactoryBot, no mocks for ActiveRecord. Fixtures in `test/fixtures/*.yml`.
+- **Every new controller action gets a test before merge.** No exceptions.
+- Run `bin/rails test && npm run check` before committing.
+
+### Controller test example
+
+```ruby
+class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
+  test "student sees own requests" do
+    sign_in users(:student_ana)
+    get homologation_requests_path
+    assert_response :ok
+    assert_inertia component: "Requests/Index"
+  end
+
+  test "coordinator can confirm payment" do
+    sign_in users(:coordinator_maria)
+    request = homologation_requests(:ana_equivalencia)
+    request.update!(status: "awaiting_payment")
+    post confirm_payment_homologation_request_path(request), params: { payment_amount: 60 }
+    assert_redirected_to homologation_request_path(request)
+    assert_equal "payment_confirmed", request.reload.status
+  end
 end
 ```
 
-For lookups in loops, use `index_by`:
+### Model test example
+
 ```ruby
-users = User.where(id: user_ids).index_by(&:id)  # one query → hash
-items.map { |i| { ...item_json(i), userName: users[i.user_id]&.name } }
+class HomologationRequestTest < ActiveSupport::TestCase
+  test "valid transition: in_review → awaiting_payment" do
+    r = homologation_requests(:ana_equivalencia)
+    r.update!(status: "in_review")
+    r.transition_to!("awaiting_payment", changed_by: users(:coordinator_maria))
+    assert_equal "awaiting_payment", r.status
+  end
+
+  test "invalid transition: draft → payment_confirmed raises" do
+    r = homologation_requests(:ana_equivalencia)
+    r.update!(status: "draft")
+    assert_raises(HomologationRequest::InvalidTransition) do
+      r.transition_to!("payment_confirmed", changed_by: users(:coordinator_maria))
+    end
+  end
+end
 ```
 
 ## Dropdown Options
 
-All defined in `config/select_options.yml`:
-- service_types: equivalencia, invoice, informe, other
-- education_systems: argentina, colombia, mexico, peru, venezuela, russia, ukraine...
-- studies_finished: yes, no, in_progress
-- study_types_spain: bachillerato, fp_medio, fp_superior, grado, master, doctorado
-- universities: ucm, uam, ceu, ue... (extend as needed)
-- language_levels: a1-c2, none
-- language_certificates: dele, siele, other, none
-- referral_sources: google, instagram, facebook, friend, university, other
-- countries: AR, CO, MX, PE, VE, RU, UA, US...
+- **Source of truth:** `config/select_options.yml` — all keys, labels (es/en/ru), and AmoCRM enum IDs live here.
+- **Delivery to frontend:** loaded once in `inertia_share` as `selectOptions`, available in every page via `usePage<SharedProps>().props.selectOptions`.
+- **Rule:** never hardcode option values in React components — always read from `selectOptions` and render with `opt[label_${locale}] || opt.label || opt.key`.
 
 ## Status Flow
 
@@ -451,6 +415,38 @@ Valid transitions:
 
 AmoCRM Lead created at `payment_confirmed`. Pre-payment statuses exist only in our app.
 
+### Transition enforcement
+
+No state machine gem — transitions are enforced via a `StatusTransition` concern with manual methods.
+
+```ruby
+# app/models/concerns/status_transition.rb
+module StatusTransition
+  extend ActiveSupport::Concern
+
+  TRANSITIONS = {
+    "draft"             => %w[submitted],
+    "submitted"         => %w[in_review],
+    "in_review"         => %w[awaiting_reply awaiting_payment],
+    "awaiting_reply"    => %w[in_review],
+    "awaiting_payment"  => %w[payment_confirmed],
+    "payment_confirmed" => %w[in_progress],
+    "in_progress"       => %w[resolved closed],
+  }.freeze
+
+  def transition_to!(new_status, changed_by:)
+    unless TRANSITIONS[status]&.include?(new_status)
+      raise InvalidTransition, "Cannot move from #{status} to #{new_status}"
+    end
+    update!(status: new_status, status_changed_at: Time.current, status_changed_by: changed_by.id)
+  end
+end
+```
+
+Controller usage: `@request.transition_to!("payment_confirmed", changed_by: current_user)`
+
+Guards and side-effects (e.g. AmoCRM sync) go in `after_commit` callbacks or are called explicitly in the controller after `transition_to!`.
+
 ## Roles (4 total, no family)
 
 | Role | Key capabilities |
@@ -462,37 +458,51 @@ AmoCRM Lead created at `payment_confirmed`. Pre-payment statuses exist only in o
 
 ## Teachers & Lessons
 
-- `teacher_profiles`: level, hourly_rate (private, super_admin only), bio, permanent_meeting_link (public)
+- `teacher_profiles`: level, hourly_rate (super_admin only), bio, permanent_meeting_link
 - `teacher_students`: many-to-many, assigned by coordinator
-- `lessons`: scheduled_at, duration, meeting_link (overrides permanent if set), status, notes
-- If lesson has no meeting_link → use teacher's permanent link from profile
-- Teacher shares changing links via chat
+- `lessons`: scheduled_at, duration, meeting_link (fallback: teacher's permanent link), status, notes
 - Teachers only do lessons + chat. No access to documents or homologation.
 
-## Minors & Guardians (Variant 1.5)
+## Minors & Guardians
 
-- `users.is_minor` — true if student is under 18
-- Guardian fields on users: `guardian_name`, `guardian_email`, `guardian_phone`, `guardian_whatsapp`
+- `users.is_minor` — true if under 18. Guardian fields: `guardian_name`, `guardian_email`, `guardian_phone`, `guardian_whatsapp`
 - If minor → Stripe invoice → `guardian_email`, AmoCRM → `guardian_whatsapp`
-- `guardian_user_id` (FK → users) — optional, for future parent login
 - MVP: parent has no login, receives invoices/notifications by email
-- Future: parent registers, links via `guardian_user_id`, sees child's status
 
-## Documentation
+## Documentation — When to Read What
 
-Full docs in `/docs`:
-- `00_PRINCIPLES.md` — Core rules: fast & simple
-- `01_ARCHITECTURE.md` — Stack, high-level architecture, directory structure
-- `02_DATABASE_SCHEMA.md` + `.dbml` — Schema for dbdiagram.io (12 tables, color-coded)
-- `03_FEATURES.md` — User stories, data flow diagram
-- `04_ROLES_AND_AUTHORIZATION.md` — 4 roles, permission matrix, Pundit policies
-- `05_AUTH_OAUTH.md` — Rails 8 auth generator + OmniAuth setup
-- `06_AMOCRM_INTEGRATION.md` — Trigger flow, field mapping, Faraday client, sync job
-- `07_IMPLEMENTATION_PLAN.md` — Steps, gems, npm packages, test strategy
-- `08_API_ROUTES.md` — All routes, controllers, Action Cable channels
-- `09_UI_COMPONENTS.md` — shadcn-admin layout, pages, file structure
-- `10_TECHNICAL_DETAILS.md` — Select options YAML, Faraday, Active Storage, Action Cable
-- `11_I18N_MULTILANGUAGE.md` — i18n setup, translation files, React rules
-- `12_SECURITY_GDPR.md` — EU compliance, encryption, rate limiting
-- `13_LESSONS_CALENDAR.md` — Calendar flow, lesson booking, meeting links, UI per role
-- `14_COORDINATOR_WORKSPACE.md` — Inbox (unified chat) + Teachers management panel
+Full docs live in `/docs`. Read the specific doc when you hit one of these situations:
+
+| Situation | Read |
+|---|---|
+| Adding/changing a DB table or field | `docs/02_DATABASE_SCHEMA.md` + `.dbml` |
+| Adding a user story or feature | `docs/03_FEATURES.md` |
+| Adding a role or changing permissions | `docs/04_ROLES_AND_AUTHORIZATION.md` |
+| Setting up or debugging OAuth | `docs/05_AUTH_OAUTH.md` |
+| Touching AmoCRM sync or field mapping | `docs/06_AMOCRM_INTEGRATION.md` |
+| What step to build next | `docs/07_IMPLEMENTATION_PLAN.md` |
+| Adding a route, controller, or Action Cable channel | `docs/08_API_ROUTES.md` |
+| Building a new page or component | `docs/09_UI_COMPONENTS.md` |
+| Working with select options, file uploads, or WebSocket | `docs/10_TECHNICAL_DETAILS.md` |
+| Missing i18n keys or adding translations | `docs/11_I18N_MULTILANGUAGE.md` |
+| Security, encryption, GDPR, rate limiting | `docs/12_SECURITY_GDPR.md` |
+| Scheduling lessons or building calendar | `docs/13_LESSONS_CALENDAR.md` |
+| Building inbox or teacher management | `docs/14_COORDINATOR_WORKSPACE.md` |
+| Questioning a design decision | `docs/00_PRINCIPLES.md` + `docs/01_ARCHITECTURE.md` |
+
+## What Claude Should Never Do
+
+- [ ] Use `.as_json` in controllers — always private `_json` methods with explicit camelCase
+- [ ] Hardcode visible text — always `t()` via react-i18next or Rails I18n
+- [ ] Use `react-hook-form`, `zod`, or any form library — only Inertia `useForm()`
+- [ ] Use `<a href>` for internal links — only Inertia `<Link>`
+- [ ] Use `fetch()`, `axios`, or `window.location` for mutations — only `router.post/patch/delete`
+- [ ] Check roles in React components — use `features.*` from shared props
+- [ ] Hardcode URL paths in components — use `routes.*` from `lib/routes.ts`
+- [ ] Skip `authorize` in any controller action — `verify_authorized` will catch it
+- [ ] Add N+1 queries inside `_json` methods — `.includes()` in the controller
+- [ ] Use `@tanstack/react-table`, Tiptap, zustand, or dark mode — see Core Rule 10
+- [ ] Add a rich text editor — always `<textarea>` from shadcn/ui
+- [ ] Sync data to AmoCRM before payment confirmation — CRM stays clean until `payment_confirmed`
+- [ ] Hardcode flash messages — always `t("flash.entity_action")` through I18n
+- [ ] Skip `bin/rails test && npm run check` before considering work done
