@@ -1,0 +1,262 @@
+{
+  "app": {
+    "name": "HomologApp"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "submit": "Submit",
+    "delete": "Delete",
+    "edit": "Edit",
+    "search": "Search",
+    "filter": "Filter",
+    "loading": "Loading...",
+    "no_results": "No results found",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "yes": "Yes",
+    "no": "No",
+    "or": "or",
+    "download": "Download",
+    "download_all": "Download all",
+    "required": "Required",
+    "optional": "Optional",
+    "error": "Error",
+    "success": "Success"
+  },
+
+  "auth": {
+    "sign_in": "Sign In",
+    "sign_up": "Create Account",
+    "sign_out": "Sign Out",
+    "email": "Email",
+    "password": "Password",
+    "confirm_password": "Confirm Password",
+    "forgot_password": "Forgot your password?",
+    "reset_password": "Reset Password",
+    "continue_with_google": "Continue with Google",
+    "continue_with_apple": "Continue with Apple",
+    "no_account": "Don't have an account?",
+    "has_account": "Already have an account?",
+    "accept_privacy": "I have read and accept the privacy policy"
+  },
+
+  "profile": {
+    "complete_title": "Complete Your Profile",
+    "whatsapp": "WhatsApp Number",
+    "whatsapp_hint": "With country code, e.g.: +34612345678",
+    "phone": "Phone",
+    "birthday": "Date of Birth",
+    "country": "Country of Origin",
+    "save_continue": "Save & Continue",
+    "notifications_section": "Notification preferences",
+    "email_notifications": "Email notifications",
+    "telegram_notifications": "Telegram notifications",
+    "connect_telegram": "Connect Telegram",
+    "disconnect_telegram": "Disconnect Telegram",
+    "telegram_connected": "Telegram connected",
+    "telegram_hint": "Receive instant notifications in Telegram — free"
+  },
+
+  "requests": {
+    "title": "My Requests",
+    "new_request": "New Request",
+    "submit_request": "Submit Request",
+    "save_draft": "Save Draft",
+    "no_requests": "You don't have any requests yet",
+
+    "status": {
+      "draft": "Draft",
+      "submitted": "Submitted",
+      "in_review": "In Review",
+      "awaiting_payment": "Awaiting Payment",
+      "payment_confirmed": "Payment Confirmed",
+      "in_progress": "In Progress",
+      "awaiting_reply": "Awaiting Reply",
+      "resolved": "Resolved",
+      "closed": "Closed"
+    },
+
+    "table": {
+      "subject": "Subject",
+      "id": "ID",
+      "created": "Created",
+      "last_activity": "Last Activity",
+      "status": "Status",
+      "status_filter": "Status"
+    },
+
+    "form": {
+      "section_about": "About You",
+      "section_request": "Your Request",
+      "section_education": "Education",
+      "section_optional": "Optional",
+      "section_documents": "Documents",
+      "name": "Name and Surname",
+      "service_type": "Service Requested",
+      "subject": "Subject",
+      "description": "Description",
+      "description_hint": "Please enter the details of your request. A member of our team will respond as soon as possible.",
+      "identity_card": "Identity Card",
+      "passport": "Passport",
+      "education_system": "Educational System of Studies",
+      "studies_finished": "Studies Finished?",
+      "study_type_spain": "Type of Studies in Spain",
+      "studies_spain": "Studies to Be Carried Out in Spain",
+      "university": "University Where You Are Going to Study",
+      "language_level": "Language Level",
+      "language_certificate": "Language Certificate",
+      "referral_source": "How Did You Find Us?",
+      "privacy_policy": "I have read and accept the privacy policy",
+      "application_file": "Application Form",
+      "originals_files": "Original Documents",
+      "other_files": "Other Documents",
+      "drop_file": "Drop file here or click to browse",
+      "drop_files": "Drop files here or click to browse",
+      "max_size": "Maximum {{size}} MB per file"
+    }
+  },
+
+  "chat": {
+    "title": "Conversation",
+    "type_message": "Type a message...",
+    "send": "Send",
+    "attach_file": "Attach file",
+    "no_messages": "No messages yet. Start the conversation!"
+  },
+
+  "notifications": {
+    "title": "Notifications",
+    "mark_all_read": "Mark all as read",
+    "no_notifications": "You have no notifications",
+    "new_request": "New request received",
+    "new_message": "New message from {{name}}",
+    "status_changed": "Status updated to {{status}}",
+    "payment_confirmed": "Payment confirmed: €{{amount}}"
+  },
+
+  "coordinator": {
+    "confirm_payment": "Confirm Payment",
+    "payment_amount": "Amount (€)",
+    "confirm_sync": "Confirm & Sync to CRM",
+    "confirm_dialog_title": "Confirm Payment Received",
+    "confirm_dialog_description": "Enter the payment amount. This will sync the data to AmoCRM.",
+    "change_status": "Change Status",
+    "assign_to_me": "Assign to Me",
+    "unassigned": "Unassigned",
+    "crm_synced": "Synced to CRM",
+    "crm_syncing": "Syncing...",
+    "crm_error": "Sync Error",
+    "crm_retry": "Retry Sync",
+    "crm_not_synced": "Not Synced"
+  },
+
+  "admin": {
+    "dashboard": "Admin Dashboard",
+    "users": "Users",
+    "reports": "Reports",
+    "stats": {
+      "total_requests": "Total Requests",
+      "open_requests": "Open",
+      "awaiting_payment": "Awaiting Payment",
+      "resolved": "Resolved"
+    },
+    "user_management": {
+      "add_user": "Add User",
+      "edit_user": "Edit User",
+      "role": "Role",
+      "roles": "Roles",
+      "assign_role": "Assign Role",
+      "remove_role": "Remove Role",
+      "deactivate": "Deactivate"
+    },
+    "charts": {
+      "requests_over_time": "Requests Over Time",
+      "by_status": "By Status",
+      "avg_response_time": "Average Response Time"
+    }
+  },
+
+  "inbox": {
+    "title": "Inbox",
+    "all": "All",
+    "requests_filter": "Requests",
+    "teacher_chats": "Teacher chats",
+    "unread_only": "Unread only",
+    "search": "Search conversation...",
+    "no_conversations": "No conversations"
+  },
+
+  "teachers": {
+    "title": "Teachers",
+    "add_teacher": "Add Teacher",
+    "students": "Students",
+    "lessons_this_week": "Lessons this week",
+    "no_permanent_link": "No permanent link",
+    "assign_student": "Assign Student",
+    "remove_student": "Remove Student",
+    "view_calendar": "View Calendar",
+    "edit_profile": "Edit Profile",
+    "level": "Level",
+    "hourly_rate": "Hourly Rate",
+    "bio": "Bio",
+    "permanent_link": "Permanent Meeting Link",
+    "search_student": "Search student...",
+    "available_students": "Available students"
+  },
+
+  "lessons": {
+    "title": "My Lessons",
+    "new_lesson": "New Lesson",
+    "upcoming": "Upcoming",
+    "past": "Past",
+    "no_lessons": "You have no scheduled lessons",
+    "join_lesson": "Join Lesson",
+    "link_pending": "Link will be added by teacher",
+    "duration_minutes": "{{minutes}} min",
+    "teacher": "Teacher",
+    "student": "Student",
+    "date": "Date",
+    "time": "Time",
+    "duration": "Duration",
+    "meeting_link": "Meeting Link",
+    "meeting_link_hint": "Leave empty to use teacher's permanent link",
+    "notes": "Notes (private, after lesson)",
+    "cancel_lesson": "Cancel Lesson",
+    "status": {
+      "scheduled": "Scheduled",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    }
+  },
+
+  "calendar": {
+    "title": "My Calendar",
+    "week": "Week",
+    "day": "Day",
+    "month": "Month",
+    "today": "Today",
+    "link_ready": "Link ready",
+    "link_needed": "Link needed",
+    "done": "Done"
+  },
+
+  "nav": {
+    "dashboard": "Dashboard",
+    "inbox": "Inbox",
+    "requests": "Requests",
+    "all_requests": "All Requests",
+    "my_requests": "My Requests",
+    "new_request": "New Request",
+    "teachers": "Teachers",
+    "all_lessons": "All Lessons",
+    "calendar": "Calendar",
+    "my_lessons": "My Lessons",
+    "chat": "Chat",
+    "notifications": "Notifications",
+    "profile": "Profile",
+    "admin": "Admin",
+    "language": "Language"
+  }
+}

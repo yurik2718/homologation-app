@@ -1,31 +1,49 @@
-# Files in the config/locales directory are used for internationalization and
-# are automatically loaded by Rails. If you want to use locales other than
-# English, add the necessary files in this directory.
-#
-# To use the locales, use `I18n.t`:
-#
-#     I18n.t "hello"
-#
-# In views, this is aliased to just `t`:
-#
-#     <%= t("hello") %>
-#
-# To use a different locale, set it with `I18n.locale`:
-#
-#     I18n.locale = :es
-#
-# This would use the information in config/locales/es.yml.
-#
-# To learn more about the API, please read the Rails Internationalization guide
-# at https://guides.rubyonrails.org/i18n.html.
-#
-# Be aware that YAML interprets the following case-insensitive strings as
-# booleans: `true`, `false`, `on`, `off`, `yes`, `no`. Therefore, these strings
-# must be quoted to be interpreted as strings. For example:
-#
-#     en:
-#       "yes": yup
-#       enabled: "ON"
-
 en:
-  hello: "Hello world"
+  activerecord:
+    models:
+      homologation_request: "Homologation Request"
+      user: "User"
+    attributes:
+      homologation_request:
+        subject: "Subject"
+        service_type: "Service Type"
+        status: "Status"
+      user:
+        name: "Name"
+        email_address: "Email"
+    errors:
+      models:
+        homologation_request:
+          attributes:
+            privacy_accepted:
+              accepted: "you must accept the privacy policy"
+  flash:
+    signed_in: "Signed in successfully"
+    signed_out: "Signed out successfully"
+    auth_failed: "Authentication failed"
+    profile_updated: "Profile updated successfully"
+    complete_profile: "Please complete your profile to continue"
+    request_created: "Request created successfully"
+    request_updated: "Request updated successfully"
+    payment_confirmed: "Payment confirmed successfully"
+    teacher_updated: "Teacher updated successfully"
+    student_assigned: "Student assigned successfully"
+    student_removed: "Student removed successfully"
+    lesson_created: "Lesson created successfully"
+    lesson_updated: "Lesson updated successfully"
+    lesson_cancelled: "Lesson cancelled successfully"
+    notification_read: "Notification marked as read"
+  mailers:
+    request_mailer:
+      new_request:
+        subject: "New request received: %{request_subject}"
+      payment_confirmed:
+        subject: "Payment confirmed for: %{request_subject}"
+      status_changed:
+        subject: "Status updated: %{request_subject}"
+  notifications:
+    new_request: "New request from %{name}"
+    new_message: "New message from %{name}"
+    payment_confirmed: "Payment of €%{amount} confirmed for '%{subject}'"
+    status_changed: "Your request status updated to %{status}"
+    lesson_scheduled: "New lesson scheduled for %{date}"

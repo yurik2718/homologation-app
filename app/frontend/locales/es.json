@@ -1,0 +1,262 @@
+{
+  "app": {
+    "name": "HomologApp"
+  },
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "submit": "Enviar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "loading": "Cargando...",
+    "no_results": "No se encontraron resultados",
+    "back": "Volver",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "yes": "Sí",
+    "no": "No",
+    "or": "o",
+    "download": "Descargar",
+    "download_all": "Descargar todo",
+    "required": "Obligatorio",
+    "optional": "Opcional",
+    "error": "Error",
+    "success": "Éxito"
+  },
+
+  "auth": {
+    "sign_in": "Iniciar sesión",
+    "sign_up": "Crear cuenta",
+    "sign_out": "Cerrar sesión",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "confirm_password": "Confirmar contraseña",
+    "forgot_password": "¿Olvidaste tu contraseña?",
+    "reset_password": "Restablecer contraseña",
+    "continue_with_google": "Continuar con Google",
+    "continue_with_apple": "Continuar con Apple",
+    "no_account": "¿No tienes cuenta?",
+    "has_account": "¿Ya tienes cuenta?",
+    "accept_privacy": "He leído y acepto la política de privacidad"
+  },
+
+  "profile": {
+    "complete_title": "Completa tu perfil",
+    "whatsapp": "Número de WhatsApp",
+    "whatsapp_hint": "Con código de país, ej: +34612345678",
+    "phone": "Teléfono",
+    "birthday": "Fecha de nacimiento",
+    "country": "País de origen",
+    "save_continue": "Guardar y continuar",
+    "notifications_section": "Preferencias de notificaciones",
+    "email_notifications": "Notificaciones por email",
+    "telegram_notifications": "Notificaciones por Telegram",
+    "connect_telegram": "Conectar Telegram",
+    "disconnect_telegram": "Desconectar Telegram",
+    "telegram_connected": "Telegram conectado",
+    "telegram_hint": "Recibe notificaciones instantáneas en Telegram — gratis"
+  },
+
+  "requests": {
+    "title": "Mis solicitudes",
+    "new_request": "Nueva solicitud",
+    "submit_request": "Enviar solicitud",
+    "save_draft": "Guardar borrador",
+    "no_requests": "Aún no tienes solicitudes",
+
+    "status": {
+      "draft": "Borrador",
+      "submitted": "Enviada",
+      "in_review": "En revisión",
+      "awaiting_payment": "Pendiente de pago",
+      "payment_confirmed": "Pago confirmado",
+      "in_progress": "En proceso",
+      "awaiting_reply": "Esperando respuesta",
+      "resolved": "Resuelta",
+      "closed": "Cerrada"
+    },
+
+    "table": {
+      "subject": "Asunto",
+      "id": "ID",
+      "created": "Creada",
+      "last_activity": "Última actividad",
+      "status": "Estado",
+      "status_filter": "Estado"
+    },
+
+    "form": {
+      "section_about": "Sobre ti",
+      "section_request": "Tu solicitud",
+      "section_education": "Educación",
+      "section_optional": "Opcional",
+      "section_documents": "Documentos",
+      "name": "Nombre y apellidos",
+      "service_type": "Servicio solicitado",
+      "subject": "Asunto",
+      "description": "Descripción",
+      "description_hint": "Introduce los detalles de tu solicitud. Un miembro de nuestro equipo responderá lo antes posible.",
+      "identity_card": "Documento de identidad",
+      "passport": "Pasaporte",
+      "education_system": "Sistema educativo de estudios",
+      "studies_finished": "¿Estudios terminados?",
+      "study_type_spain": "Tipo de estudios a realizar en España",
+      "studies_spain": "Estudios a realizar en España",
+      "university": "Universidad donde vas a estudiar",
+      "language_level": "Nivel de idioma",
+      "language_certificate": "Certificado de idioma",
+      "referral_source": "¿Cómo nos encontraste?",
+      "privacy_policy": "He leído y acepto la política de privacidad",
+      "application_file": "Solicitud (заявление)",
+      "originals_files": "Documentos originales",
+      "other_files": "Otros documentos",
+      "drop_file": "Arrastra un archivo aquí o haz clic para seleccionar",
+      "drop_files": "Arrastra archivos aquí o haz clic para seleccionar",
+      "max_size": "Máximo {{size}} MB por archivo"
+    }
+  },
+
+  "chat": {
+    "title": "Conversación",
+    "type_message": "Escribe un mensaje...",
+    "send": "Enviar",
+    "attach_file": "Adjuntar archivo",
+    "no_messages": "Aún no hay mensajes. ¡Inicia la conversación!"
+  },
+
+  "notifications": {
+    "title": "Notificaciones",
+    "mark_all_read": "Marcar todo como leído",
+    "no_notifications": "No tienes notificaciones",
+    "new_request": "Nueva solicitud recibida",
+    "new_message": "Nuevo mensaje de {{name}}",
+    "status_changed": "Estado actualizado a {{status}}",
+    "payment_confirmed": "Pago confirmado: €{{amount}}"
+  },
+
+  "coordinator": {
+    "confirm_payment": "Confirmar pago",
+    "payment_amount": "Importe (€)",
+    "confirm_sync": "Confirmar y sincronizar con CRM",
+    "confirm_dialog_title": "Confirmar pago recibido",
+    "confirm_dialog_description": "Introduce el importe del pago. Esto sincronizará los datos con AmoCRM.",
+    "change_status": "Cambiar estado",
+    "assign_to_me": "Asignarme esta solicitud",
+    "unassigned": "Sin asignar",
+    "crm_synced": "Sincronizado con CRM",
+    "crm_syncing": "Sincronizando...",
+    "crm_error": "Error de sincronización",
+    "crm_retry": "Reintentar sincronización",
+    "crm_not_synced": "No sincronizado"
+  },
+
+  "admin": {
+    "dashboard": "Panel de administración",
+    "users": "Usuarios",
+    "reports": "Informes",
+    "stats": {
+      "total_requests": "Total solicitudes",
+      "open_requests": "Abiertas",
+      "awaiting_payment": "Pendientes de pago",
+      "resolved": "Resueltas"
+    },
+    "user_management": {
+      "add_user": "Añadir usuario",
+      "edit_user": "Editar usuario",
+      "role": "Rol",
+      "roles": "Roles",
+      "assign_role": "Asignar rol",
+      "remove_role": "Quitar rol",
+      "deactivate": "Desactivar"
+    },
+    "charts": {
+      "requests_over_time": "Solicitudes a lo largo del tiempo",
+      "by_status": "Por estado",
+      "avg_response_time": "Tiempo medio de respuesta"
+    }
+  },
+
+  "inbox": {
+    "title": "Bandeja de entrada",
+    "all": "Todos",
+    "requests_filter": "Solicitudes",
+    "teacher_chats": "Chats de profesores",
+    "unread_only": "Solo sin leer",
+    "search": "Buscar conversación...",
+    "no_conversations": "No hay conversaciones"
+  },
+
+  "teachers": {
+    "title": "Profesores",
+    "add_teacher": "Añadir profesor",
+    "students": "Alumnos",
+    "lessons_this_week": "Clases esta semana",
+    "no_permanent_link": "Sin enlace permanente",
+    "assign_student": "Asignar alumno",
+    "remove_student": "Quitar alumno",
+    "view_calendar": "Ver calendario",
+    "edit_profile": "Editar perfil",
+    "level": "Nivel",
+    "hourly_rate": "Tarifa por hora",
+    "bio": "Biografía",
+    "permanent_link": "Enlace permanente de reunión",
+    "search_student": "Buscar alumno...",
+    "available_students": "Alumnos disponibles"
+  },
+
+  "lessons": {
+    "title": "Mis clases",
+    "new_lesson": "Nueva clase",
+    "upcoming": "Próximas",
+    "past": "Anteriores",
+    "no_lessons": "No tienes clases programadas",
+    "join_lesson": "Unirse a la clase",
+    "link_pending": "El profesor añadirá el enlace",
+    "duration_minutes": "{{minutes}} min",
+    "teacher": "Profesor",
+    "student": "Alumno",
+    "date": "Fecha",
+    "time": "Hora",
+    "duration": "Duración",
+    "meeting_link": "Enlace de reunión",
+    "meeting_link_hint": "Dejar vacío para usar el enlace permanente del profesor",
+    "notes": "Notas (privadas, después de la clase)",
+    "cancel_lesson": "Cancelar clase",
+    "status": {
+      "scheduled": "Programada",
+      "completed": "Completada",
+      "cancelled": "Cancelada"
+    }
+  },
+
+  "calendar": {
+    "title": "Mi calendario",
+    "week": "Semana",
+    "day": "Día",
+    "month": "Mes",
+    "today": "Hoy",
+    "link_ready": "Enlace listo",
+    "link_needed": "Falta enlace",
+    "done": "Completada"
+  },
+
+  "nav": {
+    "dashboard": "Inicio",
+    "inbox": "Bandeja de entrada",
+    "requests": "Solicitudes",
+    "all_requests": "Todas las solicitudes",
+    "my_requests": "Mis solicitudes",
+    "new_request": "Nueva solicitud",
+    "teachers": "Profesores",
+    "all_lessons": "Todas las clases",
+    "calendar": "Calendario",
+    "my_lessons": "Mis clases",
+    "chat": "Chat",
+    "notifications": "Notificaciones",
+    "profile": "Perfil",
+    "admin": "Administración",
+    "language": "Idioma"
+  }
+}

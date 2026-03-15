@@ -1,0 +1,262 @@
+{
+  "app": {
+    "name": "HomologApp"
+  },
+  "common": {
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "submit": "Отправить",
+    "delete": "Удалить",
+    "edit": "Редактировать",
+    "search": "Поиск",
+    "filter": "Фильтр",
+    "loading": "Загрузка...",
+    "no_results": "Ничего не найдено",
+    "back": "Назад",
+    "next": "Далее",
+    "previous": "Назад",
+    "yes": "Да",
+    "no": "Нет",
+    "or": "или",
+    "download": "Скачать",
+    "download_all": "Скачать всё",
+    "required": "Обязательно",
+    "optional": "Необязательно",
+    "error": "Ошибка",
+    "success": "Успешно"
+  },
+
+  "auth": {
+    "sign_in": "Войти",
+    "sign_up": "Создать аккаунт",
+    "sign_out": "Выйти",
+    "email": "Электронная почта",
+    "password": "Пароль",
+    "confirm_password": "Подтвердите пароль",
+    "forgot_password": "Забыли пароль?",
+    "reset_password": "Сбросить пароль",
+    "continue_with_google": "Войти через Google",
+    "continue_with_apple": "Войти через Apple",
+    "no_account": "Нет аккаунта?",
+    "has_account": "Уже есть аккаунт?",
+    "accept_privacy": "Я прочитал(а) и принимаю политику конфиденциальности"
+  },
+
+  "profile": {
+    "complete_title": "Заполните профиль",
+    "whatsapp": "Номер WhatsApp",
+    "whatsapp_hint": "С кодом страны, например: +34612345678",
+    "phone": "Телефон",
+    "birthday": "Дата рождения",
+    "country": "Страна происхождения",
+    "save_continue": "Сохранить и продолжить",
+    "notifications_section": "Настройки уведомлений",
+    "email_notifications": "Уведомления на email",
+    "telegram_notifications": "Уведомления в Telegram",
+    "connect_telegram": "Подключить Telegram",
+    "disconnect_telegram": "Отключить Telegram",
+    "telegram_connected": "Telegram подключён",
+    "telegram_hint": "Получайте мгновенные уведомления в Telegram — бесплатно"
+  },
+
+  "requests": {
+    "title": "Мои заявки",
+    "new_request": "Новая заявка",
+    "submit_request": "Отправить заявку",
+    "save_draft": "Сохранить черновик",
+    "no_requests": "У вас пока нет заявок",
+
+    "status": {
+      "draft": "Черновик",
+      "submitted": "Отправлена",
+      "in_review": "На рассмотрении",
+      "awaiting_payment": "Ожидает оплаты",
+      "payment_confirmed": "Оплата подтверждена",
+      "in_progress": "В работе",
+      "awaiting_reply": "Ожидает ответа",
+      "resolved": "Завершена",
+      "closed": "Закрыта"
+    },
+
+    "table": {
+      "subject": "Тема",
+      "id": "ID",
+      "created": "Создана",
+      "last_activity": "Последняя активность",
+      "status": "Статус",
+      "status_filter": "Статус"
+    },
+
+    "form": {
+      "section_about": "О вас",
+      "section_request": "Ваша заявка",
+      "section_education": "Образование",
+      "section_optional": "Дополнительно",
+      "section_documents": "Документы",
+      "name": "Имя и фамилия",
+      "service_type": "Запрашиваемая услуга",
+      "subject": "Тема",
+      "description": "Описание",
+      "description_hint": "Опишите детали вашей заявки. Наш сотрудник ответит как можно скорее.",
+      "identity_card": "Удостоверение личности",
+      "passport": "Паспорт",
+      "education_system": "Система образования",
+      "studies_finished": "Обучение завершено?",
+      "study_type_spain": "Тип обучения в Испании",
+      "studies_spain": "Обучение в Испании",
+      "university": "Университет, где будете учиться",
+      "language_level": "Уровень языка",
+      "language_certificate": "Языковой сертификат",
+      "referral_source": "Как вы нас нашли?",
+      "privacy_policy": "Я прочитал(а) и принимаю политику конфиденциальности",
+      "application_file": "Заявление",
+      "originals_files": "Оригиналы документов",
+      "other_files": "Другие документы",
+      "drop_file": "Перетащите файл сюда или нажмите для выбора",
+      "drop_files": "Перетащите файлы сюда или нажмите для выбора",
+      "max_size": "Максимум {{size}} МБ на файл"
+    }
+  },
+
+  "chat": {
+    "title": "Переписка",
+    "type_message": "Введите сообщение...",
+    "send": "Отправить",
+    "attach_file": "Прикрепить файл",
+    "no_messages": "Сообщений пока нет. Начните переписку!"
+  },
+
+  "notifications": {
+    "title": "Уведомления",
+    "mark_all_read": "Отметить все как прочитанные",
+    "no_notifications": "У вас нет уведомлений",
+    "new_request": "Получена новая заявка",
+    "new_message": "Новое сообщение от {{name}}",
+    "status_changed": "Статус обновлён: {{status}}",
+    "payment_confirmed": "Оплата подтверждена: €{{amount}}"
+  },
+
+  "coordinator": {
+    "confirm_payment": "Подтвердить оплату",
+    "payment_amount": "Сумма (€)",
+    "confirm_sync": "Подтвердить и синхронизировать с CRM",
+    "confirm_dialog_title": "Подтверждение оплаты",
+    "confirm_dialog_description": "Введите сумму оплаты. Данные будут синхронизированы с AmoCRM.",
+    "change_status": "Изменить статус",
+    "assign_to_me": "Назначить на меня",
+    "unassigned": "Не назначен",
+    "crm_synced": "Синхронизировано с CRM",
+    "crm_syncing": "Синхронизация...",
+    "crm_error": "Ошибка синхронизации",
+    "crm_retry": "Повторить синхронизацию",
+    "crm_not_synced": "Не синхронизировано"
+  },
+
+  "admin": {
+    "dashboard": "Панель управления",
+    "users": "Пользователи",
+    "reports": "Отчёты",
+    "stats": {
+      "total_requests": "Всего заявок",
+      "open_requests": "Открытые",
+      "awaiting_payment": "Ожидают оплаты",
+      "resolved": "Завершённые"
+    },
+    "user_management": {
+      "add_user": "Добавить пользователя",
+      "edit_user": "Редактировать пользователя",
+      "role": "Роль",
+      "roles": "Роли",
+      "assign_role": "Назначить роль",
+      "remove_role": "Убрать роль",
+      "deactivate": "Деактивировать"
+    },
+    "charts": {
+      "requests_over_time": "Заявки за период",
+      "by_status": "По статусу",
+      "avg_response_time": "Среднее время ответа"
+    }
+  },
+
+  "inbox": {
+    "title": "Входящие",
+    "all": "Все",
+    "requests_filter": "Заявки",
+    "teacher_chats": "Чаты с учителями",
+    "unread_only": "Только непрочитанные",
+    "search": "Поиск по чатам...",
+    "no_conversations": "Нет разговоров"
+  },
+
+  "teachers": {
+    "title": "Учителя",
+    "add_teacher": "Добавить учителя",
+    "students": "Ученики",
+    "lessons_this_week": "Уроков на этой неделе",
+    "no_permanent_link": "Нет постоянной ссылки",
+    "assign_student": "Назначить ученика",
+    "remove_student": "Убрать ученика",
+    "view_calendar": "Смотреть календарь",
+    "edit_profile": "Редактировать профиль",
+    "level": "Уровень",
+    "hourly_rate": "Ставка за час",
+    "bio": "О себе",
+    "permanent_link": "Постоянная ссылка на урок",
+    "search_student": "Поиск ученика...",
+    "available_students": "Доступные ученики"
+  },
+
+  "lessons": {
+    "title": "Мои уроки",
+    "new_lesson": "Новый урок",
+    "upcoming": "Предстоящие",
+    "past": "Прошедшие",
+    "no_lessons": "У вас нет запланированных уроков",
+    "join_lesson": "Присоединиться к уроку",
+    "link_pending": "Учитель добавит ссылку",
+    "duration_minutes": "{{minutes}} мин",
+    "teacher": "Учитель",
+    "student": "Ученик",
+    "date": "Дата",
+    "time": "Время",
+    "duration": "Длительность",
+    "meeting_link": "Ссылка на урок",
+    "meeting_link_hint": "Оставьте пустым для использования постоянной ссылки учителя",
+    "notes": "Заметки (приватные, после урока)",
+    "cancel_lesson": "Отменить урок",
+    "status": {
+      "scheduled": "Запланирован",
+      "completed": "Проведён",
+      "cancelled": "Отменён"
+    }
+  },
+
+  "calendar": {
+    "title": "Мой календарь",
+    "week": "Неделя",
+    "day": "День",
+    "month": "Месяц",
+    "today": "Сегодня",
+    "link_ready": "Ссылка готова",
+    "link_needed": "Нужна ссылка",
+    "done": "Завершено"
+  },
+
+  "nav": {
+    "dashboard": "Главная",
+    "inbox": "Входящие",
+    "requests": "Заявки",
+    "all_requests": "Все заявки",
+    "my_requests": "Мои заявки",
+    "new_request": "Новая заявка",
+    "teachers": "Учителя",
+    "all_lessons": "Все уроки",
+    "calendar": "Календарь",
+    "my_lessons": "Мои уроки",
+    "chat": "Чат",
+    "notifications": "Уведомления",
+    "profile": "Профиль",
+    "admin": "Администрирование",
+    "language": "Язык"
+  }
+}

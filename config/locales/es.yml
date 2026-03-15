@@ -1,0 +1,49 @@
+es:
+  activerecord:
+    models:
+      homologation_request: "Solicitud de homologación"
+      user: "Usuario"
+    attributes:
+      homologation_request:
+        subject: "Asunto"
+        service_type: "Tipo de servicio"
+        status: "Estado"
+      user:
+        name: "Nombre"
+        email_address: "Correo electrónico"
+    errors:
+      models:
+        homologation_request:
+          attributes:
+            privacy_accepted:
+              accepted: "debe aceptar la política de privacidad"
+  flash:
+    signed_in: "Sesión iniciada correctamente"
+    signed_out: "Sesión cerrada correctamente"
+    auth_failed: "Autenticación fallida"
+    profile_updated: "Perfil actualizado correctamente"
+    complete_profile: "Por favor, completa tu perfil para continuar"
+    request_created: "Solicitud creada correctamente"
+    request_updated: "Solicitud actualizada correctamente"
+    payment_confirmed: "Pago confirmado correctamente"
+    teacher_updated: "Profesor actualizado correctamente"
+    student_assigned: "Alumno asignado correctamente"
+    student_removed: "Alumno eliminado correctamente"
+    lesson_created: "Clase creada correctamente"
+    lesson_updated: "Clase actualizada correctamente"
+    lesson_cancelled: "Clase cancelada correctamente"
+    notification_read: "Notificación marcada como leída"
+  mailers:
+    request_mailer:
+      new_request:
+        subject: "Nueva solicitud recibida: %{request_subject}"
+      payment_confirmed:
+        subject: "Pago confirmado para: %{request_subject}"
+      status_changed:
+        subject: "Estado actualizado: %{request_subject}"
+  notifications:
+    new_request: "Nueva solicitud de %{name}"
+    new_message: "Nuevo mensaje de %{name}"
+    payment_confirmed: "Pago de €%{amount} confirmado para '%{subject}'"
+    status_changed: "Estado de tu solicitud actualizado a %{status}"
+    lesson_scheduled: "Nueva clase programada para %{date}"

@@ -1,0 +1,49 @@
+ru:
+  activerecord:
+    models:
+      homologation_request: "Заявка на гомологацию"
+      user: "Пользователь"
+    attributes:
+      homologation_request:
+        subject: "Тема"
+        service_type: "Тип услуги"
+        status: "Статус"
+      user:
+        name: "Имя"
+        email_address: "Электронная почта"
+    errors:
+      models:
+        homologation_request:
+          attributes:
+            privacy_accepted:
+              accepted: "необходимо принять политику конфиденциальности"
+  flash:
+    signed_in: "Вход выполнен успешно"
+    signed_out: "Выход выполнен успешно"
+    auth_failed: "Ошибка аутентификации"
+    profile_updated: "Профиль обновлён успешно"
+    complete_profile: "Пожалуйста, заполните профиль для продолжения"
+    request_created: "Заявка создана успешно"
+    request_updated: "Заявка обновлена успешно"
+    payment_confirmed: "Оплата подтверждена успешно"
+    teacher_updated: "Данные учителя обновлены"
+    student_assigned: "Ученик назначен успешно"
+    student_removed: "Ученик удалён успешно"
+    lesson_created: "Урок создан успешно"
+    lesson_updated: "Урок обновлён успешно"
+    lesson_cancelled: "Урок отменён успешно"
+    notification_read: "Уведомление отмечено как прочитанное"
+  mailers:
+    request_mailer:
+      new_request:
+        subject: "Получена новая заявка: %{request_subject}"
+      payment_confirmed:
+        subject: "Оплата подтверждена: %{request_subject}"
+      status_changed:
+        subject: "Статус обновлён: %{request_subject}"
+  notifications:
+    new_request: "Новая заявка от %{name}"
+    new_message: "Новое сообщение от %{name}"
+    payment_confirmed: "Оплата €%{amount} подтверждена для '%{subject}'"
+    status_changed: "Статус заявки обновлён: %{status}"
+    lesson_scheduled: "Новый урок запланирован на %{date}"

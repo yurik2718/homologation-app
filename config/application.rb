@@ -23,5 +23,15 @@ module HomologationApp
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+
+    # i18n: 3 languages, Spanish default
+    config.i18n.available_locales = %i[es en ru]
+    config.i18n.default_locale = :es
+    config.i18n.fallbacks = true
+
+    # Select options loaded once at boot — shared via inertia_share on every request
+    config.select_options = YAML.safe_load_file(
+      Rails.root.join("config/select_options.yml")
+    ).freeze
   end
 end

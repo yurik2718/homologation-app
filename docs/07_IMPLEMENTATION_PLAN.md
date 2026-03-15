@@ -167,7 +167,7 @@ Use shadcn-admin layout patterns. All visible text via `t()`.
 **Files to create:**
 - `app/frontend/components/layout/AuthLayout.tsx` — Centered card layout for login/register. Language switcher in corner.
 - `app/frontend/components/layout/AuthenticatedLayout.tsx` — Sidebar + Header + main content area. Wraps all authenticated pages.
-- `app/frontend/components/layout/AppSidebar.tsx` — Collapsible sidebar. Menu items filtered by role from `auth.user.roles` in shared props. See sidebar matrix in `docs/09_UI_COMPONENTS.md`.
+- `app/frontend/components/layout/AppSidebar.tsx` — Collapsible sidebar. Menu items filtered by `features.*` flags from shared props (never by `auth.user.roles` directly). See sidebar matrix below and `docs/09_UI_COMPONENTS.md`.
 - `app/frontend/components/layout/Header.tsx` — Top bar: breadcrumb area, LanguageSwitcher, NotificationBell, user dropdown menu (profile, logout).
 
 **Sidebar items by role** (source of truth — `docs/09_UI_COMPONENTS.md`):
@@ -191,7 +191,7 @@ Use shadcn-admin layout patterns. All visible text via `t()`.
 
 All text via `t()`. All dates via locale-aware `date-fns`.
 
-- `app/frontend/components/common/LanguageSwitcher.tsx` — 3-language dropdown (es/en/ru), persists via `router.patch("/profile", { locale })`.
+- `app/frontend/components/common/LanguageSwitcher.tsx` — 3-language dropdown (es/en/ru), persists via `router.patch(routes.profile, { locale })`.
 - `app/frontend/components/common/StatusBadge.tsx` — Colored badge per status. Label: `t(\`requests.status.${status}\`)`. Colors: draft=gray, submitted=blue, in_review=yellow, awaiting_reply=orange, awaiting_payment=purple, payment_confirmed=green, in_progress=blue, resolved=green, closed=gray.
 - `app/frontend/components/common/FormattedDate.tsx` — Locale-aware `formatDistanceToNow` using `date-fns` + `date-fns/locale`. Import `{ es, enUS, ru }`.
 - `app/frontend/components/common/NotificationBell.tsx` — Bell icon (lucide-react) + unread count badge from `unreadNotificationsCount` shared prop. Placeholder click handler (wired up in Step 8).
@@ -214,14 +214,15 @@ All text via `t()`. All dates via locale-aware `date-fns`.
   - `auth: { user: current_user ? user_json(current_user) : nil }`
   - `flash: { notice: flash[:notice], alert: flash[:alert] }`
   - `features: current_user ? build_features(current_user) : {}`
-  - `unreadNotificationsCount: current_user ? current_user.notifications.unread.count : 0`
-  - `selectOptions: YAML.load_file(Rails.root.join("config/select_options.yml"))`
+  - `unreadNotificationsCount: 0` (hardcoded for Step 0 — Notification model not yet created; replace in Step 8)
+  - `selectOptions: Rails.application.config.select_options` (loaded once at boot in `config/application.rb`)
 
-**File:** `app/controllers/inertia_controller.rb` — Inherits `ApplicationController`. Base class for all Inertia-rendering controllers.
+**File:** `app/controllers/inertia_controller.rb` — Base class for all Inertia-rendering pages. Add `include Authentication` and `after_action :verify_authorized` here in Step 1 so every page controller inherits them automatically.
 
 **Helper method** `build_features(user)` returns hash:
 ```ruby
 {
+  # Action permissions
   canConfirmPayment: user.coordinator? || user.super_admin?,
   canManageUsers: user.super_admin?,
   canManageTeachers: user.coordinator? || user.super_admin?,
@@ -229,6 +230,14 @@ All text via `t()`. All dates via locale-aware `date-fns`.
   canAccessAdmin: user.super_admin?,
   canCreateRequest: user.student?,
   canCreateLesson: user.teacher? || user.coordinator? || user.super_admin?,
+  # Navigation visibility — intentionally separate from action permissions
+  canSeeDashboard: user.super_admin? || user.coordinator? || user.student?,
+  canSeeAllRequests: user.coordinator? || user.super_admin?,
+  canSeeMyRequests: user.student?,
+  canSeeAllLessons: user.coordinator? || user.super_admin?,
+  canSeeCalendar: user.teacher?,
+  canSeeMyLessons: user.student?,
+  canSeeChat: user.teacher? || user.student?,
 }
 ```
 

@@ -1,0 +1,85 @@
+service_types:
+  - key: "equivalencia"
+    label_es: "Equivalencia"
+    label_en: "Equivalence"
+    label_ru: "Эквивалентность"
+  - key: "invoice"
+    label_es: "Solicitud de factura"
+    label_en: "Invoice Request"
+    label_ru: "Запрос счёта"
+  - key: "informe"
+    label_es: "Informe técnico"
+    label_en: "Technical Report"
+    label_ru: "Технический отчёт"
+  - key: "other"
+    label_es: "Otro"
+    label_en: "Other"
+    label_ru: "Другое"
+
+education_systems:
+  - { key: "argentina", label: "Argentina" }
+  - { key: "colombia", label: "Colombia" }
+  - { key: "mexico", label: "México" }
+  - { key: "peru", label: "Perú" }
+  - { key: "venezuela", label: "Venezuela" }
+  - { key: "russia", label: "Rusia" }
+  - { key: "ukraine", label: "Ucrania" }
+  - { key: "other", label_es: "Otro", label_en: "Other", label_ru: "Другое" }
+
+studies_finished:
+  - { key: "yes", label_es: "Sí", label_en: "Yes", label_ru: "Да" }
+  - { key: "no", label_es: "No", label_en: "No", label_ru: "Нет" }
+  - { key: "in_progress", label_es: "En curso", label_en: "In Progress", label_ru: "В процессе" }
+
+study_types_spain:
+  - { key: "bachillerato", label: "Bachillerato" }
+  - { key: "fp_medio", label: "FP Grado Medio" }
+  - { key: "fp_superior", label: "FP Grado Superior" }
+  - { key: "grado", label: "Grado Universitario" }
+  - { key: "master", label: "Máster" }
+  - { key: "doctorado", label: "Doctorado" }
+
+universities:
+  - { key: "ucm", label: "Universidad Complutense de Madrid" }
+  - { key: "uam", label: "Universidad Autónoma de Madrid" }
+  - { key: "ceu", label: "CEU San Pablo" }
+  - { key: "ue", label: "Universidad Europea" }
+  - { key: "other", label_es: "Otra", label_en: "Other", label_ru: "Другой" }
+
+language_levels:
+  - { key: "a1", label: "A1" }
+  - { key: "a2", label: "A2" }
+  - { key: "b1", label: "B1" }
+  - { key: "b2", label: "B2" }
+  - { key: "c1", label: "C1" }
+  - { key: "c2", label: "C2" }
+  - { key: "none", label_es: "Sin certificado", label_en: "None", label_ru: "Нет" }
+
+language_certificates:
+  - { key: "dele", label: "DELE" }
+  - { key: "siele", label: "SIELE" }
+  - { key: "other", label_es: "Otro", label_en: "Other", label_ru: "Другой" }
+  - { key: "none", label_es: "Ninguno", label_en: "None", label_ru: "Нет" }
+
+referral_sources:
+  - { key: "google", label: "Google" }
+  - { key: "instagram", label: "Instagram" }
+  - { key: "facebook", label: "Facebook" }
+  - { key: "friend", label_es: "Amigo", label_en: "Friend", label_ru: "Друг" }
+  - { key: "university", label_es: "Universidad", label_en: "University", label_ru: "Университет" }
+  - { key: "other", label_es: "Otro", label_en: "Other", label_ru: "Другое" }
+
+countries:
+  - { key: "AR", label: "Argentina" }
+  - { key: "CO", label: "Colombia" }
+  - { key: "MX", label: "México" }
+  - { key: "PE", label: "Perú" }
+  - { key: "VE", label: "Venezuela" }
+  - { key: "RU", label: "Rusia" }
+  - { key: "UA", label: "Ucrania" }
+  - { key: "US", label: "Estados Unidos" }
+  - { key: "ES", label: "España" }
+  - { key: "DE", label: "Alemania" }
+  - { key: "FR", label: "Francia" }
+  - { key: "IT", label: "Italia" }
+  - { key: "other", label_es: "Otro", label_en: "Other", label_ru: "Другое" }
