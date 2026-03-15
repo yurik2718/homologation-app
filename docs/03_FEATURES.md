@@ -155,10 +155,15 @@ These fields are saved in `users` table and pre-filled in future requests.
 
 ## Phase 3: Enhancements
 
-### F11. Multi-language Support
-- **F11.1** Spanish (primary), English, Russian
-- **F11.2** Rails I18n for backend messages
-- **F11.3** Frontend i18n via react-i18next or similar
+### F11. Multi-language Support (BUILT INTO PHASE 1 — not deferred!)
+i18n is built into the app from day one. See `docs/11_I18N_MULTILANGUAGE.md` for full details.
+- **F11.1** 3 languages: Spanish (default), English, Russian
+- **F11.2** Frontend: `react-i18next` — all UI text via `t()` function, ZERO hardcoded strings
+- **F11.3** Backend: Rails I18n — mailers, notifications, validation errors
+- **F11.4** Select options: multi-language labels in `config/select_options.yml`
+- **F11.5** Language switcher in navbar (flag button)
+- **F11.6** User locale saved in `users.locale`, detected from browser on first visit
+- **F11.7** Dates formatted with locale-aware `date-fns`
 
 ### F12. Profile Management
 - **F12.1** Edit profile (name, email, phone, whatsapp, birthday, country, avatar)

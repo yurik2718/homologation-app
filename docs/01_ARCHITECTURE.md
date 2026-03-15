@@ -8,7 +8,7 @@
 | Framework      | Rails 8.1.2                             |
 | Frontend       | React 19 + Inertia.js 2.3              |
 | Build          | Vite 7.3                                |
-| CSS            | Tailwind CSS 4.2 + shadcn/ui           |
+| CSS            | Tailwind CSS 4.2 + shadcn/ui (shadcn-admin style) |
 | Database       | SQLite3                                 |
 | Auth           | Rails built-in generator (`has_secure_password`) + OmniAuth (Google, Apple) |
 | Authorization  | Pundit                                  |

@@ -1,270 +1,194 @@
-# UI Components & Pages
+# UI Components
 
-## UI Library: shadcn/ui + Tailwind CSS
+## Design: shadcn-admin Style
 
-### Setup
-```bash
-npx shadcn@latest init
-# Framework: Vite
-# Style: Default
-# Base color: Slate (or Neutral)
-# CSS path: app/frontend/entrypoints/application.css
-# Tailwind config: tailwind.config.ts (if needed, or use CSS-based config)
-# Components alias: @/components
-# Utils alias: @/lib/utils
-```
+Layout and navigation from [shadcn-admin](https://github.com/satnaing/shadcn-admin):
+- Sidebar (collapsible) + Header + Main content
+- Light mode only (no dark mode for MVP)
+- shadcn/ui components via MCP server or CLI
 
-### Required shadcn/ui Components
+### shadcn/ui Components Needed
+
 ```bash
 npx shadcn@latest add \
   button input label textarea select checkbox \
   card dialog sheet sidebar \
   table badge avatar separator \
-  dropdown-menu navigation-menu command \
-  tabs popover tooltip \
-  toast sonner \
-  form
+  dropdown-menu tabs popover \
+  toast sonner scroll-area form
 ```
 
-### Additional NPM Packages
+### NPM Packages
+
 ```bash
-npm install lucide-react           # Icons (used by shadcn/ui)
-npm install react-dropzone         # Drag & drop file upload
-npm install recharts               # Charts for admin dashboard
-npm install @tiptap/react @tiptap/starter-kit  # Rich text editor
-npm install date-fns               # Date formatting
+npm install lucide-react        # Icons
+npm install react-dropzone      # Drag & drop uploads
+npm install recharts            # Admin charts
+npm install date-fns            # Dates
+npm install @rails/activestorage # Direct upload
+npm install @rails/actioncable  # WebSocket
+npm install react-i18next i18next i18next-browser-languagedetector
 ```
 
 ---
 
-## Page Layouts
+## Layout
 
-### AuthLayout
-- Centered card on gradient/neutral background
-- Logo at top
-- No sidebar or navbar
+```
+┌─── Sidebar ────┐┌─── Header ────────────────────── [🌐][🔔][👤] ──┐
+│                 ││                                                  │
+│  [Logo]         ││  Page content here                               │
+│                 ││                                                  │
+│  Dashboard      ││                                                  │
+│  Requests       ││                                                  │
+│  New Request    ││                                                  │
+│  Notifications  ││                                                  │
+│                 ││                                                  │
+│  ── admin ──    ││                                                  │
+│  Admin Panel    ││                                                  │
+│  Users          ││                                                  │
+│                 ││                                                  │
+│  ── bottom ──   ││                                                  │
+│  👤 User menu   ││                                                  │
+└─────────────────┘└──────────────────────────────────────────────────┘
+```
 
-### AppLayout (main layout)
-- **Sidebar** (collapsible):
-  - Logo
-  - Navigation: Dashboard, My Requests, New Request, Notifications
-  - User menu at bottom (profile, logout)
-  - Role-based menu items (Admin link for super_admin)
-- **Top bar**: breadcrumbs, notification bell, user avatar
-- **Main content area**
+### Sidebar Items by Role
 
-### AdminLayout (extends AppLayout)
-- Sidebar with admin-specific nav:
-  - Dashboard, Users, Reports, Settings
+| Item | admin | coordinator | teacher | student | family |
+|---|:-:|:-:|:-:|:-:|:-:|
+| Dashboard | + | + | + | + | + |
+| My Requests | - | - | - | + | + |
+| New Request | - | - | - | + | - |
+| All Requests | + | + | - | - | - |
+| Notifications | + | + | + | + | + |
+| Admin Panel | + | - | - | - | - |
+| Users | + | - | - | - | - |
 
 ---
 
-## Key Pages
+## Pages
 
-### 1. Login (`auth/Login.tsx`)
-```
-┌──────────────────────────────┐
-│         [Logo]               │
-│                              │
-│    ┌──────────────────┐      │
-│    │  Sign In          │      │
-│    │                  │      │
-│    │  Email: [______] │      │
-│    │  Pass:  [______] │      │
-│    │                  │      │
-│    │  [  Sign In    ] │      │
-│    │                  │      │
-│    │  ── or ──        │      │
-│    │                  │      │
-│    │  [G] Google      │      │
-│    │  [] Apple       │      │
-│    │                  │      │
-│    │  Forgot password?│      │
-│    │  Create account  │      │
-│    └──────────────────┘      │
-└──────────────────────────────┘
-```
+### Login
+- Email + password form
+- Google / Apple OAuth buttons
+- Language switcher (🇪🇸 🇬🇧 🇷🇺)
+- Links: forgot password, create account
 
-### 2. Register (`auth/Register.tsx`)
-- Name, Email, Password, Confirm Password
-- Google & Apple OAuth buttons
+### Register
+- Name, Email, Password, Confirm password
+- OAuth buttons
 - Privacy policy checkbox
 
-### 2b. Complete Profile (`profile/Complete.tsx`) — shown after first login
-```
-┌──────────────────────────────┐
-│       Complete Your Profile   │
-│                              │
-│  WhatsApp*: [+34_________]   │
-│  Phone:     [____________]   │
-│  Birthday:  [DD/MM/YYYY]     │
-│  Country:   [__________▼]    │
-│                              │
-│  [ Save & Continue ]         │
-└──────────────────────────────┘
-```
-* WhatsApp is required — it's used for CRM communication
+### Complete Profile (after first login)
+- WhatsApp (required), Phone, Birthday, Country
+- One page, 4 fields
 
-### 3. My Requests (`requests/Index.tsx`)
-```
-┌─ Sidebar ─┐┌── Main Content ──────────────────────────┐
-│            ││                                          │
-│ Dashboard  ││  My Requests                             │
-│ Requests ● ││                                          │
-│ New Request││  [Search...________]  Status: [Any  ▼]   │
-│ Notif (3)  ││                                          │
-│            ││  ┌──────────────────────────────────────┐ │
-│            ││  │ Subject    │ ID    │ Created│ Status │ │
-│            ││  ├───────────────────────────────────────┤ │
-│            ││  │ Equiv...   │#66763│ 2 mo   │🟡 Wait │ │
-│            ││  │ Equiv...   │#63793│ 4 mo   │🟢 Done │ │
-│            ││  │ ...        │      │        │        │ │
-│            ││  └──────────────────────────────────────┘ │
-│            ││                                          │
-│ ── user ── ││  [< 1 2 3 >]                            │
-│ [Profile]  ││                                          │
-│ [Logout]   ││                                          │
-└────────────┘└──────────────────────────────────────────┘
-```
+### My Requests (table)
+- Simple `<Table>` with: Subject, ID, Created, Status
+- Search input + Status dropdown filter
+- Click row → open request
 
-### 4. Submit a Request (`requests/New.tsx`)
-12 fields + file uploads. Kept simple to not overwhelm the student.
+### New Request (form)
+- Inertia `useForm()` — no extra form library
+- Sections: About You → Request → Education → Optional → Documents
+- File uploads: 3 drop zones (Application, Originals, Other)
+- All labels via `t()` for i18n
+- Submit button + Save Draft
+
+### Request Detail (chat + files)
+- Left: chat messages (Action Cable real-time)
+- Right: status, request details, file list with download
+- Coordinator sees: "Confirm Payment" button, status dropdown
+- CRM sync indicator after payment confirmation
+
+### Admin Dashboard
+- 4 stat cards (total, open, awaiting, resolved)
+- 2 charts (requests over time, by status) via Recharts
+- Recent requests table
+
+### Admin Users
+- Simple table: Name, Email, Role, Actions
+- Add/edit user dialog
+- Assign/remove role
+
+---
+
+## File Structure
+
 ```
-┌─ Sidebar ─┐┌── Main Content ──────────────────────────┐
-│            ││                                          │
-│            ││  Submit a Request                        │
-│            ││                                          │
-│            ││  ── About You ──                         │
-│            ││  Name and Surname: [John Doe________]    │
-│            ││  Identity Card/DNI: [______________]     │
-│            ││  Passport: [_______________________]     │
-│            ││                                          │
-│            ││  ── Your Request ──                      │
-│            ││  Service Requested: [Equivalencia  ▼]    │
-│            ││  Subject: [________________________]     │
-│            ││  Description: ┌─────────────────────┐    │
-│            ││               │ B I U │ list │       │    │
-│            ││               │                     │    │
-│            ││               └─────────────────────┘    │
-│            ││                                          │
-│            ││  ── Education ──                         │
-│            ││  Education System: [_______________▼]    │
-│            ││  Studies Finished?: [______________▼]    │
-│            ││  Type of Studies: [________________▼]    │
-│            ││  Studies in Spain: [________________]    │
-│            ││  University: [____________________▼]     │
-│            ││                                          │
-│            ││  ── Optional ──                          │
-│            ││  Language Level: [________________▼]     │
-│            ││  Language Certificate: [__________▼]     │
-│            ││  How did you find us?: [__________▼]     │
-│            ││                                          │
-│            ││  ── Documents ──                         │
-│            ││  Application (заявление):                │
-│            ││  ┌──────────────────────────────────┐    │
-│            ││  │  Drop file here or [Add file]    │    │
-│            ││  └──────────────────────────────────┘    │
-│            ││  Originals (оригиналы документов):       │
-│            ││  ┌──────────────────────────────────┐    │
-│            ││  │  Drop files here or [Add files]  │    │
-│            ││  └──────────────────────────────────┘    │
-│            ││  - diploma_scan.pdf  ✕                   │
-│            ││  Other documents:                        │
-│            ││  ┌──────────────────────────────────┐    │
-│            ││  │  Drop files here or [Add files]  │    │
-│            ││  └──────────────────────────────────┘    │
-│            ││                                          │
-│            ││  ☐ I accept the privacy policy           │
-│            ││                                          │
-│            ││  [Save Draft]          [ Submit ]        │
-└────────────┘└──────────────────────────────────────────┘
+app/frontend/
+├── components/
+│   ├── layout/
+│   │   ├── AppSidebar.tsx
+│   │   ├── Header.tsx
+│   │   ├── AuthenticatedLayout.tsx
+│   │   └── AuthLayout.tsx
+│   ├── ui/                  # shadcn/ui (auto-generated)
+│   ├── common/
+│   │   ├── LanguageSwitcher.tsx
+│   │   ├── NotificationBell.tsx
+│   │   ├── StatusBadge.tsx
+│   │   ├── FormattedDate.tsx
+│   │   └── RoleGuard.tsx
+│   ├── chat/
+│   │   ├── ChatWindow.tsx
+│   │   ├── MessageBubble.tsx
+│   │   └── MessageInput.tsx
+│   ├── documents/
+│   │   ├── FileDropZone.tsx
+│   │   └── FileList.tsx
+│   └── admin/
+│       ├── StatsCard.tsx
+│       └── Charts.tsx
+├── pages/
+│   ├── auth/        (Login, Register, ForgotPassword)
+│   ├── profile/     (Complete, Edit)
+│   ├── dashboard/   (Index)
+│   ├── requests/    (Index, New, Show)
+│   └── admin/       (Dashboard, Users)
+├── hooks/
+│   ├── useActionCable.ts
+│   └── useFileUpload.ts
+├── lib/
+│   ├── utils.ts
+│   └── i18n.ts
+├── locales/         (es.json, en.json, ru.json)
+├── types/           (models.d.ts)
+└── entrypoints/
+    ├── application.ts
+    ├── application.css
+    └── inertia.tsx
 ```
 
-### 5. Request Detail + Chat (`requests/Show.tsx`)
-```
-┌─ Sidebar ─┐┌── Chat ─────────────────┐┌── Details ────────┐
-│            ││                         ││ Status: 🟡 Review │
-│            ││  [Student] 14 Nov 2025  ││                   │
-│            ││  Buenos dias, solicito  ││ Service: Equiv.   │
-│            ││  la equivalencia de...  ││ University: CEU   │
-│            ││                         ││ System: Colombia  │
-│            ││  [Coordinator] 14 Nov   ││                   │
-│            ││  Your documentation is  ││ ── Documents ──   │
-│            ││  correct. Please pay... ││ Application:      │
-│            ││                         ││ 📄 solicitud.pdf  │
-│            ││  [Student] 15 Nov       ││ Originals:        │
-│            ││  Payment done, receipt  ││ 📄 diploma.pdf    │
-│            ││  attached.              ││ 📄 notas.pdf      │
-│            ││                         ││   [Download All]  │
-│            ││                         ││                   │
-│            ││                         ││ ── Payment ──     │
-│            ││                         ││ Amount: €60.00    │
-│            ││ ┌─────────────────────┐ ││ Status: Confirmed │
-│            ││ │ Type a message... 📎│ ││ CRM: ✅ Synced    │
-│            ││ │              [Send] │ ││                   │
-│            ││ └─────────────────────┘ ││ [Confirm Payment] │
-└────────────┘└─────────────────────────┘│ (coordinator only)│
-                                         └───────────────────┘
-```
-Note: "Confirm Payment" button opens a dialog where coordinator enters Sale € amount.
-After confirmation, CRM sync status shows: Synced / Syncing / Error + retry.
+## Forms: Inertia useForm (NO extra libraries)
 
-### 6. Admin Dashboard (`admin/Dashboard.tsx`)
+```tsx
+// Example: all forms use Inertia's built-in useForm
+import { useForm } from "@inertiajs/react"
+
+function RequestForm() {
+  const { t } = useTranslation()
+  const { data, setData, post, processing, errors } = useForm({
+    service_type: "",
+    subject: "",
+    // ...
+  })
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    post("/requests")
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <Label>{t("requests.form.service_type")}</Label>
+      <Select value={data.service_type} onValueChange={(v) => setData("service_type", v)}>
+        {/* options */}
+      </Select>
+      {errors.service_type && <p className="text-red-500">{errors.service_type}</p>}
+      <Button type="submit" disabled={processing}>{t("common.submit")}</Button>
+    </form>
+  )
+}
 ```
-┌─ Admin Sidebar ─┐┌── Main Content ─────────────────────┐
-│                  ││                                     │
-│ Dashboard ●      ││  Dashboard                          │
-│ Users            ││                                     │
-│ Reports          ││  ┌──────┐ ┌──────┐ ┌──────┐ ┌────┐ │
-│                  ││  │  156 │ │  23  │ │  12  │ │ 121│ │
-│                  ││  │Total │ │Open  │ │Wait  │ │Done│ │
-│                  ││  └──────┘ └──────┘ └──────┘ └────┘ │
-│                  ││                                     │
-│                  ││  ┌─── Requests Over Time ─────────┐ │
-│                  ││  │ 📈 Line Chart                  │ │
-│                  ││  └────────────────────────────────┘ │
-│                  ││                                     │
-│                  ││  ┌─── By Status ──┐┌── Avg Time ──┐ │
-│                  ││  │ 🥧 Pie Chart   ││ 📊 Bar Chart │ │
-│                  ││  └────────────────┘└──────────────┘ │
-│                  ││                                     │
-│ ← Back to App   ││  Recent Requests                    │
-│                  ││  [Table with latest requests...]    │
-└──────────────────┘└─────────────────────────────────────┘
-```
-
-### 7. Admin Users (`admin/Users.tsx`)
-```
-Users Management
-
-[Search...________]  Role: [Any ▼]  [+ Add User]
-
-┌────────────────────────────────────────────────────┐
-│ Name      │ Email         │ Roles      │ Actions   │
-├────────────────────────────────────────────────────┤
-│ Maria G.  │ m@ex.com      │ coordinator│ [Edit][X] │
-│ Pedro L.  │ p@ex.com      │ teacher    │ [Edit][X] │
-│ Ana K.    │ a@ex.com      │ student    │ [Edit][X] │
-└────────────────────────────────────────────────────┘
-```
-
-## Reusable Components
-
-| Component            | Location                          | Description                      |
-|----------------------|-----------------------------------|----------------------------------|
-| `AppLayout`          | `components/layouts/`             | Main layout with sidebar         |
-| `AuthLayout`         | `components/layouts/`             | Centered auth layout             |
-| `AdminLayout`        | `components/layouts/`             | Admin layout with admin sidebar  |
-| `RequestForm`        | `components/requests/`            | Full request form                |
-| `RequestTable`       | `components/requests/`            | Filterable request list          |
-| `RequestStatusBadge` | `components/requests/`            | Colored status badge             |
-| `ChatWindow`         | `components/chat/`                | Full chat component              |
-| `MessageBubble`      | `components/chat/`                | Single message display           |
-| `MessageInput`       | `components/chat/`                | Text input + send + attach       |
-| `FileDropZone`       | `components/documents/`           | Drag & drop upload area          |
-| `FileList`           | `components/documents/`           | List of files with download      |
-| `StatsCard`          | `components/admin/`               | Number stat with icon            |
-| `Chart`              | `components/admin/`               | Recharts wrapper                 |
-| `UserTable`          | `components/admin/`               | Admin user management table      |
-| `RoleGuard`          | `components/`                     | Role-based rendering             |
-| `NotificationBell`   | `components/`                     | Bell icon with dropdown          |
