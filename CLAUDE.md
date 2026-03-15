@@ -175,32 +175,7 @@ Every page MUST work on mobile (360px+). Students and teachers primarily use pho
 
 ### 1. Centralized routes — `app/frontend/lib/routes.ts`
 
-```ts
-export const routes = {
-  dashboard:        ()  => "/",
-  requests:         ()  => "/requests",
-  requestNew:       ()  => "/requests/new",
-  request:          (id: number) => `/requests/${id}`,
-  confirmPayment:   (id: number) => `/requests/${id}/confirm_payment`,
-  inbox:            ()  => "/inbox",
-  inboxConversation:(id: number) => `/inbox/${id}`,
-  conversations:    ()  => "/conversations",
-  conversation:     (id: number) => `/conversations/${id}`,
-  teachers:         ()  => "/teachers",
-  lessons:          ()  => "/lessons",
-  lesson:           (id: number) => `/lessons/${id}`,
-  profile:          ()  => "/profile",
-  profileEdit:      ()  => "/profile/edit",
-  notifications:    ()  => "/notifications",
-  privacyPolicy:    ()  => "/privacy-policy",
-  admin:            ()  => "/admin",
-  adminUsers:       ()  => "/admin/users",
-  adminUser:        (id: number) => `/admin/users/${id}`,
-  adminLessons:     ()  => "/admin/lessons",
-  login:            ()  => "/session/new",
-  register:         ()  => "/registration/new",
-} as const;
-```
+Full route list lives in `app/frontend/lib/routes.ts` — add new routes there, never inline.
 
 ```tsx
 // ❌ <Link href={`/requests/${id}`}>  ✅ <Link href={routes.request(id)}>
@@ -369,27 +344,6 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
 end
 ```
 
-### Model test example
-
-```ruby
-class HomologationRequestTest < ActiveSupport::TestCase
-  test "valid transition: in_review → awaiting_payment" do
-    r = homologation_requests(:ana_equivalencia)
-    r.update!(status: "in_review")
-    r.transition_to!("awaiting_payment", changed_by: users(:coordinator_maria))
-    assert_equal "awaiting_payment", r.status
-  end
-
-  test "invalid transition: draft → payment_confirmed raises" do
-    r = homologation_requests(:ana_equivalencia)
-    r.update!(status: "draft")
-    assert_raises(HomologationRequest::InvalidTransition) do
-      r.transition_to!("payment_confirmed", changed_by: users(:coordinator_maria))
-    end
-  end
-end
-```
-
 ## Dropdown Options
 
 - **Source of truth:** `config/select_options.yml` — all keys, labels (es/en/ru), and AmoCRM enum IDs live here.
@@ -417,35 +371,11 @@ AmoCRM Lead created at `payment_confirmed`. Pre-payment statuses exist only in o
 
 ### Transition enforcement
 
-No state machine gem — transitions are enforced via a `StatusTransition` concern with manual methods.
+Transitions via `StatusTransition` concern in `app/models/concerns/status_transition.rb`.
 
-```ruby
-# app/models/concerns/status_transition.rb
-module StatusTransition
-  extend ActiveSupport::Concern
-
-  TRANSITIONS = {
-    "draft"             => %w[submitted],
-    "submitted"         => %w[in_review],
-    "in_review"         => %w[awaiting_reply awaiting_payment],
-    "awaiting_reply"    => %w[in_review],
-    "awaiting_payment"  => %w[payment_confirmed],
-    "payment_confirmed" => %w[in_progress],
-    "in_progress"       => %w[resolved closed],
-  }.freeze
-
-  def transition_to!(new_status, changed_by:)
-    unless TRANSITIONS[status]&.include?(new_status)
-      raise InvalidTransition, "Cannot move from #{status} to #{new_status}"
-    end
-    update!(status: new_status, status_changed_at: Time.current, status_changed_by: changed_by.id)
-  end
-end
-```
-
-Controller usage: `@request.transition_to!("payment_confirmed", changed_by: current_user)`
-
-Guards and side-effects (e.g. AmoCRM sync) go in `after_commit` callbacks or are called explicitly in the controller after `transition_to!`.
+- Call: `@request.transition_to!("payment_confirmed", changed_by: current_user)`
+- Invalid transition raises `HomologationRequest::InvalidTransition`
+- Guards and side-effects: `after_commit` callbacks or explicit calls in the controller after `transition_to!`
 
 ## Roles (4 total, no family)
 
