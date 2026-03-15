@@ -27,29 +27,14 @@ Super admin manages everything including Stripe billing.
 ## Commands
 
 ```bash
-# Development
-bin/rails server                     # Start Rails + Vite
-bin/rails test                       # Run Minitest
-bin/rails test:system                # Run system tests (Capybara)
-npm run check                        # TypeScript type checking
-
-# Generators
-bin/rails generate authentication    # Auth (already done or to be done in Step 1)
-bin/rails generate model Foo         # New model
-bin/rails generate channel Foo       # Action Cable channel
-
-# Security
-bundle exec brakeman                 # Static security analysis
-bundle exec bundler-audit check      # Check gems for vulnerabilities
-
-# Database
-bin/rails db:migrate
-bin/rails db:seed                    # Seeds roles
-bin/rails db:encryption:init         # Setup Active Record Encryption keys
+bin/rails server              # Start Rails + Vite
+bin/rails test                # Minitest    |  bin/rails test:system  # System tests
+npm run check                 # TS types    |  bundle exec brakeman   # Security scan
+bin/rails db:migrate          # Migrations  |  bin/rails db:seed      # Seed 4 roles
+bin/rails generate model Foo  # New model   |  bin/rails generate channel Foo  # Action Cable
 ```
 
-## Current State
-> Update this section as steps are completed. See `docs/07_IMPLEMENTATION_PLAN.md` for details.
+## Current State (see `docs/07_IMPLEMENTATION_PLAN.md`)
 
 - [ ] Step 0: Foundation — shadcn/ui init, i18n setup, layouts, select_options.yml, routes.ts
 - [ ] Step 1: Authentication — Rails 8 generator, OmniAuth (Google/Apple), CompleteProfile
@@ -88,88 +73,16 @@ config/
 
 ## Core Rules
 
-### 1. i18n — NEVER hardcode text
-```tsx
-// ❌ WRONG
-<Button>Submit</Button>
-
-// ✅ CORRECT
-const { t } = useTranslation()
-<Button>{t("common.submit")}</Button>
-```
-All visible text must use `t()`. Status badges: `t(\`requests.status.${status}\`)`. Select option labels: `opt[label_${locale}] || opt.label`.
-
-### 2. Forms — use Inertia useForm, NOT react-hook-form
-```tsx
-const { data, setData, post, processing, errors } = useForm({ subject: "" })
-```
-No zod, no react-hook-form. Validation is server-side (Rails model validations), errors come back via Inertia.
-
-### 3. Authorization — Pundit on every controller action
-```ruby
-authorize @request             # In every action
-after_action :verify_authorized # Catches missing authorize calls
-```
-
-### 4. Files — Active Storage with direct upload
-Students upload via `FileDropZone` (react-dropzone + @rails/activestorage DirectUpload). Three categories: `:application` (one file), `:originals` (many), `:documents` (many).
-
-### 5. Chat — send HTTP, receive WebSocket
-- Send messages: `router.post()` (Inertia) → MessagesController → saves to DB → broadcasts via Action Cable
-- Receive messages: `useChannel()` hook subscribes to ConversationChannel → updates React state
-
-### 6. AmoCRM sync — ONLY on payment confirmation
-Coordinator clicks "Confirm Payment" → `AmoCrmSyncJob` runs in background → creates Contact (with WhatsApp) + Lead in AmoCRM. No data goes to CRM before payment.
-
-### 7. Select options — single YAML file
-All dropdowns read from `config/select_options.yml`. This file has multi-language labels and AmoCRM enum ID mappings. Passed to frontend via Inertia shared data.
-
-### 8. Security — simple and mandatory
-- `encrypts :phone, :whatsapp, :guardian_phone, :guardian_whatsapp` (User)
-- `encrypts :identity_card, :passport` (HomologationRequest)
-- `rate_limit` on auth controllers
-- Privacy policy checkbox with `privacy_accepted_at` timestamp
-- Files served through controller (Pundit checks access)
-- PII filtered from logs
-
-### 9. Mobile-first responsive design
-Every page MUST work on mobile (360px+). Students and teachers primarily use phones.
-- Use Tailwind responsive prefixes: base = mobile, `md:` = tablet, `lg:` = desktop
-- Sidebar: use shadcn/ui `Sheet` on mobile (slide-out), fixed sidebar on `lg:`
-- Inbox 3-column layout: on mobile show only conversation list → tap → full-screen chat → back button
-- Tables: on mobile use card/list view instead of `<Table>` (tables are unreadable on phones)
-- Forms: full-width inputs, large touch targets (min 44px height)
-- File upload: "Add file" button works on mobile (no drag & drop needed, it's a bonus on desktop)
-- Calendar: on mobile show day view only (not week grid)
-- Test every page at 360px, 768px, 1280px
-
-```tsx
-// ❌ WRONG — desktop-only layout
-<div className="grid grid-cols-3 gap-4">
-
-// ✅ CORRECT — mobile-first
-<div className="flex flex-col lg:grid lg:grid-cols-3 gap-4">
-
-// ❌ WRONG — small touch target
-<Button size="sm">
-
-// ✅ CORRECT — mobile-friendly
-<Button size="default" className="min-h-[44px]">
-
-// ❌ WRONG — table on mobile
-<Table> always
-
-// ✅ CORRECT — responsive
-<div className="hidden md:block"><Table>...</Table></div>
-<div className="md:hidden"><CardList>...</CardList></div>
-```
-
-### 10. Keep it simple
-- `<textarea>` not rich text editor
-- shadcn/ui `<Table>` on desktop, card list on mobile
-- Light mode only
-- No command menu, no audit log, no dark mode
-- Minimum viable security (~30 lines)
+1. **i18n** — All visible text via `t()`. Status: `t(\`requests.status.${status}\`)`. Options: `opt[label_${locale}] || opt.label`.
+2. **Forms** — Inertia `useForm()` only. No zod, no react-hook-form. Server-side validation, errors via Inertia.
+3. **Authorization** — `authorize @record` in every action. `after_action :verify_authorized` in ApplicationController.
+4. **Files** — Active Storage direct upload via `FileDropZone`. Three categories: `:application` (one), `:originals` (many), `:documents` (many).
+5. **Chat** — Send via `router.post()` (Inertia), receive via `useChannel()` hook (Action Cable).
+6. **AmoCRM sync** — ONLY on payment confirmation. No data to CRM before `payment_confirmed`.
+7. **Select options** — `config/select_options.yml` → `inertia_share` → `selectOptions` in every page.
+8. **Security** — `encrypts` on PII fields, `rate_limit` on auth, files served through controller (Pundit), PII filtered from logs.
+9. **Mobile-first** — Every page works at 360px+. See `docs/15_MOBILE_PATTERNS.md`.
+10. **Keep it simple** — `<textarea>` not rich text, light mode only, no command menu/audit log/dark mode.
 
 ## Coding Patterns (Rails + Inertia.js + React)
 
@@ -184,93 +97,30 @@ Full route list lives in `app/frontend/lib/routes.ts` — add new routes there, 
 
 ### 2. Serialization — private `_json` methods, explicit camelCase
 
+Never `.as_json`. Dates = ISO 8601 strings. One `_json` method = one TS interface.
 ```ruby
-# ❌ render inertia: "Requests/Show", props: { request: @request.as_json }
 # ✅ render inertia: "Requests/Show", props: { request: request_json(@request) }
-
 private
-
 def request_json(r)
-  {
-    id: r.id, subject: r.subject, serviceType: r.service_type,
-    status: r.status, paymentAmount: r.payment_amount,
-    createdAt: r.created_at.iso8601, user: user_json(r.user),
-  }
+  { id: r.id, subject: r.subject, serviceType: r.service_type,
+    status: r.status, createdAt: r.created_at.iso8601, user: user_json(r.user) }
 end
 ```
 
-Dates = ISO 8601 strings. One `_json` method = one TypeScript interface.
+### 3. Shared Props — `inertia_share` in ApplicationController
 
-### 3. Shared Props — typed, never duplicate current_user in page props
+Keys: `auth` (user), `flash`, `features` (from `build_features`), `unreadNotificationsCount`, `selectOptions`.
+Type in `app/frontend/types/index.ts` as `SharedProps extends PageProps`. Never duplicate `current_user` in page props.
 
-```ruby
-# app/controllers/application_controller.rb
-inertia_share do
-  {
-    auth:     { user: current_user ? auth_user_json(current_user) : nil },
-    flash:    { notice: flash.notice, alert: flash.alert },
-    features: current_user ? build_features(current_user) : {},
-    unreadNotificationsCount: current_user&.notifications&.unread&.count || 0,
-    selectOptions: YAML.load_file(Rails.root.join("config/select_options.yml")),
-  }
-end
-```
+### 4. Page props — one TS interface per page in `types/pages.ts`
 
-```ts
-// app/frontend/types/index.ts
-export interface SharedProps extends PageProps {
-  auth: { user: AuthUser | null };
-  flash: { notice?: string; alert?: string };
-  features: Features;
-  unreadNotificationsCount: number;
-  selectOptions: SelectOptions;
-}
-```
+Usage: `const { request } = usePage<SharedProps & RequestsShowProps>().props;`
 
-### 4. Page props — TypeScript interfaces mirroring controller props
+### 5. Controller pattern — `authorize` → build props via `_json` methods → `render inertia:`
 
-```ts
-// app/frontend/types/pages.ts — every page gets one
-export interface RequestsShowProps {
-  request: RequestDetail;
-  messages: Message[];
-  conversation: Conversation;
-}
+Conditional props by role: `props[:adminActions] = { ... } if current_user.coordinator?`
 
-// Usage: const { request } = usePage<SharedProps & RequestsShowProps>().props;
-```
-
-### 5. Controller pattern — authorize → build → render
-
-```ruby
-def show
-  @request = HomologationRequest.find(params[:id])
-  authorize @request                              # 1. Always first
-  props = {
-    request:  request_detail_json(@request),      # 2. Private _json methods
-    messages: @request.conversation.messages.map { |m| message_json(m) },
-  }
-  if current_user.coordinator? || current_user.super_admin?
-    props[:adminActions] = { canConfirmPayment: @request.awaiting_payment? }
-  end
-  render inertia: "Requests/Show", props: props   # 3. Render
-end
-```
-
-### 6. Feature flags — server decides, frontend reads
-
-```ruby
-def build_features(user)
-  {
-    canCreateRequest:   user.student?,
-    canConfirmPayment:  user.coordinator? || user.super_admin?,
-    canManageUsers:     user.super_admin?,
-    canManageTeachers:  user.coordinator? || user.super_admin?,
-    canCreateLessons:   user.teacher? || user.coordinator? || user.super_admin?,
-    canViewAllRequests: user.coordinator? || user.super_admin?,
-  }
-end
-```
+### 6. Feature flags — `build_features(user)` returns `{ canConfirmPayment:, canManageUsers:, ... }`
 
 ```tsx
 // ❌ {currentUser.roles.includes('coordinator') && <Button />}
@@ -279,135 +129,44 @@ end
 
 ### 7. Navigation and mutations — only Inertia
 
-```tsx
-<Link href={routes.request(id)}>View</Link>                        // ✅
-router.post(routes.confirmPayment(id), { paymentAmount: amount })  // ✅
-// ❌ <a href>, window.location, fetch(), axios
-```
-
+`<Link>` for links, `router.post/patch/delete` for mutations. Never `<a href>`, `fetch()`, `window.location`.
 Exception: Action Cable WebSocket receives are not Inertia — that's fine.
 
 ### 8. Flash messages — always I18n
 
-```ruby
-# ❌ redirect_to path, notice: "Payment confirmed"
-# ✅ redirect_to path, notice: t("flash.payment_confirmed")
-```
-
-Key naming: `flash.{entity}_{past_tense}` — `flash.request_created`, `flash.payment_confirmed`, `flash.lesson_cancelled`.
+`redirect_to path, notice: t("flash.payment_confirmed")`. Key naming: `flash.{entity}_{past_tense}`.
 
 ### 9. N+1 — `.includes()` in controller, never lazy load in `_json`
 
-```ruby
-# ❌ policy_scope(HomologationRequest)  — then r.user triggers N+1
-# ✅ policy_scope(HomologationRequest).includes(:user, :conversation).order(updated_at: :desc)
-```
+`policy_scope(HomologationRequest).includes(:user, :conversation).order(updated_at: :desc)`
+For lookups: `User.where(id: ids).index_by(&:id)` — one query, O(1) access.
 
-For lookups: `users = User.where(id: ids).index_by(&:id)` — one query, O(1) access.
-
-## Testing Patterns (Minitest)
-
-### What to test where
-
-| Layer | Test for | Don't test |
-|---|---|---|
-| **Models** | Validations, `transition_to!` guards, scopes, associations | Controller logic, rendering |
-| **Controllers** | HTTP status, Inertia component name, authorization (Pundit), redirects | Business logic (push to model) |
-| **Jobs** | Side effects (AmoCRM sync), error handling | HTTP internals (mock with WebMock) |
-| **System** | Critical user journeys: login, submit request, chat | Every edge case |
-
-### Rules
+## Testing (Minitest)
 
 - **Fixtures only** — no FactoryBot, no mocks for ActiveRecord. Fixtures in `test/fixtures/*.yml`.
 - **Every new controller action gets a test before merge.** No exceptions.
 - Run `bin/rails test && npm run check` before committing.
-
-### Controller test example
-
-```ruby
-class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
-  test "student sees own requests" do
-    sign_in users(:student_ana)
-    get homologation_requests_path
-    assert_response :ok
-    assert_inertia component: "Requests/Index"
-  end
-
-  test "coordinator can confirm payment" do
-    sign_in users(:coordinator_maria)
-    request = homologation_requests(:ana_equivalencia)
-    request.update!(status: "awaiting_payment")
-    post confirm_payment_homologation_request_path(request), params: { payment_amount: 60 }
-    assert_redirected_to homologation_request_path(request)
-    assert_equal "payment_confirmed", request.reload.status
-  end
-end
-```
+- Full patterns, test matrix, and examples: `docs/16_TESTING.md`.
 
 ## Dropdown Options
 
-- **Source of truth:** `config/select_options.yml` — all keys, labels (es/en/ru), and AmoCRM enum IDs live here.
-- **Delivery to frontend:** loaded once in `inertia_share` as `selectOptions`, available in every page via `usePage<SharedProps>().props.selectOptions`.
-- **Rule:** never hardcode option values in React components — always read from `selectOptions` and render with `opt[label_${locale}] || opt.label || opt.key`.
+Source: `config/select_options.yml`. Delivered via `inertia_share`. Never hardcode — always `opt[label_${locale}] || opt.label`. See `docs/10_TECHNICAL_DETAILS.md`.
 
 ## Status Flow
 
-```
-draft → submitted → in_review ⇄ awaiting_reply → awaiting_payment → payment_confirmed → in_progress → resolved
-                                                                                                         ↓
-                                                                                                       closed
-```
+`draft → submitted → in_review ⇄ awaiting_reply → awaiting_payment → payment_confirmed → in_progress → resolved/closed`
 
-Valid transitions:
-- `draft` → `submitted` (student submits)
-- `submitted` → `in_review` (coordinator picks up)
-- `in_review` ⇄ `awaiting_reply` (coordinator asks / student responds)
-- `in_review` → `awaiting_payment` (coordinator sets price)
-- `awaiting_payment` → `payment_confirmed` (coordinator confirms → triggers AmoCRM sync)
-- `payment_confirmed` → `in_progress` (work begins)
-- `in_progress` → `resolved` / `closed`
-
-AmoCRM Lead created at `payment_confirmed`. Pre-payment statuses exist only in our app.
-
-### Transition enforcement
-
-Transitions via `StatusTransition` concern in `app/models/concerns/status_transition.rb`.
-
-- Call: `@request.transition_to!("payment_confirmed", changed_by: current_user)`
-- Invalid transition raises `HomologationRequest::InvalidTransition`
-- Guards and side-effects: `after_commit` callbacks or explicit calls in the controller after `transition_to!`
-
-## Roles (4 total, no family)
-
-| Role | Key capabilities |
-|---|---|
-| `super_admin` | Everything + Stripe billing + user management + teacher config |
-| `coordinator` | Inbox (unified chat), manage requests, assign teachers, confirm payments |
-| `teacher` | Calendar of lessons, meeting links, chat with students, see assigned students |
-| `student` | Submit requests, upload docs, chat, view lessons |
-
-## Teachers & Lessons
-
-- `teacher_profiles`: level, hourly_rate (super_admin only), bio, permanent_meeting_link
-- `teacher_students`: many-to-many, assigned by coordinator
-- `lessons`: scheduled_at, duration, meeting_link (fallback: teacher's permanent link), status, notes
-- Teachers only do lessons + chat. No access to documents or homologation.
-
-## Minors & Guardians
-
-- `users.is_minor` — true if under 18. Guardian fields: `guardian_name`, `guardian_email`, `guardian_phone`, `guardian_whatsapp`
-- If minor → Stripe invoice → `guardian_email`, AmoCRM → `guardian_whatsapp`
-- MVP: parent has no login, receives invoices/notifications by email
+- Enforced via `@request.transition_to!("new_status", changed_by: current_user)` — invalid raises `InvalidTransition`.
+- AmoCRM Lead created at `payment_confirmed`. Pre-payment statuses exist only in our app.
+- Full state machine table: `docs/03_FEATURES.md`.
 
 ## Documentation — When to Read What
-
-Full docs live in `/docs`. Read the specific doc when you hit one of these situations:
 
 | Situation | Read |
 |---|---|
 | Adding/changing a DB table or field | `docs/02_DATABASE_SCHEMA.md` + `.dbml` |
 | Adding a user story or feature | `docs/03_FEATURES.md` |
-| Adding a role or changing permissions | `docs/04_ROLES_AND_AUTHORIZATION.md` |
+| Roles, permissions, or what each role can do | `docs/04_ROLES_AND_AUTHORIZATION.md` |
 | Setting up or debugging OAuth | `docs/05_AUTH_OAUTH.md` |
 | Touching AmoCRM sync or field mapping | `docs/06_AMOCRM_INTEGRATION.md` |
 | What step to build next | `docs/07_IMPLEMENTATION_PLAN.md` |
@@ -416,8 +175,11 @@ Full docs live in `/docs`. Read the specific doc when you hit one of these situa
 | Working with select options, file uploads, or WebSocket | `docs/10_TECHNICAL_DETAILS.md` |
 | Missing i18n keys or adding translations | `docs/11_I18N_MULTILANGUAGE.md` |
 | Security, encryption, GDPR, rate limiting | `docs/12_SECURITY_GDPR.md` |
-| Scheduling lessons or building calendar | `docs/13_LESSONS_CALENDAR.md` |
+| Teachers, lessons, or calendar | `docs/13_LESSONS_CALENDAR.md` |
+| Minors, guardians, or guardian invoicing | `docs/02_DATABASE_SCHEMA.md` (Minor/Guardian section) |
 | Building inbox or teacher management | `docs/14_COORDINATOR_WORKSPACE.md` |
+| Mobile/responsive patterns and examples | `docs/15_MOBILE_PATTERNS.md` |
+| Writing tests or test conventions | `docs/16_TESTING.md` |
 | Questioning a design decision | `docs/00_PRINCIPLES.md` + `docs/01_ARCHITECTURE.md` |
 
 ## What Claude Should Never Do
