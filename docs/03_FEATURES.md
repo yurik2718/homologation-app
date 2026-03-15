@@ -41,14 +41,14 @@ These fields are saved in `users` table and pre-filled in future requests.
 
 ### F3. Submit a Homologation Request (Step 2 — per request)
 - **F3.1** Student sees "Submit a request" form
-- **F3.2** Form fields (12 fields total):
+- **F3.2** Form fields (14 fields total):
 
 | #  | Field                    | Type             | Required | Notes                        |
 |----|--------------------------|------------------|----------|------------------------------|
 | 1  | Name and Surname         | text (pre-filled)| yes      | From profile                 |
 | 2  | Service Requested        | dropdown         | yes      | Equivalencia / Invoice / Informe / Other |
 | 3  | Subject                  | text             | yes      | Short title for the request  |
-| 4  | Description              | rich text        | no       | Details (Tiptap editor)      |
+| 4  | Description              | textarea         | no       | Details (plain text, no rich editor) |
 | 5  | Identity Card / Passport | text             | yes      | DNI/NIE or passport number   |
 | 6  | Education System         | dropdown         | yes      | Country/system of studies    |
 | 7  | Studies Finished?        | dropdown         | yes      | Yes / No / In progress       |
@@ -64,8 +64,8 @@ These fields are saved in `users` table and pre-filled in future requests.
   - Application (заявление) — one file
   - Originals (оригиналы) — multiple files
   - Other documents — multiple files
-- **F3.4** Student can save draft before submitting
-- **F3.5** On submit → status = "submitted", coordinators notified
+- **F3.4** Student can save draft before submitting (status = "draft")
+- **F3.5** On submit → status changes from "draft" to "submitted", coordinators notified
 - **F3.6** Files stored via Active Storage
 
 **What students do NOT upload** (coordinator handles later in AmoCRM):
@@ -92,6 +92,24 @@ These fields are saved in `users` table and pre-filled in future requests.
   - Clicks confirm → triggers AmoCRM sync in background
   - Student gets notification "Payment confirmed, processing started"
 - **F5.9** CRM sync indicator: shows if synced / syncing / error
+
+### Status State Machine
+
+```
+draft → submitted → in_review ⇄ awaiting_reply → awaiting_payment → payment_confirmed → in_progress → resolved / closed
+```
+
+| From | To | Who | Trigger |
+|---|---|---|---|
+| `draft` | `submitted` | Student | Clicks "Submit" |
+| `submitted` | `in_review` | Coordinator | Opens request / assigns self |
+| `in_review` | `awaiting_reply` | Coordinator | Sends message asking student for info |
+| `awaiting_reply` | `in_review` | Auto | Student replies in chat |
+| `in_review` | `awaiting_payment` | Coordinator | Sets payment amount |
+| `awaiting_payment` | `payment_confirmed` | Coordinator | Clicks "Confirm Payment" → triggers AmoCRM sync |
+| `payment_confirmed` | `in_progress` | Coordinator | Work begins |
+| `in_progress` | `resolved` | Coordinator | Homologation approved |
+| `in_progress` | `closed` | Coordinator | Rejected or cancelled |
 
 ### F6. Coordinator Workspace
 See `docs/14_COORDINATOR_WORKSPACE.md` for full wireframes.
@@ -126,7 +144,7 @@ See `docs/14_COORDINATOR_WORKSPACE.md` for full wireframes.
 
 ### F8. User Roles & Authorization (Pundit)
 - **F8.1** 4 roles: super_admin, coordinator, teacher, student (family removed — duplicates student)
-- **F8.2** Students: see/edit own requests, book lessons, chat with coordinator and teacher
+- **F8.2** Students: see/edit own requests, view scheduled lessons, chat with coordinator and teacher
 - **F8.3** Coordinators: manage all requests, assign teachers to students, change statuses
 - **F8.4** Teachers: see assigned students, calendar of lessons, share meeting links
 - **F8.5** Super Admin: full access + Stripe billing + user management
@@ -143,11 +161,16 @@ See `docs/14_COORDINATOR_WORKSPACE.md` for full wireframes.
 - **F9.9** Teacher can add notes after lesson (private, not visible to student)
 - **F9.10** Notifications: lesson reminder, new lesson booked, lesson cancelled
 
-### F10. Teacher-Student Chat
-- **F10.1** Separate chat between teacher and student (not tied to homologation request)
-- **F10.2** Teacher shares meeting links in chat when they change
-- **F10.3** Same Action Cable real-time as request chat
-- **F10.4** Conversations table supports both: request chats AND teacher-student chats
+### F10. Chat Page (`/chat`) — Teacher & Student
+- **F10.1** Teachers and students access `/chat` to see their conversations
+- **F10.2** Teacher sees: list of chats with assigned students (teacher-student conversations)
+- **F10.3** Student sees: list of chats with assigned teachers + request conversations
+- **F10.4** Tap conversation → full chat view with message input
+- **F10.5** Teacher-student chat is separate from request chat (not tied to homologation request)
+- **F10.6** Teacher shares meeting links in chat when they change
+- **F10.7** Same Action Cable real-time as request chat
+- **F10.8** Conversations table supports both: request chats AND teacher-student chats
+- **F10.9** Mobile: conversation list → tap → full-screen chat → back button
 
 ---
 
@@ -200,23 +223,21 @@ See `docs/14_COORDINATOR_WORKSPACE.md` for full wireframes.
 
 ### F13. Multi-language Support (BUILT INTO PHASE 1 — not deferred!)
 i18n is built into the app from day one. See `docs/11_I18N_MULTILANGUAGE.md` for full details.
-- **F11.1** 3 languages: Spanish (default), English, Russian
-- **F11.2** Frontend: `react-i18next` — all UI text via `t()` function, ZERO hardcoded strings
-- **F11.3** Backend: Rails I18n — mailers, notifications, validation errors
-- **F11.4** Select options: multi-language labels in `config/select_options.yml`
-- **F11.5** Language switcher in navbar (flag button)
-- **F11.6** User locale saved in `users.locale`, detected from browser on first visit
-- **F11.7** Dates formatted with locale-aware `date-fns`
+- **F13.1** 3 languages: Spanish (default), English, Russian
+- **F13.2** Frontend: `react-i18next` — all UI text via `t()` function, ZERO hardcoded strings
+- **F13.3** Backend: Rails I18n — mailers, notifications, validation errors
+- **F13.4** Select options: multi-language labels in `config/select_options.yml`
+- **F13.5** Language switcher in navbar (flag button)
+- **F13.6** User locale saved in `users.locale`, detected from browser on first visit
+- **F13.7** Dates formatted with locale-aware `date-fns`
 
 ### F14. Profile Management
-- **F12.1** Edit profile (name, email, phone, whatsapp, birthday, country, avatar)
-- **F12.2** Change password
-- **F12.3** Link/unlink OAuth providers
+- **F14.1** Edit profile (name, email, phone, whatsapp, birthday, country, avatar)
+- **F14.2** Change password
+- **F14.3** Link/unlink OAuth providers
 
-### F13. Teacher & Family Views
-- **F13.1** Teacher can view students' requests (read-only)
-- **F13.2** Family member linked to student, can view progress
-- **F13.3** Coordinator can link family to student
+### F15. Teacher Views (Future)
+- **F15.1** Teacher can view assigned students' requests (read-only)
 
 ---
 
@@ -277,7 +298,7 @@ i18n is built into the app from day one. See `docs/11_I18N_MULTILANGUAGE.md` for
 ### "Submit a request" page
 - Clean form with labeled fields
 - Dropdowns for structured data (service type, education system, etc.)
-- Rich text editor for description
+- Textarea for description (plain text, no rich editor)
 - Drag & drop zone for file attachments
 - Red "Submit" button at bottom
 - Breadcrumb navigation at top

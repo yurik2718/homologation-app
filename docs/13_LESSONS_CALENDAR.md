@@ -117,7 +117,7 @@ Overview table of all lessons across all teachers and students. Filter by teache
 ```
 ┌─ Sidebar ──┐┌── Header: Lessons Overview ─────────────────┐
 │             ││                                              │
-│             ││  Lessons         [+ Assign Teacher] [Export] │
+│             ││  Lessons                    [+ Assign Teacher] │
 │             ││                                              │
 │             ││  [Teacher ▼] [Student ▼] [Status ▼] [Date]  │
 │             ││                                              │
@@ -138,6 +138,8 @@ Overview table of all lessons across all teachers and students. Filter by teache
 ### Who can create:
 - **Teacher** — for their assigned students only
 - **Coordinator / Super Admin** — for any teacher-student pair
+
+**Students cannot create lessons.** Teachers schedule lessons; students only view them and join via meeting link.
 
 ### New Lesson Dialog
 
@@ -201,15 +203,13 @@ end
 | Lesson in 1 hour | Student + Teacher |
 | Meeting link added | Student |
 
-## Calendar NPM Package
+## Calendar UI
 
-```bash
-npm install @schedule-x/react @schedule-x/theme-default
-```
+Build a custom week/day grid using CSS Grid + shadcn/ui Cards. No external calendar library needed — keeps dependencies minimal and the UI consistent with the rest of the app.
 
-[Schedule-X](https://schedule-x.dev) — lightweight calendar component, works with React, supports week/day/month views, drag & drop. Or simpler: just build a custom week grid with shadcn/ui (less dependency).
-
-**Recommendation:** Start with a simple custom week grid (CSS Grid + shadcn Cards). Add a calendar library only if needed later.
+- Desktop: week grid (Mon–Fri columns, time rows)
+- Mobile: day view only (list of lessons for selected day with date picker)
+- Lesson slots rendered as Cards inside the grid
 
 ## Pages Summary
 

@@ -47,7 +47,8 @@ Students can be minors (parents pay) or adults (pay themselves).
 
 | Model | Field |
 |---|---|
-| User | `phone`, `whatsapp`, `identity_card`, `passport`, `guardian_phone`, `guardian_whatsapp` |
+| User | `phone`, `whatsapp`, `guardian_phone`, `guardian_whatsapp` |
+| HomologationRequest | `identity_card`, `passport` |
 
 ## File Attachments (Active Storage, local disk, no S3)
 

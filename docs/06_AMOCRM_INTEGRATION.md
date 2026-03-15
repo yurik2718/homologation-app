@@ -192,44 +192,46 @@ class AmoCrmClient
     @field_ids ||= Rails.application.credentials.dig(:amo_crm, :field_ids).symbolize_keys
   end
 
-  # ── HTTP ──
+  # ── HTTP (Faraday) ──
+
+  def connection
+    @connection ||= Faraday.new(url: BASE_URL) do |f|
+      f.request :json
+      f.response :json
+      f.request :retry, max: 3, interval: 1, backoff_factor: 2,
+                        retry_statuses: [429, 500, 502, 503]
+      f.adapter Faraday.default_adapter
+    end
+  end
 
   def get(path, params = {})
-    uri = URI("#{BASE_URL}#{path}")
-    uri.query = URI.encode_www_form(params) if params.any?
-    req = Net::HTTP::Get.new(uri)
-    req["Authorization"] = "Bearer #{@token}"
-    perform_request(uri, req)
+    response = connection.get(path, params) do |req|
+      req.headers["Authorization"] = "Bearer #{@token}"
+    end
+    handle_response(response)
   end
 
   def post(path, body)
-    uri = URI("#{BASE_URL}#{path}")
-    req = Net::HTTP::Post.new(uri)
-    req["Authorization"] = "Bearer #{@token}"
-    req["Content-Type"] = "application/json"
-    req.body = body.to_json
-    perform_request(uri, req)
+    response = connection.post(path) do |req|
+      req.headers["Authorization"] = "Bearer #{@token}"
+      req.body = body
+    end
+    handle_response(response)
   end
 
   def patch(path, body)
-    uri = URI("#{BASE_URL}#{path}")
-    req = Net::HTTP::Patch.new(uri)
-    req["Authorization"] = "Bearer #{@token}"
-    req["Content-Type"] = "application/json"
-    req.body = body.to_json
-    perform_request(uri, req)
+    response = connection.patch(path) do |req|
+      req.headers["Authorization"] = "Bearer #{@token}"
+      req.body = body
+    end
+    handle_response(response)
   end
 
-  def perform_request(uri, req)
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-    response = http.request(req)
-
-    unless response.is_a?(Net::HTTPSuccess)
-      raise "AmoCRM API error: #{response.code} — #{response.body}"
+  def handle_response(response)
+    unless response.success?
+      raise "AmoCRM API error: #{response.status} — #{response.body}"
     end
-
-    JSON.parse(response.body)
+    response.body
   end
 
   def fetch_or_refresh_token
@@ -246,15 +248,18 @@ class AmoCrmClient
   end
 
   def refresh_token(refresh_token)
-    uri = URI("#{BASE_URL}/oauth2/access_token")
-    res = Net::HTTP.post(uri, {
+    conn = Faraday.new(url: BASE_URL) do |f|
+      f.request :json
+      f.response :json
+    end
+    response = conn.post("/oauth2/access_token", {
       client_id: Rails.application.credentials.dig(:amo_crm, :client_id),
       client_secret: Rails.application.credentials.dig(:amo_crm, :client_secret),
       grant_type: "refresh_token",
       refresh_token: refresh_token,
       redirect_uri: Rails.application.credentials.dig(:amo_crm, :redirect_uri)
-    }.to_json, "Content-Type" => "application/json")
-    JSON.parse(res.body)
+    })
+    response.body
   end
 
   HOMOLOGATION_PIPELINE_ID = Rails.application.credentials.dig(:amo_crm, :homologation_pipeline_id)
@@ -452,6 +457,17 @@ end
 ```
 
 Initial setup: one-time OAuth flow in browser to get first token pair.
+
+## Initial Setup Guide
+
+1. **Create integration in AmoCRM** → Settings → Integrations → Add → External Integration
+2. **Get pipeline + status IDs**: `GET /api/v4/leads/pipelines` → find "Homologation" pipeline → note `pipeline_id` and `status_id` for "New"
+3. **Get custom field IDs**:
+   - Lead fields: `GET /api/v4/leads/custom_fields` → note IDs for services, equivalencia, date_of_receipt, etc.
+   - Contact fields: `GET /api/v4/contacts/custom_fields` → note IDs for whatsapp, country, birthday, etc.
+4. **Get responsible_user_id**: `GET /api/v4/users` → find default responsible user
+5. **Add all IDs to Rails credentials**: `bin/rails credentials:edit` → paste into `amo_crm:` section (see config below)
+6. **Complete OAuth flow**: Visit `{base_url}/oauth2/authorize?client_id={id}&redirect_uri={uri}&response_type=code` → authorize → exchange code for token pair → insert into `amo_crm_tokens` table
 
 ## Admin: Sync Status Panel
 

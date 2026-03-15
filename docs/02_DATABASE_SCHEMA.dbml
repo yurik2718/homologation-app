@@ -185,10 +185,10 @@ Table homologation_requests [headercolor: #e74c3c] {
   • originals    (many)
   • documents    (many)
 
-  Status: submitted → in_review → awaiting_payment
+  Status: draft → submitted → in_review → awaiting_reply → awaiting_payment
   → payment_confirmed ⚡AmoCRM → in_progress → resolved / closed
 
-  identity_card & passport stored on users table (not here)
+  identity_card & passport are per-request (student may use different docs per request)
   country read from users.country (not duplicated)
   '''
 }

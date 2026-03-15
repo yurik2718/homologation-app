@@ -55,15 +55,20 @@ npm install react-i18next i18next i18next-browser-languagedetector
 
 ### Sidebar Items by Role
 
-| Item | admin | coordinator | teacher | student | family |
-|---|:-:|:-:|:-:|:-:|:-:|
-| Dashboard | + | + | + | + | + |
-| My Requests | - | - | - | + | + |
-| New Request | - | - | - | + | - |
-| All Requests | + | + | - | - | - |
-| Notifications | + | + | + | + | + |
-| Admin Panel | + | - | - | - | - |
-| Users | + | - | - | - | - |
+| Item | super_admin | coordinator | teacher | student |
+|---|:-:|:-:|:-:|:-:|
+| Dashboard | + | + | — | + |
+| Inbox | + | + | — | — |
+| Requests | + | + | — | — |
+| New Request | — | — | — | + |
+| Teachers | + | + | — | — |
+| All Lessons | + | + | — | — |
+| Calendar | — | — | + | — |
+| My Lessons | — | — | — | + |
+| My Requests | — | — | — | + |
+| Chat | — | — | + | + |
+| Notifications | + | + | + | + |
+| Admin | + | — | — | — |
 
 ---
 
@@ -112,6 +117,28 @@ npm install react-i18next i18next i18next-browser-languagedetector
 - Add/edit user dialog
 - Assign/remove role
 
+### Admin Lessons
+- Table of all lessons across all teachers and students
+- Filters: Teacher, Student, Status, Date range
+- "Assign Teacher" button opens dialog
+
+### Chat (Teacher & Student)
+- List of conversations (teacher-student chats + request chats)
+- Tap conversation → full chat view
+- Mobile: list → full-screen chat → back button
+- Teacher sees: chats with assigned students
+- Student sees: chats with assigned teachers + request conversations
+
+### Teacher Calendar
+- Custom week grid (CSS Grid + shadcn Cards), no external calendar library
+- Desktop: week view (Mon–Fri columns). Mobile: day view only
+- "New Lesson" button opens dialog
+- Click lesson slot → lesson detail/edit dialog
+
+### Student Lessons
+- Simple list: Upcoming lessons (cards with join link) + Past lessons
+- "Join lesson" opens meeting link (lesson-specific or teacher's permanent link)
+
 ---
 
 ## File Structure
@@ -138,15 +165,35 @@ app/frontend/
 │   ├── documents/
 │   │   ├── FileDropZone.tsx
 │   │   └── FileList.tsx
+│   ├── inbox/
+│   │   ├── ConversationList.tsx
+│   │   ├── ConversationItem.tsx
+│   │   ├── ChatPanel.tsx
+│   │   └── ContextPanel.tsx
+│   ├── teachers/
+│   │   ├── TeacherCard.tsx
+│   │   ├── AssignStudentDialog.tsx
+│   │   └── EditTeacherDialog.tsx
+│   ├── lessons/
+│   │   ├── WeekGrid.tsx
+│   │   ├── DayView.tsx
+│   │   ├── LessonCard.tsx
+│   │   ├── LessonDialog.tsx
+│   │   └── LessonList.tsx
 │   └── admin/
 │       ├── StatsCard.tsx
 │       └── Charts.tsx
 ├── pages/
 │   ├── auth/        (Login, Register, ForgotPassword)
-│   ├── profile/     (Complete, Edit)
+│   ├── profile/     (Edit — also serves as CompleteProfile)
 │   ├── dashboard/   (Index)
 │   ├── requests/    (Index, New, Show)
-│   └── admin/       (Dashboard, Users)
+│   ├── inbox/       (Index)
+│   ├── teachers/    (Index)
+│   ├── lessons/     (Index — student view)
+│   ├── calendar/    (Index — teacher view)
+│   ├── chat/        (Index — teacher & student conversations)
+│   └── admin/       (Dashboard, Users, Lessons)
 ├── hooks/
 │   ├── useActionCable.ts
 │   └── useFileUpload.ts

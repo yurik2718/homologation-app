@@ -24,9 +24,12 @@ Static page at `/privacy-policy`. Describes:
 class User < ApplicationRecord
   encrypts :phone
   encrypts :whatsapp
+  encrypts :guardian_phone
+  encrypts :guardian_whatsapp
 end
 
 # app/models/homologation_request.rb
+# identity_card and passport live on homologation_requests (per-request data, not profile data)
 class HomologationRequest < ApplicationRecord
   encrypts :identity_card
   encrypts :passport

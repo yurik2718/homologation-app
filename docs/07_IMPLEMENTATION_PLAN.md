@@ -39,7 +39,7 @@ bin/rails generate model Role name:string
 bin/rails generate model UserRole user:references role:references
 ```
 - Role helpers on User (`student?`, `coordinator?`, `super_admin?`)
-- Seed 5 roles
+- Seed 4 roles
 - Pundit in InertiaController with `verify_authorized`
 - `RoleGuard` component for sidebar navigation
 
@@ -87,13 +87,40 @@ bin/rails generate model Notification user:references \
 - `NotificationBell` component with unread count
 - Mark as read
 
-## Step 6: Admin Dashboard
-- `Admin::DashboardController` — stats queries
-- `Admin::UsersController` — CRUD, role assignment
-- Pundit: super_admin only
-- Pages: Dashboard (4 stat cards + 2 Recharts), Users (table + dialog)
+## Step 6: Teachers & Lessons
+```bash
+bin/rails generate model TeacherProfile user:references bio:text \
+  permanent_meeting_link:string level:string hourly_rate:decimal
+bin/rails generate model TeacherStudent teacher:references student:references assigned_by:integer
+bin/rails generate model Lesson teacher:references student:references \
+  scheduled_at:datetime duration_minutes:integer meeting_link:string \
+  status:string notes:text
+```
+- `TeacherProfile` — bio, permanent_meeting_link, level, hourly_rate
+- `TeacherStudent` — many-to-many, assigned by coordinator
+- `Lesson` — calendar entry with meeting link fallback logic
+- `LessonsController` — create/update/destroy, filtered by role (teacher sees own, student sees own)
+- Policy: teacher creates for assigned students, coordinator for any pair
+- Validation: no past lessons, no double-booking, student must be assigned to teacher
+- Pages: Teacher calendar (week grid, custom CSS Grid + shadcn Cards), Student lessons list
+- Notifications: new lesson, cancelled lesson, link added
 
-## Step 7: AmoCRM Integration
+## Step 7: Coordinator Workspace
+- `InboxController` — unified conversation list with filters (All, Requests, Teacher chats, Unread)
+- `TeachersController` — teacher cards with stats, assign/remove students
+- Pages: Inbox (3-column: conversation list → chat → context panel), Teachers (cards + dialogs)
+- Components: ConversationList, ConversationItem, ChatPanel, ContextPanel, TeacherCard, AssignStudentDialog
+- Mobile: conversation list → tap → full-screen chat → back button
+- Real-time: Action Cable updates conversation list ordering + unread badges
+
+## Step 8: Admin Dashboard
+- `Admin::DashboardController` — stats + chart data as Inertia props (no separate API endpoints)
+- `Admin::UsersController` — CRUD, role assignment
+- `Admin::LessonsController` — all lessons overview table with filters
+- Pundit: super_admin only (except lessons: coordinator too)
+- Pages: Dashboard (4 stat cards + 2 Recharts), Users (table + dialog), Lessons (table)
+
+## Step 9: AmoCRM Integration
 ```bash
 bundle add faraday faraday-multipart
 bin/rails generate model AmoCrmToken access_token:text refresh_token:text expires_at:datetime
@@ -104,7 +131,7 @@ bin/rails generate model AmoCrmToken access_token:text refresh_token:text expire
 - CRM sync status on request detail page
 - Admin: retry failed syncs
 
-## Step 8: Polish
+## Step 10: Polish
 - Privacy policy page
 - Profile edit page
 - Email notifications (RequestMailer)

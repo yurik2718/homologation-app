@@ -295,10 +295,82 @@ app/frontend/locales/
     }
   },
 
+  "inbox": {
+    "title": "Bandeja de entrada",
+    "all": "Todos",
+    "requests_filter": "Solicitudes",
+    "teacher_chats": "Chats de profesores",
+    "unread_only": "Solo sin leer",
+    "search": "Buscar conversación...",
+    "no_conversations": "No hay conversaciones"
+  },
+
+  "teachers": {
+    "title": "Profesores",
+    "add_teacher": "Añadir profesor",
+    "students": "Alumnos",
+    "lessons_this_week": "Clases esta semana",
+    "no_permanent_link": "Sin enlace permanente",
+    "assign_student": "Asignar alumno",
+    "remove_student": "Quitar alumno",
+    "view_calendar": "Ver calendario",
+    "edit_profile": "Editar perfil",
+    "level": "Nivel",
+    "hourly_rate": "Tarifa por hora",
+    "bio": "Biografía",
+    "permanent_link": "Enlace permanente de reunión",
+    "search_student": "Buscar alumno...",
+    "available_students": "Alumnos disponibles"
+  },
+
+  "lessons": {
+    "title": "Mis clases",
+    "new_lesson": "Nueva clase",
+    "upcoming": "Próximas",
+    "past": "Anteriores",
+    "no_lessons": "No tienes clases programadas",
+    "join_lesson": "Unirse a la clase",
+    "link_pending": "El profesor añadirá el enlace",
+    "duration_minutes": "{{minutes}} min",
+    "teacher": "Profesor",
+    "student": "Alumno",
+    "date": "Fecha",
+    "time": "Hora",
+    "duration": "Duración",
+    "meeting_link": "Enlace de reunión",
+    "meeting_link_hint": "Dejar vacío para usar el enlace permanente del profesor",
+    "notes": "Notas (privadas, después de la clase)",
+    "cancel_lesson": "Cancelar clase",
+    "status": {
+      "scheduled": "Programada",
+      "completed": "Completada",
+      "cancelled": "Cancelada"
+    }
+  },
+
+  "calendar": {
+    "title": "Mi calendario",
+    "week": "Semana",
+    "day": "Día",
+    "month": "Mes",
+    "today": "Hoy",
+    "link_ready": "Enlace listo",
+    "link_needed": "Falta enlace",
+    "done": "Completada"
+  },
+
   "nav": {
     "dashboard": "Inicio",
+    "inbox": "Bandeja de entrada",
     "requests": "Solicitudes",
+    "all_requests": "Todas las solicitudes",
+    "my_requests": "Mis solicitudes",
     "new_request": "Nueva solicitud",
+    "teachers": "Profesores",
+    "all_lessons": "Todas las clases",
+    "calendar": "Calendario",
+    "my_lessons": "Mis clases",
+    "chat": "Chat",
     "notifications": "Notificaciones",
     "profile": "Perfil",
     "admin": "Administración",
@@ -481,10 +553,82 @@ app/frontend/locales/
     }
   },
 
+  "inbox": {
+    "title": "Inbox",
+    "all": "All",
+    "requests_filter": "Requests",
+    "teacher_chats": "Teacher chats",
+    "unread_only": "Unread only",
+    "search": "Search conversation...",
+    "no_conversations": "No conversations"
+  },
+
+  "teachers": {
+    "title": "Teachers",
+    "add_teacher": "Add Teacher",
+    "students": "Students",
+    "lessons_this_week": "Lessons this week",
+    "no_permanent_link": "No permanent link",
+    "assign_student": "Assign Student",
+    "remove_student": "Remove Student",
+    "view_calendar": "View Calendar",
+    "edit_profile": "Edit Profile",
+    "level": "Level",
+    "hourly_rate": "Hourly Rate",
+    "bio": "Bio",
+    "permanent_link": "Permanent Meeting Link",
+    "search_student": "Search student...",
+    "available_students": "Available students"
+  },
+
+  "lessons": {
+    "title": "My Lessons",
+    "new_lesson": "New Lesson",
+    "upcoming": "Upcoming",
+    "past": "Past",
+    "no_lessons": "You have no scheduled lessons",
+    "join_lesson": "Join Lesson",
+    "link_pending": "Link will be added by teacher",
+    "duration_minutes": "{{minutes}} min",
+    "teacher": "Teacher",
+    "student": "Student",
+    "date": "Date",
+    "time": "Time",
+    "duration": "Duration",
+    "meeting_link": "Meeting Link",
+    "meeting_link_hint": "Leave empty to use teacher's permanent link",
+    "notes": "Notes (private, after lesson)",
+    "cancel_lesson": "Cancel Lesson",
+    "status": {
+      "scheduled": "Scheduled",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    }
+  },
+
+  "calendar": {
+    "title": "My Calendar",
+    "week": "Week",
+    "day": "Day",
+    "month": "Month",
+    "today": "Today",
+    "link_ready": "Link ready",
+    "link_needed": "Link needed",
+    "done": "Done"
+  },
+
   "nav": {
     "dashboard": "Dashboard",
+    "inbox": "Inbox",
     "requests": "Requests",
+    "all_requests": "All Requests",
+    "my_requests": "My Requests",
     "new_request": "New Request",
+    "teachers": "Teachers",
+    "all_lessons": "All Lessons",
+    "calendar": "Calendar",
+    "my_lessons": "My Lessons",
+    "chat": "Chat",
     "notifications": "Notifications",
     "profile": "Profile",
     "admin": "Admin",
@@ -667,10 +811,82 @@ app/frontend/locales/
     }
   },
 
+  "inbox": {
+    "title": "Входящие",
+    "all": "Все",
+    "requests_filter": "Заявки",
+    "teacher_chats": "Чаты с учителями",
+    "unread_only": "Только непрочитанные",
+    "search": "Поиск по чатам...",
+    "no_conversations": "Нет разговоров"
+  },
+
+  "teachers": {
+    "title": "Учителя",
+    "add_teacher": "Добавить учителя",
+    "students": "Ученики",
+    "lessons_this_week": "Уроков на этой неделе",
+    "no_permanent_link": "Нет постоянной ссылки",
+    "assign_student": "Назначить ученика",
+    "remove_student": "Убрать ученика",
+    "view_calendar": "Смотреть календарь",
+    "edit_profile": "Редактировать профиль",
+    "level": "Уровень",
+    "hourly_rate": "Ставка за час",
+    "bio": "О себе",
+    "permanent_link": "Постоянная ссылка на урок",
+    "search_student": "Поиск ученика...",
+    "available_students": "Доступные ученики"
+  },
+
+  "lessons": {
+    "title": "Мои уроки",
+    "new_lesson": "Новый урок",
+    "upcoming": "Предстоящие",
+    "past": "Прошедшие",
+    "no_lessons": "У вас нет запланированных уроков",
+    "join_lesson": "Присоединиться к уроку",
+    "link_pending": "Учитель добавит ссылку",
+    "duration_minutes": "{{minutes}} мин",
+    "teacher": "Учитель",
+    "student": "Ученик",
+    "date": "Дата",
+    "time": "Время",
+    "duration": "Длительность",
+    "meeting_link": "Ссылка на урок",
+    "meeting_link_hint": "Оставьте пустым для использования постоянной ссылки учителя",
+    "notes": "Заметки (приватные, после урока)",
+    "cancel_lesson": "Отменить урок",
+    "status": {
+      "scheduled": "Запланирован",
+      "completed": "Проведён",
+      "cancelled": "Отменён"
+    }
+  },
+
+  "calendar": {
+    "title": "Мой календарь",
+    "week": "Неделя",
+    "day": "День",
+    "month": "Месяц",
+    "today": "Сегодня",
+    "link_ready": "Ссылка готова",
+    "link_needed": "Нужна ссылка",
+    "done": "Завершено"
+  },
+
   "nav": {
     "dashboard": "Главная",
+    "inbox": "Входящие",
     "requests": "Заявки",
+    "all_requests": "Все заявки",
+    "my_requests": "Мои заявки",
     "new_request": "Новая заявка",
+    "teachers": "Учителя",
+    "all_lessons": "Все уроки",
+    "calendar": "Календарь",
+    "my_lessons": "Мои уроки",
+    "chat": "Чат",
     "notifications": "Уведомления",
     "profile": "Профиль",
     "admin": "Администрирование",

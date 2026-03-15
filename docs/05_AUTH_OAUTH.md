@@ -129,7 +129,6 @@ class User < ApplicationRecord
         avatar_url: auth.info.image
       )
       user.roles << Role.find_by!(name: "student")  # Default role
-      AmoCrmSyncJob.perform_later(user.id)
     end
 
     user

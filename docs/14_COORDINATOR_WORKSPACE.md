@@ -99,7 +99,31 @@ end
 - Unread badges update via NotificationChannel
 - Conversation list re-sorts when new message arrives
 
-### Keyboard shortcuts (simple)
+### Mobile Layout
+
+On mobile (< 768px), the 3-column layout collapses:
+1. Show conversation list only (full screen)
+2. Tap conversation → full-screen chat + collapsible context panel
+3. Back button → returns to conversation list
+
+```
+┌── Mobile: Conversation List ──┐    ┌── Mobile: Chat ────────────┐
+│                                │    │ ← Ana Kowalski              │
+│ [Search...] [All ▼]           │    │ Request #66763 · 🟡 Review  │
+│                                │    │                              │
+│ 🔴 Ana Kowalski               │    │ [Ana] 14:32                  │
+│    Equiv. CEU Madrid           │ →  │ Hola, adjunto mis docs...    │
+│    "Hola, adjunto..."          │    │                              │
+│    2 min ago                   │    │ [▼ Details]  (collapsible)   │
+│                                │    │                              │
+│ ⚪ Pedro Lopez                 │    │ ┌──────────────────────────┐ │
+│    Informe UE Madrid           │    │ │ Type a message...     📎 │ │
+│    "Gracias por..."            │    │ │              [Send]      │ │
+│    1 hour ago                  │    │ └──────────────────────────┘ │
+└────────────────────────────────┘    └──────────────────────────────┘
+```
+
+### Keyboard shortcuts (future enhancement, not MVP)
 
 - `↑` / `↓` — navigate conversation list
 - `Enter` — focus chat input
@@ -159,7 +183,7 @@ Cards view of all teachers with workload and assigned students.
 | **+ Assign** | Dialog: search students, select, assign to this teacher |
 | **View Calendar** | Opens teacher's calendar (same page as teacher sees) |
 | **Edit** | Dialog: edit level, rate, bio, permanent link |
-| **+ Add Teacher** | Dialog: select existing user → create teacher_profile |
+| **+ Add Teacher** | Dialog: select existing user → assign teacher role + create teacher_profile (level, rate, link) in one step |
 
 ### Assign Student Dialog
 
@@ -192,6 +216,8 @@ Click on student name badge → confirm dialog → removes `teacher_student` rec
 | Item | super_admin | coordinator | teacher | student |
 |---|:-:|:-:|:-:|:-:|
 | Dashboard | ✅ | ✅ | — | ✅ |
+
+**Note:** Teacher has no Dashboard — teacher's landing page after login is `/calendar` (their lesson calendar).
 | **Inbox** | ✅ | ✅ | — | — |
 | Requests | ✅ | ✅ | — | — |
 | New Request | — | — | — | ✅ |

@@ -123,7 +123,8 @@ Coordinator clicks "Confirm Payment" → `AmoCrmSyncJob` runs in background → 
 All dropdowns read from `config/select_options.yml`. This file has multi-language labels and AmoCRM enum ID mappings. Passed to frontend via Inertia shared data.
 
 ### 8. Security — simple and mandatory
-- `encrypts :phone, :whatsapp, :identity_card, :passport` (User)
+- `encrypts :phone, :whatsapp, :guardian_phone, :guardian_whatsapp` (User)
+- `encrypts :identity_card, :passport` (HomologationRequest)
 - `rate_limit` on auth controllers
 - Privacy policy checkbox with `privacy_accepted_at` timestamp
 - Files served through controller (Pundit checks access)
@@ -184,10 +185,19 @@ All defined in `config/select_options.yml`:
 ## Status Flow
 
 ```
-submitted → in_review → awaiting_payment → payment_confirmed → in_progress → resolved
-                ↓                                                                ↓
-          awaiting_reply                                                       closed
+draft → submitted → in_review ⇄ awaiting_reply → awaiting_payment → payment_confirmed → in_progress → resolved
+                                                                                                         ↓
+                                                                                                       closed
 ```
+
+Valid transitions:
+- `draft` → `submitted` (student submits)
+- `submitted` → `in_review` (coordinator picks up)
+- `in_review` ⇄ `awaiting_reply` (coordinator asks / student responds)
+- `in_review` → `awaiting_payment` (coordinator sets price)
+- `awaiting_payment` → `payment_confirmed` (coordinator confirms → triggers AmoCRM sync)
+- `payment_confirmed` → `in_progress` (work begins)
+- `in_progress` → `resolved` / `closed`
 
 AmoCRM Lead created at `payment_confirmed`. Pre-payment statuses exist only in our app.
 

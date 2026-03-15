@@ -27,7 +27,8 @@
 | Change request status               |     ✅      |     ✅      |    —    |    —    |
 | Confirm payment                     |     ✅      |     ✅      |    —    |    —    |
 | Upload documents                    |     ✅      |     ✅      |    —    |   ✅    |
-| Download documents                  |     ✅      |     ✅      |    —    |    —    |
+| Download own documents              |     ✅      |     ✅      |    —    |   ✅    |
+| Download all documents              |     ✅      |     ✅      |    —    |    —    |
 | **👩‍🏫 Teachers & Lessons**          |             |             |         |         |
 | Assign teacher to student           |     ✅      |     ✅      |    —    |    —    |
 | View teacher calendar               |     ✅      |     ✅      |   ✅    |    —    |

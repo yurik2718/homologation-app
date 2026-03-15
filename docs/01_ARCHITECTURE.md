@@ -31,12 +31,17 @@ Rails Router
     |       |
     |       +-- Auth::SessionsController      (login/logout/OAuth)
     |       +-- Auth::RegistrationsController  (signup)
-    |       +-- HomologationRequestsController (CRUD requests)
-    |       +-- MessagesController             (chat via Action Cable)
-    |       +-- DocumentsController            (file upload/download)
-    |       +-- Admin::DashboardController     (superadmin panel)
-    |       +-- Admin::UsersController         (manage coordinators/teachers)
-    |       +-- Api::AmoCrmWebhooksController  (CRM sync)
+    |       +-- ProfilesController             (complete + edit profile)
+    |       +-- HomologationRequestsController (CRUD requests + confirm_payment)
+    |       +-- MessagesController             (chat messages)
+    |       +-- ConversationsController         (chat list for teacher/student)
+    |       +-- InboxController                 (unified inbox for coordinator)
+    |       +-- TeachersController              (teacher management)
+    |       +-- LessonsController               (lesson CRUD + calendar)
+    |       +-- NotificationsController         (in-app notifications)
+    |       +-- Admin::DashboardController     (stats + charts)
+    |       +-- Admin::UsersController         (manage users + roles)
+    |       +-- Admin::LessonsController       (all lessons overview)
     |
     +-- Action Cable Channels
     |       +-- ConversationChannel (real-time chat per request)
@@ -59,21 +64,31 @@ app/
 │   │   ├── registrations_controller.rb # Signup
 │   │   ├── omniauth_callbacks_controller.rb
 │   │   └── passwords_controller.rb     # Password reset
-│   ├── homologation_requests_controller.rb
+│   ├── profiles_controller.rb          # Complete + edit profile
+│   ├── homologation_requests_controller.rb  # CRUD + confirm_payment
 │   ├── messages_controller.rb
-│   ├── documents_controller.rb
+│   ├── conversations_controller.rb     # Chat list for teacher/student
+│   ├── inbox_controller.rb            # Unified inbox for coordinator
+│   ├── teachers_controller.rb         # Teacher management + assign students
+│   ├── lessons_controller.rb          # Lesson CRUD + calendar
 │   ├── notifications_controller.rb
+│   ├── pages_controller.rb            # Static pages (privacy policy)
 │   └── admin/
-│       ├── dashboard_controller.rb
+│       ├── dashboard_controller.rb     # Stats + charts as Inertia props
 │       ├── users_controller.rb
-│       └── reports_controller.rb
+│       └── lessons_controller.rb       # All lessons overview
 ├── models/
 │   ├── user.rb
 │   ├── role.rb
+│   ├── user_role.rb
 │   ├── homologation_request.rb
-│   ├── message.rb
+│   ├── teacher_profile.rb
+│   ├── teacher_student.rb
+│   ├── lesson.rb
 │   ├── conversation.rb
+│   ├── message.rb
 │   ├── notification.rb
+│   ├── amo_crm_token.rb
 │   └── concerns/
 │       └── amo_crm_syncable.rb
 ├── policies/                           # Pundit policies
@@ -94,68 +109,88 @@ app/
 │   ├── request_mailer.rb
 │   └── notification_mailer.rb
 ├── services/
-│   ├── amo_crm_client.rb              # AmoCRM API wrapper
-│   └── amo_crm_contact_sync.rb
+│   └── amo_crm_client.rb              # AmoCRM API wrapper (Faraday)
 ├── frontend/
 │   ├── entrypoints/
 │   │   ├── application.ts
 │   │   ├── application.css
 │   │   └── inertia.tsx
 │   ├── components/
-│   │   ├── ui/                        # shadcn/ui components
-│   │   │   ├── button.tsx
-│   │   │   ├── input.tsx
-│   │   │   ├── select.tsx
-│   │   │   ├── card.tsx
-│   │   │   ├── dialog.tsx
-│   │   │   ├── table.tsx
-│   │   │   ├── badge.tsx
-│   │   │   ├── avatar.tsx
-│   │   │   ├── dropdown-menu.tsx
-│   │   │   └── ...
-│   │   ├── layouts/
-│   │   │   ├── AppLayout.tsx          # Main app layout with sidebar
-│   │   │   ├── AuthLayout.tsx         # Auth pages layout
-│   │   │   └── AdminLayout.tsx        # Admin dashboard layout
+│   │   ├── ui/                        # shadcn/ui components (auto-generated)
+│   │   ├── layout/
+│   │   │   ├── AppSidebar.tsx         # Collapsible sidebar with role-based items
+│   │   │   ├── Header.tsx             # Top bar with language switcher, notifications, user menu
+│   │   │   ├── AuthenticatedLayout.tsx
+│   │   │   └── AuthLayout.tsx
+│   │   ├── common/
+│   │   │   ├── LanguageSwitcher.tsx
+│   │   │   ├── NotificationBell.tsx
+│   │   │   ├── StatusBadge.tsx
+│   │   │   ├── FormattedDate.tsx
+│   │   │   └── RoleGuard.tsx
 │   │   ├── chat/
 │   │   │   ├── ChatWindow.tsx
 │   │   │   ├── MessageBubble.tsx
 │   │   │   └── MessageInput.tsx
-│   │   ├── requests/
-│   │   │   ├── RequestForm.tsx
-│   │   │   ├── RequestTable.tsx
-│   │   │   └── RequestStatusBadge.tsx
 │   │   ├── documents/
 │   │   │   ├── FileDropZone.tsx
 │   │   │   └── FileList.tsx
+│   │   ├── inbox/
+│   │   │   ├── ConversationList.tsx
+│   │   │   ├── ConversationItem.tsx
+│   │   │   ├── ChatPanel.tsx
+│   │   │   └── ContextPanel.tsx
+│   │   ├── teachers/
+│   │   │   ├── TeacherCard.tsx
+│   │   │   ├── AssignStudentDialog.tsx
+│   │   │   └── EditTeacherDialog.tsx
+│   │   ├── lessons/
+│   │   │   ├── WeekGrid.tsx
+│   │   │   ├── DayView.tsx
+│   │   │   ├── LessonCard.tsx
+│   │   │   ├── LessonDialog.tsx
+│   │   │   └── LessonList.tsx
 │   │   └── admin/
 │   │       ├── StatsCard.tsx
-│   │       ├── Chart.tsx
-│   │       └── UserManagementTable.tsx
+│   │       └── Charts.tsx
 │   ├── pages/
 │   │   ├── auth/
 │   │   │   ├── Login.tsx
 │   │   │   ├── Register.tsx
 │   │   │   └── ForgotPassword.tsx
+│   │   ├── profile/
+│   │   │   └── Edit.tsx               # Also serves as CompleteProfile
 │   │   ├── dashboard/
-│   │   │   └── Index.tsx              # User home page
+│   │   │   └── Index.tsx
 │   │   ├── requests/
-│   │   │   ├── Index.tsx              # My requests list
-│   │   │   ├── New.tsx                # Submit a request form
-│   │   │   └── Show.tsx              # Request detail + chat + files
-│   │   ├── admin/
-│   │   │   ├── Dashboard.tsx          # Admin overview with charts
-│   │   │   ├── Users.tsx             # Manage users
-│   │   │   └── Reports.tsx
-│   │   └── profile/
-│   │       └── Edit.tsx
+│   │   │   ├── Index.tsx
+│   │   │   ├── New.tsx
+│   │   │   └── Show.tsx
+│   │   ├── inbox/
+│   │   │   └── Index.tsx              # Coordinator unified inbox
+│   │   ├── teachers/
+│   │   │   └── Index.tsx              # Coordinator teacher management
+│   │   ├── lessons/
+│   │   │   └── Index.tsx              # Student: my lessons list
+│   │   ├── calendar/
+│   │   │   └── Index.tsx              # Teacher: week/day calendar
+│   │   ├── chat/
+│   │   │   └── Index.tsx              # Teacher & student conversation list
+│   │   └── admin/
+│   │       ├── Dashboard.tsx
+│   │       ├── Users.tsx
+│   │       └── Lessons.tsx
 │   ├── hooks/
 │   │   ├── useActionCable.ts
 │   │   └── useFileUpload.ts
 │   ├── lib/
-│   │   └── utils.ts                   # shadcn/ui utility (cn function)
+│   │   ├── utils.ts                   # shadcn/ui utility (cn function)
+│   │   └── i18n.ts                    # react-i18next setup
+│   ├── locales/
+│   │   ├── es.json
+│   │   ├── en.json
+│   │   └── ru.json
 │   └── types/
-│       ├── index.d.ts
 │       └── models.d.ts
 ```
 
@@ -188,6 +223,6 @@ app/
 - Simple role check helpers in policies
 
 ### 6. AmoCRM Integration
-- Background job syncs new users/requests to AmoCRM
-- Uses AmoCRM REST API v4
-- Webhook endpoint for receiving CRM updates
+- Background job syncs requests to AmoCRM **only after payment confirmation**
+- Uses AmoCRM REST API v4 via Faraday HTTP client
+- Token auto-refresh via `amo_crm_tokens` table
