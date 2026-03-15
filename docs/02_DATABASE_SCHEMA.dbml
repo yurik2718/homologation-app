@@ -37,6 +37,7 @@ Table users [headercolor: #3498db] {
 
   amo_crm_contact_id varchar
   privacy_accepted_at datetime
+  discarded_at datetime [note: 'Soft delete — NULL = active, set = archived']
   created_at datetime [not null]
   updated_at datetime [not null]
 
@@ -44,6 +45,7 @@ Table users [headercolor: #3498db] {
     email_address [unique]
     (provider, uid) [unique]
     guardian_user_id
+    discarded_at [note: 'Filter active/archived users']
   }
 
   Note: '''
@@ -175,6 +177,7 @@ Table homologation_requests [headercolor: #e74c3c] {
   amo_crm_lead_id varchar
   amo_crm_synced_at datetime
   amo_crm_sync_error text
+  discarded_at datetime [note: 'Soft delete — NULL = active, set = archived']
   created_at datetime [not null]
   updated_at datetime [not null]
 
@@ -182,6 +185,9 @@ Table homologation_requests [headercolor: #e74c3c] {
     user_id
     coordinator_id
     status
+    (user_id, status) [note: 'Student requests filtered by status']
+    updated_at [note: 'Sort by recent activity']
+    discarded_at [note: 'Filter active/archived requests']
   }
 
   Note: '''
@@ -208,6 +214,10 @@ Table conversations [headercolor: #2ecc71] {
   created_at datetime [not null]
   updated_at datetime [not null]
 
+  indexes {
+    updated_at [note: 'Sort inbox by recent activity']
+  }
+
   Note: '''
   Two use cases:
   1. Request chat: homologation_request_id set
@@ -226,6 +236,7 @@ Table messages [headercolor: #2ecc71] {
 
   indexes {
     (conversation_id, created_at)
+    user_id
   }
 
   Note: 'Files: has_many_attached :attachments. Real-time via Action Cable.'
@@ -247,7 +258,8 @@ Table notifications [headercolor: #f39c12] {
 
   indexes {
     user_id
-    (user_id, read_at)
+    (user_id, read_at) [note: 'Unread notifications query']
+    (user_id, created_at) [note: 'Notification feed sorted by date']
   }
 }
 

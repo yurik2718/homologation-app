@@ -71,7 +71,7 @@ config/
 5. **Chat** — Send via `router.post()` (Inertia), receive via `useChannel()` hook (Action Cable).
 6. **AmoCRM sync** — ONLY on payment confirmation. No data to CRM before `payment_confirmed`.
 7. **Select options** — `config/select_options.yml` → `inertia_share` → `selectOptions` in every page. Never hardcode — always `opt[label_${locale}] || opt.label`.
-8. **Security** — `encrypts` on PII fields, `rate_limit` on auth, files served through controller (Pundit), PII filtered from logs.
+8. **Security** — `encrypts` on PII fields, `rate_limit` on auth, files served through controller (Pundit), PII filtered from logs. Soft delete (`discarded_at`) on `users` and `homologation_requests` — use `.kept` scope, never hard delete without GDPR request.
 9. **Mobile-first** — Every page works at 360px+. See `docs/15_MOBILE_PATTERNS.md`.
 10. **Keep it simple** — `<textarea>` not rich text, light mode only, no command menu/audit log/dark mode.
 

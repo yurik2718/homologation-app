@@ -55,6 +55,34 @@ Students can be minors (parents pay) or adults (pay themselves).
 
 **Channels:** In-app (always) + Email (default on) + Telegram (opt-in via button). User can toggle each in profile settings.
 
+## Soft Delete & Data Retention
+
+Tables `users` and `homologation_requests` have a `discarded_at` column for soft delete.
+
+| Action | What happens | Reversible? |
+|---|---|---|
+| "Archive" (coordinator/admin) | `discarded_at = Time.current`, hidden from lists | Yes — set `discarded_at = nil` |
+| "Deactivate user" (super_admin) | `discarded_at = Time.current`, sessions destroyed | Yes |
+| "GDPR full delete" (super_admin) | Hard delete record + files | No |
+
+**Data retention policy (future `DataRetentionJob`):**
+- Resolved/closed requests: files purged after 90 days (data already in AmoCRM)
+- Soft-deleted records: hard-deleted after 90 days
+- GDPR "right to erasure" request: immediate hard delete
+
+**Model pattern:**
+```ruby
+# In User and HomologationRequest:
+scope :kept, -> { where(discarded_at: nil) }
+scope :discarded, -> { where.not(discarded_at: nil) }
+
+def discard = update!(discarded_at: Time.current)
+def undiscard = update!(discarded_at: nil)
+def discarded? = discarded_at.present?
+```
+
+All queries default to `.kept` — discarded records are invisible unless explicitly requested.
+
 ## Encrypted Fields (GDPR)
 
 | Model | Field |

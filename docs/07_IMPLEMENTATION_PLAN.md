@@ -312,9 +312,11 @@ class AddFieldsToUsers < ActiveRecord::Migration[8.0]
     add_column :users, :notification_email, :boolean, null: false, default: true
     add_column :users, :amo_crm_contact_id, :string
     add_column :users, :privacy_accepted_at, :datetime
+    add_column :users, :discarded_at, :datetime
 
     add_index :users, [:provider, :uid], unique: true
     add_index :users, :guardian_user_id
+    add_index :users, :discarded_at
   end
 end
 ```
@@ -396,10 +398,14 @@ create_table :homologation_requests do |t|
   t.string :amo_crm_lead_id
   t.datetime :amo_crm_synced_at
   t.text :amo_crm_sync_error
+  t.datetime :discarded_at
   t.timestamps
 end
 add_index :homologation_requests, :coordinator_id
 add_index :homologation_requests, :status
+add_index :homologation_requests, [:user_id, :status]
+add_index :homologation_requests, :updated_at
+add_index :homologation_requests, :discarded_at
 add_foreign_key :homologation_requests, :users, column: :coordinator_id
 add_foreign_key :homologation_requests, :users, column: :status_changed_by
 add_foreign_key :homologation_requests, :users, column: :payment_confirmed_by
@@ -413,6 +419,7 @@ create_table :conversations do |t|
   t.timestamps
 end
 add_index :conversations, :teacher_student_id
+add_index :conversations, :updated_at
 add_foreign_key :conversations, :teacher_students
 ```
 
@@ -425,6 +432,7 @@ create_table :messages do |t|
   t.timestamps
 end
 add_index :messages, [:conversation_id, :created_at]
+add_index :messages, :user_id
 ```
 
 **Migration 8: lessons**
@@ -458,6 +466,7 @@ create_table :notifications do |t|
   t.timestamps
 end
 add_index :notifications, [:user_id, :read_at]
+add_index :notifications, [:user_id, :created_at]
 add_index :notifications, [:notifiable_type, :notifiable_id]
 ```
 
@@ -490,6 +499,7 @@ Add the generated keys to Rails credentials: `bin/rails credentials:edit`.
 - Role helpers: `super_admin?`, `coordinator?`, `teacher?`, `student?` — each calls `has_role?(name)` which does `roles.exists?(name: name)`
 - `self.find_or_create_from_oauth(auth)` — finds by provider+uid, then by email, creates with student role if new
 - `profile_complete?` — `whatsapp.present? && birthday.present? && country.present?`
+- Soft delete: `scope :kept, -> { where(discarded_at: nil) }`, `scope :discarded, -> { where.not(discarded_at: nil) }`, `def discard`, `def undiscard`, `def discarded?`
 - Validations: `email_address` presence + uniqueness, `name` presence
 
 **`app/models/role.rb`:**
@@ -539,6 +549,7 @@ Add the generated keys to Rails credentials: `bin/rails credentials:edit`.
   end
   ```
 - Custom exception: `class InvalidTransition < StandardError; end` (define in model or `app/models/concerns/`)
+- Soft delete: `scope :kept, -> { where(discarded_at: nil) }`, `scope :discarded, -> { where.not(discarded_at: nil) }`, `def discard`, `def undiscard`, `def discarded?`
 - Validations: `subject` presence, `service_type` presence + inclusion, `privacy_accepted` acceptance (on create when status != draft)
 
 **`app/models/conversation.rb`:**
@@ -780,10 +791,11 @@ end
 
 - [ ] `bin/rails db:migrate` runs without errors
 - [ ] `bin/rails db:seed` creates 4 roles (verify: `Role.count == 4` in console)
-- [ ] `bin/rails test` — all model tests pass (minimum 12 tests)
+- [ ] `bin/rails test` — all model tests pass (minimum 14 tests)
 - [ ] Encrypted fields work: `User.create!(email_address: "test@test.com", name: "Test", phone: "+123")` → `phone` is encrypted in DB
 - [ ] `HomologationRequest.new.transition_to!("submitted", ...)` works from draft
 - [ ] `HomologationRequest.new.transition_to!("resolved", ...)` from draft raises `InvalidTransition`
+- [ ] Soft delete works: `user.discard` → `User.kept` excludes user, `User.discarded` includes user
 - [ ] Fixtures load without errors: `bin/rails test` doesn't fail on fixture loading
 
 ---
