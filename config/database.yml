@@ -6,8 +6,24 @@
 #
 default: &default
   adapter: sqlite3
-  max_connections: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  # Wait up to 5s for write lock instead of failing immediately
   timeout: 5000
+  pragmas:
+    # WAL mode: readers don't block writers, writers don't block readers
+    journal_mode: wal
+    # NORMAL sync is safe with WAL (data survives process crash, not power loss)
+    synchronous: normal
+    # 64MB cache in memory (negative = KB, positive = pages)
+    cache_size: -65536
+    # 128MB memory-mapped I/O for faster reads
+    mmap_size: 134217728
+    # Limit WAL file growth to 64MB, then auto-checkpoint
+    journal_size_limit: 67108864
+    # Enforce foreign keys (data integrity)
+    foreign_keys: true
+    # Wait 5s for lock instead of SQLITE_BUSY error
+    busy_timeout: 5000
 
 development:
   <<: *default
