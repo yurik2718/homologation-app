@@ -166,7 +166,7 @@ export function AppSidebar() {
                     <Link href={routes.profile}>{t("nav.profile")}</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href={routes.logout} method="delete" as="button">
+                    <Link href={routes.session} method="delete" as="button">
                       {t("auth.sign_out")}
                     </Link>
                   </DropdownMenuItem>

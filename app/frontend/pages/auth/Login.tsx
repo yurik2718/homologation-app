@@ -17,7 +17,7 @@ export default function Login() {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    post(routes.logout)
+    post(routes.session)
   }
 
   return (

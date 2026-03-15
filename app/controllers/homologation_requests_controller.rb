@@ -1,5 +1,5 @@
 class HomologationRequestsController < InertiaController
-  before_action :set_request, only: [:show, :update, :confirm_payment, :download_document]
+  before_action :set_request, only: [ :show, :update, :confirm_payment, :download_document ]
 
   def index
     authorize HomologationRequest

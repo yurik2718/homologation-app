@@ -12,10 +12,10 @@ class DashboardController < InertiaController
       { myRequests: current_user.homologation_requests.count,
         pendingRequests: current_user.homologation_requests.where.not(status: %w[resolved closed]).count }
     else
-      { totalRequests: HomologationRequest.count,
-        openRequests: HomologationRequest.where.not(status: %w[resolved closed draft]).count,
-        awaitingPayment: HomologationRequest.where(status: "awaiting_payment").count,
-        resolved: HomologationRequest.where(status: "resolved").count }
+      { totalRequests: HomologationRequest.kept.count,
+        openRequests: HomologationRequest.kept.where.not(status: %w[resolved closed draft]).count,
+        awaitingPayment: HomologationRequest.kept.where(status: "awaiting_payment").count,
+        resolved: HomologationRequest.kept.where(status: "resolved").count }
     end
   end
 end

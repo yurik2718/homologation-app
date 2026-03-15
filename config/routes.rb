@@ -1,8 +1,8 @@
 Rails.application.routes.draw do
-  resource :session, only: [:new, :create, :destroy]
-  resource :registration, only: [:new, :create]
-  resources :passwords, param: :token, only: [:new, :create, :edit, :update]
-  resource :profile, only: [:edit, :update]
+  resource :session, only: [ :new, :create, :destroy ]
+  resource :registration, only: [ :new, :create ]
+  resources :passwords, param: :token, only: [ :new, :create, :edit, :update ]
+  resource :profile, only: [ :edit, :update ]
 
   # OAuth
   post "/auth/:provider/callback", to: "auth/omniauth_callbacks#create"
@@ -16,7 +16,7 @@ Rails.application.routes.draw do
   root "dashboard#index"
 
   resources :homologation_requests, path: "requests" do
-    resources :messages, only: [:create]
+    resources :messages, only: [ :create ]
     member do
       get  :download_document
       post :confirm_payment
