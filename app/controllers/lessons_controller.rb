@@ -40,6 +40,11 @@ class LessonsController < InertiaController
     authorize @lesson
 
     if @lesson.save
+      NotificationJob.perform_later(
+        user_id: @lesson.student_id,
+        title: I18n.t("notifications.lesson_scheduled", date: @lesson.scheduled_at.strftime("%d/%m/%Y %H:%M")),
+        notifiable: @lesson
+      )
       redirect_to lesson_path(@lesson), notice: t("flash.lesson_created")
     else
       redirect_to lessons_path, inertia: { errors: @lesson.errors }
@@ -58,6 +63,13 @@ class LessonsController < InertiaController
   def destroy
     authorize @lesson
     @lesson.update!(status: "cancelled")
+    [ @lesson.student_id, @lesson.teacher_id ].each do |user_id|
+      NotificationJob.perform_later(
+        user_id: user_id,
+        title: I18n.t("notifications.lesson_cancelled", date: @lesson.scheduled_at.strftime("%d/%m/%Y %H:%M")),
+        notifiable: @lesson
+      )
+    end
     redirect_to lessons_path, notice: t("flash.lesson_cancelled")
   end
 

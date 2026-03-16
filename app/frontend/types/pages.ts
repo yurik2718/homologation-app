@@ -1,5 +1,20 @@
 // Page-specific props interfaces — one per page, added per step
 
+// notifications/Index
+export interface NotificationItem {
+  id: number
+  title: string
+  body: string | null
+  readAt: string | null
+  createdAt: string
+  notifiableType: string
+  notifiableId: number
+}
+
+export interface NotificationsIndexProps {
+  notifications: NotificationItem[]
+}
+
 // auth/ResetPassword
 export interface ResetPasswordProps {
   token: string
@@ -22,6 +37,9 @@ export interface ProfileEditProps {
     guardianPhone: string | null
     guardianWhatsapp: string | null
     profileComplete: boolean
+    notificationEmail: boolean
+    notificationTelegram: boolean
+    telegramConnected: boolean
   }
 }
 

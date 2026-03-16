@@ -2,7 +2,10 @@ Rails.application.routes.draw do
   resource :session, only: [ :new, :create, :destroy ]
   resource :registration, only: [ :new, :create ]
   resources :passwords, param: :token, only: [ :new, :create, :edit, :update ]
-  resource :profile, only: [ :edit, :update ]
+  resource :profile, only: [ :edit, :update ] do
+    post :connect_telegram
+    delete :disconnect_telegram
+  end
 
   # OAuth
   post "/auth/:provider/callback", to: "auth/omniauth_callbacks#create"
@@ -32,6 +35,14 @@ Rails.application.routes.draw do
   namespace :admin do
     resources :lessons, only: [ :index ]
   end
+  resources :notifications, only: [ :index, :update ] do
+    collection do
+      post :mark_all_read
+    end
+  end
+
+  post "/telegram/webhook", to: "telegram#webhook"
+
   resources :teachers, only: [ :index, :update ] do
     member do
       post :assign_student

@@ -1,4 +1,4 @@
-import { useForm, Link, usePage } from "@inertiajs/react"
+import { useForm, Link, usePage, router } from "@inertiajs/react"
 import { useTranslation } from "react-i18next"
 import { AuthenticatedLayout } from "@/components/layout/AuthenticatedLayout"
 import { Button } from "@/components/ui/button"
@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Separator } from "@/components/ui/separator"
 import { routes } from "@/lib/routes"
 import type { SharedProps } from "@/types"
 import type { ProfileEditProps } from "@/types/pages"
@@ -34,11 +35,21 @@ export default function Edit() {
     guardian_email: profile.guardianEmail ?? "",
     guardian_phone: profile.guardianPhone ?? "",
     guardian_whatsapp: profile.guardianWhatsapp ?? "",
+    notification_email: profile.notificationEmail ?? true,
+    notification_telegram: profile.notificationTelegram ?? false,
   })
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     patch(routes.profile)
+  }
+
+  function handleConnectTelegram() {
+    router.post(routes.connectTelegram)
+  }
+
+  function handleDisconnectTelegram() {
+    router.delete(routes.disconnectTelegram)
   }
 
   const title = profile.profileComplete ? t("profile.edit_title") : t("profile.complete_title")
@@ -181,6 +192,75 @@ export default function Edit() {
                   ))}
                 </div>
               )}
+
+              <Separator />
+
+              {/* Notification preferences */}
+              <div className="space-y-4">
+                <p className="text-sm font-medium">{t("profile.notifications_section")}</p>
+
+                {/* Email notifications toggle */}
+                <div className="flex items-center gap-3">
+                  <Checkbox
+                    id="notification_email"
+                    checked={data.notification_email}
+                    onCheckedChange={(checked) => setData("notification_email", !!checked)}
+                    className="min-h-[20px] min-w-[20px]"
+                  />
+                  <Label htmlFor="notification_email" className="cursor-pointer">
+                    {t("profile.email_notifications")}
+                  </Label>
+                </div>
+
+                {/* Telegram section */}
+                <div className="rounded-md border p-4 space-y-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <p className="text-sm font-medium">
+                        {profile.telegramConnected
+                          ? `✅ ${t("profile.telegram_connected")}`
+                          : t("profile.connect_telegram")}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">{t("profile.telegram_hint")}</p>
+                    </div>
+                    {profile.telegramConnected ? (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="min-h-[44px] shrink-0"
+                        onClick={handleDisconnectTelegram}
+                      >
+                        {t("profile.disconnect_telegram")}
+                      </Button>
+                    ) : (
+                      <Button
+                        type="button"
+                        size="sm"
+                        className="min-h-[44px] shrink-0"
+                        onClick={handleConnectTelegram}
+                      >
+                        {t("profile.connect_telegram")}
+                      </Button>
+                    )}
+                  </div>
+
+                  {/* Telegram notifications toggle — only if connected */}
+                  {profile.telegramConnected && (
+                    <div className="flex items-center gap-3">
+                      <Checkbox
+                        id="notification_telegram"
+                        checked={data.notification_telegram}
+                        onCheckedChange={(checked) => setData("notification_telegram", !!checked)}
+                        className="min-h-[20px] min-w-[20px]"
+                      />
+                      <Label htmlFor="notification_telegram" className="cursor-pointer">
+                        {t("profile.telegram_notifications")}
+                      </Label>
+                    </div>
+                  )}
+                </div>
+              </div>
 
               {/* Save button */}
               <Button

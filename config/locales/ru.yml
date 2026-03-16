@@ -57,3 +57,6 @@ ru:
     payment_confirmed: "Оплата €%{amount} подтверждена для '%{subject}'"
     status_changed: "Статус заявки обновлён: %{status}"
     lesson_scheduled: "Новый урок запланирован на %{date}"
+    lesson_reminder: "Напоминание об уроке"
+    lesson_starts_soon: "Ваш урок начнётся через 1 час (%{time})"
+    lesson_cancelled: "Урок отменён: %{date}"

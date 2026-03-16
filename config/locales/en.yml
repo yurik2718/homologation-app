@@ -57,3 +57,6 @@ en:
     payment_confirmed: "Payment of €%{amount} confirmed for '%{subject}'"
     status_changed: "Your request status updated to %{status}"
     lesson_scheduled: "New lesson scheduled for %{date}"
+    lesson_reminder: "Lesson reminder"
+    lesson_starts_soon: "Your lesson starts in 1 hour (%{time})"
+    lesson_cancelled: "Lesson cancelled: %{date}"

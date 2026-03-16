@@ -16,3 +16,6 @@ production:
   database_backup:
     class: DatabaseBackupJob
     schedule: at 3am every day
+  lesson_reminders:
+    class: LessonReminderJob
+    schedule: every 5 minutes

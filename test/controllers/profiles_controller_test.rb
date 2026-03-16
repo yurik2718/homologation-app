@@ -36,4 +36,20 @@ class ProfilesControllerTest < ActionDispatch::IntegrationTest
     assert reloaded.is_minor?
     assert_equal "Mama", reloaded.guardian_name
   end
+
+  test "connect_telegram generates token and redirects to bot" do
+    sign_in users(:student_ana)
+    post connect_telegram_profile_path
+    assert users(:student_ana).reload.telegram_link_token.present?
+    assert_response :redirect
+  end
+
+  test "disconnect_telegram clears chat_id" do
+    user = users(:student_ana)
+    user.update!(telegram_chat_id: "123", notification_telegram: true)
+    sign_in user
+    delete disconnect_telegram_profile_path
+    assert_nil user.reload.telegram_chat_id
+    refute user.notification_telegram?
+  end
 end

@@ -20,7 +20,7 @@ class ApplicationController < ActionController::Base
       auth: { user: Current.user ? user_json(Current.user) : nil },
       flash: { notice: flash[:notice], alert: flash[:alert] },
       features: Current.user ? build_features(Current.user) : {},
-      unreadNotificationsCount: 0, # TODO Step 8: replace with Current.user.notifications.where(read_at: nil).count
+      unreadNotificationsCount: Current.user ? Current.user.notifications.unread.count : 0,
       selectOptions: Rails.application.config.select_options
     }
   end

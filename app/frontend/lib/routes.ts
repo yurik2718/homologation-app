@@ -9,6 +9,8 @@ export const routes = {
   password: (token: string) => `/passwords/${token}`,
   profile: "/profile",
   editProfile: "/profile/edit",
+  connectTelegram: "/profile/connect_telegram",
+  disconnectTelegram: "/profile/disconnect_telegram",
   requests: "/requests",
   newRequest: "/requests/new",
   request: (id: number) => `/requests/${id}`,
@@ -28,6 +30,7 @@ export const routes = {
   lessons: "/lessons",
   lesson: (id: number) => `/lessons/${id}`,
   notifications: "/notifications",
+  notification: (id: number) => `/notifications/${id}`,
   markAllRead: "/notifications/mark_all_read",
   privacyPolicy: "/privacy-policy",
   admin: {
