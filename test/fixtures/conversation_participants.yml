@@ -9,3 +9,15 @@ maria_in_equivalencia_conversation:
   user_id: <%= ActiveRecord::FixtureSet.identify(:coordinator_maria) %>
   created_at: 2026-01-10 10:05:00
   updated_at: 2026-01-10 10:05:00
+
+ivan_in_ivan_ana_conversation:
+  conversation_id: <%= ActiveRecord::FixtureSet.identify(:ivan_ana_conversation) %>
+  user_id: <%= ActiveRecord::FixtureSet.identify(:teacher_ivan) %>
+  created_at: 2026-01-15 09:00:00
+  updated_at: 2026-01-15 09:00:00
+
+ana_in_ivan_ana_conversation:
+  conversation_id: <%= ActiveRecord::FixtureSet.identify(:ivan_ana_conversation) %>
+  user_id: <%= ActiveRecord::FixtureSet.identify(:student_ana) %>
+  created_at: 2026-01-15 09:00:00
+  updated_at: 2026-01-15 09:00:00

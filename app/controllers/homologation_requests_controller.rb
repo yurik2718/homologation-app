@@ -75,7 +75,7 @@ class HomologationRequestsController < InertiaController
 
   def set_request
     @request = HomologationRequest.kept
-      .includes(:user, :conversation,
+      .includes(:user, conversation: { messages: :user },
                 application_attachment: :blob,
                 originals_attachments: :blob,
                 documents_attachments: :blob)
@@ -116,7 +116,10 @@ class HomologationRequestsController < InertiaController
   end
 
   def conversation_json(c)
-    { id: c.id }
+    {
+      id: c.id,
+      messages: c.messages.order(:created_at).map(&:as_json_for_cable)
+    }
   end
 
   def files_json(r)

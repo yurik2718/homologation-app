@@ -2,6 +2,7 @@ import { useState } from "react"
 import { router, usePage } from "@inertiajs/react"
 import { useTranslation } from "react-i18next"
 import { AuthenticatedLayout } from "@/components/layout/AuthenticatedLayout"
+import { ChatWindow } from "@/components/chat/ChatWindow"
 import { StatusBadge } from "@/components/common/StatusBadge"
 import { FormattedDate } from "@/components/common/FormattedDate"
 import { FileList } from "@/components/documents/FileList"
@@ -67,14 +68,22 @@ export default function RequestsShow() {
   return (
     <AuthenticatedLayout>
       <div className="flex flex-col lg:grid lg:grid-cols-2 gap-6">
-        {/* Left: Chat placeholder (wired in Step 5) */}
+        {/* Left: Chat */}
         <div className="order-2 lg:order-1">
-          <Card className="min-h-[300px] lg:min-h-[500px]">
-            <CardHeader>
+          <Card className="min-h-[300px] lg:min-h-[500px] flex flex-col">
+            <CardHeader className="shrink-0">
               <CardTitle className="text-base">{t("chat.title")}</CardTitle>
             </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">{t("chat.no_messages")}</p>
+            <CardContent className="flex-1 p-0">
+              {request.conversation ? (
+                <ChatWindow
+                  conversationId={request.conversation.id}
+                  messages={request.conversation.messages}
+                  postUrl={routes.requestMessages(request.id)}
+                />
+              ) : (
+                <p className="p-4 text-sm text-muted-foreground">{t("chat.no_messages")}</p>
+              )}
             </CardContent>
           </Card>
         </div>

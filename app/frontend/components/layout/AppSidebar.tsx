@@ -1,6 +1,5 @@
-import { Link } from "@inertiajs/react"
+import { Link, usePage } from "@inertiajs/react"
 import { useTranslation } from "react-i18next"
-import { usePage } from "@inertiajs/react"
 import {
   LayoutDashboard,
   Inbox,
@@ -32,6 +31,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { routes } from "@/lib/routes"
+import { getInitials } from "@/lib/utils"
 import type { SharedProps } from "@/types"
 
 export function AppSidebar() {
@@ -114,9 +114,7 @@ export function AppSidebar() {
     },
   ]
 
-  const initials = user?.name
-    ? user.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()
-    : "?"
+  const initials = user?.name ? getInitials(user.name) : "?"
 
   return (
     <Sidebar collapsible="icon">

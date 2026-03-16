@@ -15,6 +15,15 @@ export function formatBytes(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 }
 
+export function getInitials(name: string): string {
+  return name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2)
+}
+
 export function getOptionLabel(
   opt: { key: string; label?: string; label_es?: string; label_en?: string; label_ru?: string },
   locale: string

@@ -51,6 +51,7 @@ export interface FileInfo {
 
 export interface ConversationDetail {
   id: number
+  messages: import("@/types/models.d").ChatMessage[]
 }
 
 export interface RequestDetail extends RequestListItem {
@@ -77,6 +78,17 @@ export interface RequestDetail extends RequestListItem {
 
 export interface RequestsShowProps {
   request: RequestDetail
+}
+
+// dashboard/Index
+// chat/Index
+export interface ChatIndexProps {
+  conversations: import("@/types/models.d").ConversationListItem[]
+}
+
+// chat/Show
+export interface ChatShowProps {
+  conversation: import("@/types/models.d").ConversationFull
 }
 
 // dashboard/Index

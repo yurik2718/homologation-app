@@ -9,16 +9,16 @@ class Message < ApplicationRecord
   after_create_commit :broadcast_message
   after_create_commit :touch_conversation_last_message_at
 
+  def as_json_for_cable
+    { id: id, body: body, createdAt: created_at.iso8601,
+      user: { id: user.id, name: user.name, avatarUrl: user.avatar_url },
+      attachments: attachments.map { |a| { id: a.id, filename: a.filename.to_s } } }
+  end
+
   private
 
   def broadcast_message
-    ConversationChannel.broadcast_to(conversation, {
-      id: id,
-      body: body,
-      createdAt: created_at.iso8601,
-      user: { id: user.id, name: user.name, avatarUrl: user.avatar_url },
-      attachments: attachments.map { |a| { id: a.id, filename: a.filename.to_s } }
-    })
+    ConversationChannel.broadcast_to(conversation, as_json_for_cable)
   end
 
   def touch_conversation_last_message_at
