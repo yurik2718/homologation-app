@@ -1,5 +1,6 @@
 import { usePage, Link, router } from "@inertiajs/react"
 import { useTranslation } from "react-i18next"
+import type { ColumnDef } from "@tanstack/react-table"
 import {
   FileText,
   FolderOpen,
@@ -10,21 +11,53 @@ import {
   AlertCircle,
 } from "lucide-react"
 import { AuthenticatedLayout } from "@/components/layout/AuthenticatedLayout"
+import { DataTable } from "@/components/data-table"
 import { StatsCard } from "@/components/admin/StatsCard"
 import { RequestsByMonthChart, RequestsByStatusChart } from "@/components/admin/Charts"
 import { StatusBadge } from "@/components/common/StatusBadge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { routes } from "@/lib/routes"
+import { formatDate } from "@/lib/utils"
 import type { SharedProps } from "@/types"
 import type { AdminDashboardProps, RequestListItem } from "@/types/pages"
 
 export default function AdminDashboard() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { stats, requestsByMonth, requestsByStatus, recentRequests, failedSyncs } =
     usePage<SharedProps & AdminDashboardProps>().props
 
+  const columns: ColumnDef<RequestListItem>[] = [
+    {
+      accessorKey: "subject",
+      header: t("requests.table.subject"),
+    },
+    {
+      accessorKey: "user",
+      header: t("requests.table.student"),
+      cell: ({ row }) => <span className="text-muted-foreground">{row.original.user.name}</span>,
+      enableSorting: false,
+    },
+    {
+      accessorKey: "status",
+      header: t("requests.table.status"),
+      cell: ({ row }) => <StatusBadge status={row.original.status} />,
+      enableSorting: false,
+    },
+    {
+      accessorKey: "createdAt",
+      header: t("requests.table.created"),
+      cell: ({ row }) => (
+        <span className="text-muted-foreground">
+          {formatDate(row.original.createdAt, "date", i18n.language)}
+        </span>
+      ),
+    },
+  ]
+
   return (
-    <AuthenticatedLayout>
+    <AuthenticatedLayout
+      breadcrumbs={[{ label: t("admin.dashboard") }]}
+    >
       <div className="space-y-6">
         <h1 className="text-2xl font-bold">{t("admin.dashboard")}</h1>
 
@@ -87,33 +120,13 @@ export default function AdminDashboard() {
             <CardTitle className="text-sm font-medium">{t("admin.recent_requests")}</CardTitle>
           </CardHeader>
           <CardContent className="p-0">
-            {/* Desktop table */}
-            <div className="hidden md:block overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b bg-muted/30">
-                    <th className="p-3 text-left font-medium">{t("requests.table.subject")}</th>
-                    <th className="p-3 text-left font-medium">{t("requests.table.student")}</th>
-                    <th className="p-3 text-left font-medium">{t("requests.table.status")}</th>
-                    <th className="p-3 text-left font-medium">{t("requests.table.created")}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {recentRequests.map((r) => (
-                    <RecentRequestRow key={r.id} request={r} />
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            {/* Mobile cards */}
-            <div className="md:hidden divide-y">
-              {recentRequests.map((r) => (
-                <RecentRequestCard key={r.id} request={r} />
-              ))}
-            </div>
-            {recentRequests.length === 0 && (
-              <p className="p-4 text-center text-sm text-muted-foreground">{t("requests.no_requests")}</p>
-            )}
+            <DataTable
+              columns={columns}
+              data={recentRequests}
+              onRowClick={(r) => router.visit(routes.request(r.id))}
+              showPagination={false}
+              renderMobileCard={(r) => <RecentRequestCard request={r} />}
+            />
           </CardContent>
         </Card>
       </div>
@@ -121,26 +134,13 @@ export default function AdminDashboard() {
   )
 }
 
-function RecentRequestRow({ request }: { request: RequestListItem }) {
-  const { i18n } = useTranslation()
-  return (
-    <tr className="border-b hover:bg-muted/30 cursor-pointer" onClick={() => router.visit(routes.request(request.id))}>
-      <td className="p-3">{request.subject}</td>
-      <td className="p-3 text-muted-foreground">{request.user.name}</td>
-      <td className="p-3">
-        <StatusBadge status={request.status} />
-      </td>
-      <td className="p-3 text-muted-foreground">
-        {new Date(request.createdAt).toLocaleDateString(i18n.language)}
-      </td>
-    </tr>
-  )
-}
-
 function RecentRequestCard({ request }: { request: RequestListItem }) {
   const { i18n } = useTranslation()
   return (
-    <div className="p-3">
+    <div
+      className="p-3 cursor-pointer"
+      onClick={() => router.visit(routes.request(request.id))}
+    >
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
           <p className="font-medium text-sm truncate">{request.subject}</p>
@@ -149,7 +149,7 @@ function RecentRequestCard({ request }: { request: RequestListItem }) {
         <StatusBadge status={request.status} />
       </div>
       <p className="mt-1 text-xs text-muted-foreground">
-        {new Date(request.createdAt).toLocaleDateString(i18n.language)}
+        {formatDate(request.createdAt, "date", i18n.language)}
       </p>
     </div>
   )

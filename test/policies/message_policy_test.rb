@@ -44,8 +44,8 @@ class MessagePolicyTest < ActiveSupport::TestCase
     refute MessagePolicy.new(@pedro, msg).create?
   end
 
-  test "coordinator cannot send message in teacher-student conversation directly" do
+  test "coordinator can send message in teacher-student conversation" do
     msg = @teacher_conversation.messages.build(user: @maria, body: "test")
-    refute MessagePolicy.new(@maria, msg).create?
+    assert MessagePolicy.new(@maria, msg).create?
   end
 end

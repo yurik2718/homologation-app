@@ -28,7 +28,9 @@
     "clear": "Clear",
     "name": "Name",
     "created_at": "Created",
-    "actions": "Actions"
+    "actions": "Actions",
+    "rows_per_page": "Rows per page",
+    "page_of": "Page {{page}} of {{total}}"
   },
   "auth": {
     "sign_in": "Sign In",
@@ -205,14 +207,17 @@
     "recent_requests": "Recent Requests",
     "no_users": "No users found"
   },
-  "inbox": {
-    "title": "Inbox",
+  "chats": {
+    "title": "Chats",
     "all": "All",
     "requests_filter": "Requests",
     "teacher_chats": "Teacher chats",
     "unread_only": "Unread only",
-    "search": "Search conversation...",
-    "no_conversations": "No conversations"
+    "search": "Search chat...",
+    "no_conversations": "No conversations",
+    "select_chat": "Select a chat to get started",
+    "your_messages": "Your messages",
+    "info": "Info"
   },
   "teachers": {
     "title": "Teachers",
@@ -270,7 +275,7 @@
   },
   "nav": {
     "dashboard": "Dashboard",
-    "inbox": "Inbox",
+    "chats": "Chats",
     "requests": "Requests",
     "all_requests": "All Requests",
     "my_requests": "My Requests",

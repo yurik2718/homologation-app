@@ -15,7 +15,7 @@ export interface AppFeatures {
   canConfirmPayment: boolean
   canManageUsers: boolean
   canManageTeachers: boolean
-  canAccessInbox: boolean
+  canAccessChats: boolean
   canAccessAdmin: boolean
   canCreateRequest: boolean
   canCreateLesson: boolean

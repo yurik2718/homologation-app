@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class InboxController < InertiaController
-  INBOX_INCLUDES = [
+class ChatsController < InertiaController
+  CHAT_INCLUDES = [
     :homologation_request, :teacher_student_link,
     :conversation_participants,
     teacher_student_link: [ :teacher, :student ],
@@ -9,32 +9,32 @@ class InboxController < InertiaController
   ].freeze
 
   def index
-    authorize :inbox
+    authorize :chats
 
-    conversations = Conversation.includes(INBOX_INCLUDES).order(last_message_at: :desc)
+    conversations = Conversation.includes(CHAT_INCLUDES).order(last_message_at: :desc)
 
-    render inertia: "inbox/Index", props: {
-      conversations: conversations.map { |c| inbox_conversation_json(c) }
+    render inertia: "chats/Index", props: {
+      conversations: conversations.map { |c| chat_conversation_json(c) }
     }
   end
 
   def show
     @conversation = Conversation
-      .includes(*INBOX_INCLUDES, homologation_request: :user)
+      .includes(*CHAT_INCLUDES, homologation_request: :user)
       .find(params[:id])
     authorize @conversation, :show?
 
-    conversations = Conversation.includes(INBOX_INCLUDES).order(last_message_at: :desc)
+    conversations = Conversation.includes(CHAT_INCLUDES).order(last_message_at: :desc)
 
-    render inertia: "inbox/Index", props: {
-      conversations: conversations.map { |c| inbox_conversation_json(c) },
-      selectedConversation: inbox_conversation_detail_json(@conversation)
+    render inertia: "chats/Index", props: {
+      conversations: conversations.map { |c| chat_conversation_json(c) },
+      selectedConversation: chat_conversation_detail_json(@conversation)
     }
   end
 
   private
 
-  def inbox_conversation_json(c)
+  def chat_conversation_json(c)
     last_msg = c.messages.max_by(&:created_at)
     {
       id: c.id,
@@ -46,8 +46,8 @@ class InboxController < InertiaController
     }
   end
 
-  def inbox_conversation_detail_json(c)
-    base = inbox_conversation_json(c)
+  def chat_conversation_detail_json(c)
+    base = chat_conversation_json(c)
     base[:messages] = c.messages.sort_by(&:created_at).map(&:as_json_for_cable)
 
     if c.homologation_request_id?

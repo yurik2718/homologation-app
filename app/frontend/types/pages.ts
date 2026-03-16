@@ -109,7 +109,7 @@ export interface ChatShowProps {
   conversation: import("@/types/models.d").ConversationFull
 }
 
-// inbox/Index + inbox/Show
+// chats/Index + chats/Show
 export interface InboxConversation {
   id: number
   type: "request" | "teacher_student"

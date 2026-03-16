@@ -51,8 +51,8 @@ app/
 ├── jobs/            # AmoCrmSyncJob, NotificationJob (Solid Queue)
 ├── services/        # AmoCrmClient (Faraday)
 ├── frontend/
-│   ├── components/  # layout/, ui/ (shadcn), common/, chat/, documents/, inbox/, teachers/, lessons/
-│   ├── pages/       # auth/, profile/, dashboard/, requests/, inbox/, teachers/, calendar/, chat/, admin/
+│   ├── components/  # layout/, ui/ (shadcn), common/, chat/, documents/, chats/, teachers/, lessons/
+│   ├── pages/       # auth/, profile/, dashboard/, requests/, chats/, teachers/, calendar/, chat/, admin/
 │   ├── hooks/       # useActionCable, useFileUpload
 │   ├── lib/         # routes.ts, utils.ts, i18n.ts
 │   ├── locales/     # es.json, en.json, ru.json
@@ -173,11 +173,11 @@ end
 | Security, encryption, GDPR, rate limiting | `docs/12_SECURITY_GDPR.md` |
 | Teachers, lessons, or calendar | `docs/13_LESSONS_CALENDAR.md` |
 | Minors, guardians, or guardian invoicing | `docs/02_DATABASE_SCHEMA.md` (Minor/Guardian section) |
-| Building inbox or teacher management | `docs/14_COORDINATOR_WORKSPACE.md` |
+| Building chats or teacher management | `docs/14_COORDINATOR_WORKSPACE.md` |
 | Mobile/responsive patterns and examples | `docs/15_MOBILE_PATTERNS.md` |
 | Writing tests or test conventions | `docs/16_TESTING.md` |
 | Questioning a design decision | `docs/00_PRINCIPLES.md` + `docs/01_ARCHITECTURE.md` |
 
 ## Banned Patterns
 
-`.as_json` · `react-hook-form` · `zod` · `<a href>` · `fetch()`/`axios` · `window.location` · hardcoded URL paths · role checks in React · `@tanstack/react-table` · Tiptap · zustand · dark mode · AmoCRM sync before `payment_confirmed` · skipping `authorize` · skipping tests
+`.as_json` · `react-hook-form` · `zod` · `<a href>` · `fetch()`/`axios` · `window.location` · hardcoded URL paths · role checks in React · Tiptap · zustand · dark mode · AmoCRM sync before `payment_confirmed` · skipping `authorize` · skipping tests

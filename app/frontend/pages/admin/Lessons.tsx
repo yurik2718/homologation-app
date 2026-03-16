@@ -1,6 +1,9 @@
 import { useState } from "react"
 import { usePage, router } from "@inertiajs/react"
 import { useTranslation } from "react-i18next"
+import type { ColumnDef } from "@tanstack/react-table"
+import { AuthenticatedLayout } from "@/components/layout/AuthenticatedLayout"
+import { DataTable } from "@/components/data-table"
 import { Badge } from "@/components/ui/badge"
 import {
   Select,
@@ -11,74 +14,13 @@ import {
 } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import { routes } from "@/lib/routes"
+import { LESSON_STATUS_COLORS } from "@/lib/colors"
+import { formatDate } from "@/lib/utils"
 import type { SharedProps } from "@/types"
 import type { AdminLessonsProps, LessonItem } from "@/types/pages"
 
-const STATUS_COLORS: Record<string, string> = {
-  scheduled: "bg-blue-100 text-blue-700",
-  completed: "bg-gray-100 text-gray-600",
-  cancelled: "bg-red-50 text-red-600",
-}
-
-function LessonRow({ lesson }: { lesson: LessonItem }) {
-  const { t, i18n } = useTranslation()
-  const date = new Date(lesson.scheduledAt)
-
-  return (
-    <tr className="border-b hover:bg-muted/30">
-      <td className="p-3 text-sm">
-        {date.toLocaleDateString(i18n.language, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
-      </td>
-      <td className="p-3 text-sm">{lesson.teacherName}</td>
-      <td className="p-3 text-sm">{lesson.studentName}</td>
-      <td className="p-3 text-sm">{t("lessons.duration_minutes", { minutes: lesson.durationMinutes })}</td>
-      <td className="p-3">
-        <Badge variant="secondary" className={STATUS_COLORS[lesson.status] ?? ""}>
-          {t(`lessons.status.${lesson.status}`)}
-        </Badge>
-      </td>
-      <td className="p-3 text-sm">
-        {lesson.meetingLinkReady ? (
-          <span className="text-green-600">{t("calendar.link_ready")}</span>
-        ) : (
-          <span className="text-yellow-600">{t("calendar.link_needed")}</span>
-        )}
-      </td>
-    </tr>
-  )
-}
-
-function LessonCard({ lesson }: { lesson: LessonItem }) {
-  const { t, i18n } = useTranslation()
-  const date = new Date(lesson.scheduledAt)
-
-  return (
-    <div className="border rounded-lg p-4 space-y-2 min-h-[44px]">
-      <div className="flex items-start justify-between gap-2">
-        <div className="text-sm font-medium">
-          {date.toLocaleDateString(i18n.language, { weekday: "short", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
-        </div>
-        <Badge variant="secondary" className={STATUS_COLORS[lesson.status] ?? ""}>
-          {t(`lessons.status.${lesson.status}`)}
-        </Badge>
-      </div>
-      <div className="text-sm text-muted-foreground">
-        {t("lessons.teacher")}: {lesson.teacherName} · {t("lessons.student")}: {lesson.studentName}
-      </div>
-      <div className="text-sm text-muted-foreground">
-        {t("lessons.duration_minutes", { minutes: lesson.durationMinutes })} ·{" "}
-        {lesson.meetingLinkReady ? (
-          <span className="text-green-600">{t("calendar.link_ready")}</span>
-        ) : (
-          <span className="text-yellow-600">{t("calendar.link_needed")}</span>
-        )}
-      </div>
-    </div>
-  )
-}
-
 export default function AdminLessons() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { lessons, teachers, students } = usePage<SharedProps & AdminLessonsProps>().props
 
   const [teacherFilter, setTeacherFilter] = useState("")
@@ -100,78 +42,132 @@ export default function AdminLessons() {
     router.get(routes.admin.lessons, {}, { preserveState: true })
   }
 
+  const columns: ColumnDef<LessonItem>[] = [
+    {
+      accessorKey: "scheduledAt",
+      header: t("lessons.date"),
+      cell: ({ row }) => formatDate(row.original.scheduledAt, "datetime", i18n.language),
+    },
+    {
+      accessorKey: "teacherName",
+      header: t("lessons.teacher"),
+    },
+    {
+      accessorKey: "studentName",
+      header: t("lessons.student"),
+    },
+    {
+      id: "duration",
+      header: t("lessons.duration"),
+      cell: ({ row }) => t("lessons.duration_minutes", { minutes: row.original.durationMinutes }),
+      enableSorting: false,
+    },
+    {
+      accessorKey: "status",
+      header: t("lessons.status_label"),
+      enableSorting: false,
+      cell: ({ row }) => (
+        <Badge variant="secondary" className={LESSON_STATUS_COLORS[row.original.status] ?? ""}>
+          {t(`lessons.status.${row.original.status}`)}
+        </Badge>
+      ),
+    },
+    {
+      id: "meetingLink",
+      header: t("lessons.meeting_link"),
+      enableSorting: false,
+      cell: ({ row }) =>
+        row.original.meetingLinkReady ? (
+          <span className="text-green-600">{t("calendar.link_ready")}</span>
+        ) : (
+          <span className="text-yellow-600">{t("calendar.link_needed")}</span>
+        ),
+    },
+  ]
+
   return (
-    <div className="space-y-4">
-      <h1 className="text-xl font-bold">{t("nav.all_lessons")}</h1>
+    <AuthenticatedLayout
+      breadcrumbs={[
+        { label: t("nav.admin"), href: routes.admin.root },
+        { label: t("nav.all_lessons") },
+      ]}
+    >
+      <div className="space-y-4">
+        <h1 className="text-xl font-bold">{t("nav.all_lessons")}</h1>
 
-      {/* Filters */}
-      <div className="flex flex-wrap gap-2 items-end">
-        <Select value={teacherFilter} onValueChange={setTeacherFilter}>
-          <SelectTrigger className="w-40 min-h-[44px]">
-            <SelectValue placeholder={t("lessons.teacher")} />
-          </SelectTrigger>
-          <SelectContent>
-            {teachers.map((u) => (
-              <SelectItem key={u.id} value={String(u.id)}>{u.name}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <DataTable
+          columns={columns}
+          data={lessons}
+          renderMobileCard={(lesson) => <LessonCard lesson={lesson} />}
+          toolbarContent={
+            <div className="flex flex-wrap gap-2 items-end">
+              <Select value={teacherFilter} onValueChange={setTeacherFilter}>
+                <SelectTrigger className="w-40 min-h-[44px]">
+                  <SelectValue placeholder={t("lessons.teacher")} />
+                </SelectTrigger>
+                <SelectContent>
+                  {teachers.map((u) => (
+                    <SelectItem key={u.id} value={String(u.id)}>{u.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
 
-        <Select value={studentFilter} onValueChange={setStudentFilter}>
-          <SelectTrigger className="w-40 min-h-[44px]">
-            <SelectValue placeholder={t("lessons.student")} />
-          </SelectTrigger>
-          <SelectContent>
-            {students.map((u) => (
-              <SelectItem key={u.id} value={String(u.id)}>{u.name}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+              <Select value={studentFilter} onValueChange={setStudentFilter}>
+                <SelectTrigger className="w-40 min-h-[44px]">
+                  <SelectValue placeholder={t("lessons.student")} />
+                </SelectTrigger>
+                <SelectContent>
+                  {students.map((u) => (
+                    <SelectItem key={u.id} value={String(u.id)}>{u.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
 
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-36 min-h-[44px]">
-            <SelectValue placeholder={t("lessons.status_label")} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="scheduled">{t("lessons.status.scheduled")}</SelectItem>
-            <SelectItem value="completed">{t("lessons.status.completed")}</SelectItem>
-            <SelectItem value="cancelled">{t("lessons.status.cancelled")}</SelectItem>
-          </SelectContent>
-        </Select>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-36 min-h-[44px]">
+                  <SelectValue placeholder={t("lessons.status_label")} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="scheduled">{t("lessons.status.scheduled")}</SelectItem>
+                  <SelectItem value="completed">{t("lessons.status.completed")}</SelectItem>
+                  <SelectItem value="cancelled">{t("lessons.status.cancelled")}</SelectItem>
+                </SelectContent>
+              </Select>
 
-        <Button onClick={applyFilters} size="sm" className="min-h-[44px]">{t("common.filter")}</Button>
-        <Button onClick={clearFilters} variant="ghost" size="sm" className="min-h-[44px]">{t("common.clear")}</Button>
+              <Button onClick={applyFilters} size="sm" className="min-h-[44px]">{t("common.filter")}</Button>
+              <Button onClick={clearFilters} variant="ghost" size="sm" className="min-h-[44px]">{t("common.clear")}</Button>
+            </div>
+          }
+        />
       </div>
+    </AuthenticatedLayout>
+  )
+}
 
-      {lessons.length === 0 ? (
-        <p className="text-sm text-muted-foreground py-8 text-center">{t("lessons.no_lessons")}</p>
-      ) : (
-        <>
-          {/* Desktop table */}
-          <div className="hidden md:block border rounded-lg overflow-hidden">
-            <table className="w-full text-sm">
-              <thead className="bg-muted/30">
-                <tr>
-                  <th className="text-left p-3 font-medium">{t("lessons.date")}</th>
-                  <th className="text-left p-3 font-medium">{t("lessons.teacher")}</th>
-                  <th className="text-left p-3 font-medium">{t("lessons.student")}</th>
-                  <th className="text-left p-3 font-medium">{t("lessons.duration")}</th>
-                  <th className="text-left p-3 font-medium">{t("lessons.status.scheduled")}</th>
-                  <th className="text-left p-3 font-medium">{t("lessons.meeting_link")}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {lessons.map((l) => <LessonRow key={l.id} lesson={l} />)}
-              </tbody>
-            </table>
-          </div>
+function LessonCard({ lesson }: { lesson: LessonItem }) {
+  const { t, i18n } = useTranslation()
 
-          {/* Mobile cards */}
-          <div className="md:hidden space-y-3">
-            {lessons.map((l) => <LessonCard key={l.id} lesson={l} />)}
-          </div>
-        </>
-      )}
+  return (
+    <div className="border rounded-lg p-4 space-y-2 min-h-[44px]">
+      <div className="flex items-start justify-between gap-2">
+        <div className="text-sm font-medium">
+          {formatDate(lesson.scheduledAt, "datetime", i18n.language)}
+        </div>
+        <Badge variant="secondary" className={LESSON_STATUS_COLORS[lesson.status] ?? ""}>
+          {t(`lessons.status.${lesson.status}`)}
+        </Badge>
+      </div>
+      <div className="text-sm text-muted-foreground">
+        {t("lessons.teacher")}: {lesson.teacherName} · {t("lessons.student")}: {lesson.studentName}
+      </div>
+      <div className="text-sm text-muted-foreground">
+        {t("lessons.duration_minutes", { minutes: lesson.durationMinutes })} ·{" "}
+        {lesson.meetingLinkReady ? (
+          <span className="text-green-600">{t("calendar.link_ready")}</span>
+        ) : (
+          <span className="text-yellow-600">{t("calendar.link_needed")}</span>
+        )}
+      </div>
     </div>
   )
 }

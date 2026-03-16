@@ -1,12 +1,15 @@
 import { useState } from "react"
 import { Link, router, usePage } from "@inertiajs/react"
 import { useTranslation } from "react-i18next"
+import type { ColumnDef } from "@tanstack/react-table"
 import { Plus } from "lucide-react"
 import { AuthenticatedLayout } from "@/components/layout/AuthenticatedLayout"
+import { DataTable } from "@/components/data-table"
 import { StatusBadge } from "@/components/common/StatusBadge"
 import { FormattedDate } from "@/components/common/FormattedDate"
+import { SearchInput } from "@/components/common/SearchInput"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { Card, CardContent } from "@/components/ui/card"
 import {
   Select,
   SelectContent,
@@ -14,23 +17,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import { Card, CardContent } from "@/components/ui/card"
 import { routes } from "@/lib/routes"
+import { STATUSES } from "@/lib/colors"
 import type { SharedProps } from "@/types/index"
 import type { RequestsIndexProps, RequestListItem } from "@/types/pages"
-
-const STATUSES = [
-  "draft", "submitted", "in_review", "awaiting_reply",
-  "awaiting_payment", "payment_confirmed", "in_progress", "resolved", "closed",
-]
 
 export default function RequestsIndex() {
   const { t } = useTranslation()
@@ -45,8 +35,40 @@ export default function RequestsIndex() {
     return matchSearch && matchStatus
   })
 
+  const columns: ColumnDef<RequestListItem>[] = [
+    {
+      accessorKey: "subject",
+      header: t("requests.table.subject"),
+      cell: ({ row }) => <span className="font-medium">{row.original.subject}</span>,
+    },
+    {
+      accessorKey: "id",
+      header: t("requests.table.id"),
+      cell: ({ row }) => <span className="text-muted-foreground">#{row.original.id}</span>,
+      enableSorting: false,
+    },
+    {
+      accessorKey: "createdAt",
+      header: t("requests.table.created"),
+      cell: ({ row }) => <FormattedDate date={row.original.createdAt} />,
+    },
+    {
+      accessorKey: "updatedAt",
+      header: t("requests.table.last_activity"),
+      cell: ({ row }) => <FormattedDate date={row.original.updatedAt} />,
+    },
+    {
+      accessorKey: "status",
+      header: t("requests.table.status"),
+      cell: ({ row }) => <StatusBadge status={row.original.status} />,
+      enableSorting: false,
+    },
+  ]
+
   return (
-    <AuthenticatedLayout>
+    <AuthenticatedLayout
+      breadcrumbs={[{ label: t("nav.requests") }]}
+    >
       <div className="space-y-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h1 className="text-2xl font-bold">{t("requests.title")}</h1>
@@ -60,73 +82,37 @@ export default function RequestsIndex() {
           )}
         </div>
 
-        {/* Filters */}
-        <div className="flex flex-col gap-2 sm:flex-row">
-          <Input
-            placeholder={t("common.search")}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="sm:max-w-xs"
-          />
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="sm:w-48">
-              <SelectValue placeholder={t("requests.table.status_filter")} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">{t("common.filter")}</SelectItem>
-              {STATUSES.map((s) => (
-                <SelectItem key={s} value={s}>
-                  {t(`requests.status.${s}`)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        {filtered.length === 0 ? (
-          <p className="text-muted-foreground py-8 text-center">
-            {t("requests.no_requests")}
-          </p>
-        ) : (
-          <>
-            {/* Desktop table */}
-            <div className="hidden md:block rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>{t("requests.table.subject")}</TableHead>
-                    <TableHead className="w-16">{t("requests.table.id")}</TableHead>
-                    <TableHead>{t("requests.table.created")}</TableHead>
-                    <TableHead>{t("requests.table.last_activity")}</TableHead>
-                    <TableHead>{t("requests.table.status")}</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filtered.map((r) => (
-                    <TableRow
-                      key={r.id}
-                      className="cursor-pointer hover:bg-muted/50"
-                      onClick={() => router.visit(routes.request(r.id))}
-                    >
-                      <TableCell className="font-medium">{r.subject}</TableCell>
-                      <TableCell className="text-muted-foreground">#{r.id}</TableCell>
-                      <TableCell><FormattedDate date={r.createdAt} /></TableCell>
-                      <TableCell><FormattedDate date={r.updatedAt} /></TableCell>
-                      <TableCell><StatusBadge status={r.status} /></TableCell>
-                    </TableRow>
+        <DataTable
+          columns={columns}
+          data={filtered}
+          onRowClick={(r) => router.visit(routes.request(r.id))}
+          searchColumn="subject"
+          searchValue={search}
+          renderMobileCard={(r) => <RequestCard request={r} />}
+          toolbarContent={
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <SearchInput
+                value={search}
+                onChange={setSearch}
+                placeholder={t("common.search")}
+                className="sm:max-w-xs"
+              />
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="sm:w-48">
+                  <SelectValue placeholder={t("requests.table.status_filter")} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">{t("common.filter")}</SelectItem>
+                  {STATUSES.map((s) => (
+                    <SelectItem key={s} value={s}>
+                      {t(`requests.status.${s}`)}
+                    </SelectItem>
                   ))}
-                </TableBody>
-              </Table>
+                </SelectContent>
+              </Select>
             </div>
-
-            {/* Mobile card list */}
-            <div className="md:hidden space-y-2">
-              {filtered.map((r) => (
-                <RequestCard key={r.id} request={r} />
-              ))}
-            </div>
-          </>
-        )}
+          }
+        />
       </div>
     </AuthenticatedLayout>
   )

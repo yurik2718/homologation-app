@@ -3,6 +3,8 @@ import { Calendar, ExternalLink, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { LESSON_STATUS_COLORS } from "@/lib/colors"
+import { formatDate } from "@/lib/utils"
 import type { LessonItem } from "@/types/pages"
 
 interface LessonListProps {
@@ -12,17 +14,8 @@ interface LessonListProps {
 
 function LessonRow({ lesson }: { lesson: LessonItem }) {
   const { t, i18n } = useTranslation()
-  const date = new Date(lesson.scheduledAt)
-  const formattedDate = date.toLocaleDateString(i18n.language, {
-    weekday: "short",
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  })
-  const formattedTime = date.toLocaleTimeString(i18n.language, {
-    hour: "2-digit",
-    minute: "2-digit",
-  })
+  const formattedDate = formatDate(lesson.scheduledAt, "date", i18n.language)
+  const formattedTime = formatDate(lesson.scheduledAt, "time", i18n.language)
 
   return (
     <Card>
@@ -37,14 +30,9 @@ function LessonRow({ lesson }: { lesson: LessonItem }) {
               <User className="h-4 w-4 shrink-0" />
               <span>{t("lessons.teacher")}: {lesson.teacherName}</span>
             </div>
-            {lesson.status === "completed" && (
-              <Badge variant="secondary" className="bg-gray-100 text-gray-600 text-xs">
-                {t("lessons.status.completed")}
-              </Badge>
-            )}
-            {lesson.status === "cancelled" && (
-              <Badge variant="secondary" className="bg-red-50 text-red-600 text-xs">
-                {t("lessons.status.cancelled")}
+            {(lesson.status === "completed" || lesson.status === "cancelled") && (
+              <Badge variant="secondary" className={`${LESSON_STATUS_COLORS[lesson.status]} text-xs`}>
+                {t(`lessons.status.${lesson.status}`)}
               </Badge>
             )}
           </div>

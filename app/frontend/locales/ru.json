@@ -28,7 +28,9 @@
     "clear": "Сбросить",
     "name": "Имя",
     "created_at": "Создан",
-    "actions": "Действия"
+    "actions": "Действия",
+    "rows_per_page": "Строк на странице",
+    "page_of": "Страница {{page}} из {{total}}"
   },
   "auth": {
     "sign_in": "Войти",
@@ -205,14 +207,17 @@
     "recent_requests": "Последние заявки",
     "no_users": "Пользователи не найдены"
   },
-  "inbox": {
-    "title": "Входящие",
+  "chats": {
+    "title": "Чаты",
     "all": "Все",
     "requests_filter": "Заявки",
     "teacher_chats": "Чаты с учителями",
     "unread_only": "Только непрочитанные",
     "search": "Поиск по чатам...",
-    "no_conversations": "Нет разговоров"
+    "no_conversations": "Нет разговоров",
+    "select_chat": "Выберите чат, чтобы начать",
+    "your_messages": "Ваши сообщения",
+    "info": "Инфо"
   },
   "teachers": {
     "title": "Учителя",
@@ -270,7 +275,7 @@
   },
   "nav": {
     "dashboard": "Главная",
-    "inbox": "Входящие",
+    "chats": "Чаты",
     "requests": "Заявки",
     "all_requests": "Все заявки",
     "my_requests": "Мои заявки",

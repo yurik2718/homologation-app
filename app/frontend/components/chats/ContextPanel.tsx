@@ -170,7 +170,7 @@ export function ContextPanel({ conversation }: ContextPanelProps) {
   const ctx = conversation.context
 
   return (
-    <div className="h-full overflow-y-auto border-l">
+    <div className="overflow-y-auto">
       {ctx.type === "request" ? (
         <RequestContext context={ctx} />
       ) : (

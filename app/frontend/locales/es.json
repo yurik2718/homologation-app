@@ -28,7 +28,9 @@
     "clear": "Limpiar",
     "name": "Nombre",
     "created_at": "Creado",
-    "actions": "Acciones"
+    "actions": "Acciones",
+    "rows_per_page": "Filas por página",
+    "page_of": "Página {{page}} de {{total}}"
   },
   "auth": {
     "sign_in": "Iniciar sesión",
@@ -205,14 +207,17 @@
     "recent_requests": "Solicitudes recientes",
     "no_users": "No se encontraron usuarios"
   },
-  "inbox": {
-    "title": "Bandeja de entrada",
+  "chats": {
+    "title": "Chats",
     "all": "Todos",
     "requests_filter": "Solicitudes",
     "teacher_chats": "Chats de profesores",
     "unread_only": "Solo sin leer",
-    "search": "Buscar conversación...",
-    "no_conversations": "No hay conversaciones"
+    "search": "Buscar chat...",
+    "no_conversations": "No hay conversaciones",
+    "select_chat": "Selecciona un chat para empezar",
+    "your_messages": "Tus mensajes",
+    "info": "Info"
   },
   "teachers": {
     "title": "Profesores",
@@ -270,7 +275,7 @@
   },
   "nav": {
     "dashboard": "Inicio",
-    "inbox": "Bandeja de entrada",
+    "chats": "Chats",
     "requests": "Solicitudes",
     "all_requests": "Todas las solicitudes",
     "my_requests": "Mis solicitudes",

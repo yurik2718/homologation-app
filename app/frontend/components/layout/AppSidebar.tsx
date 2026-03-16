@@ -2,7 +2,7 @@ import { Link, usePage } from "@inertiajs/react"
 import { useTranslation } from "react-i18next"
 import {
   LayoutDashboard,
-  Inbox,
+  MessagesSquare,
   FileText,
   FilePlus,
   Users,
@@ -47,10 +47,10 @@ export function AppSidebar() {
       label: t("nav.dashboard"),
     },
     {
-      show: features.canAccessInbox,
-      href: routes.inbox,
-      icon: Inbox,
-      label: t("nav.inbox"),
+      show: features.canAccessChats,
+      href: routes.chats,
+      icon: MessagesSquare,
+      label: t("nav.chats"),
     },
     {
       show: features.canSeeAllRequests,

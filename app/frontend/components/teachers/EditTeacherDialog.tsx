@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
 import {
   Select,
   SelectContent,
@@ -19,14 +20,13 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { routes } from "@/lib/routes"
+import { TEACHER_LEVELS } from "@/lib/constants"
 import type { TeacherItem } from "@/types/pages"
 
 interface EditTeacherDialogProps {
   teacher: TeacherItem
   trigger: React.ReactNode
 }
-
-const LEVELS = ["junior", "mid", "senior", "native"] as const
 
 export function EditTeacherDialog({ teacher, trigger }: EditTeacherDialogProps) {
   const { t } = useTranslation()
@@ -63,7 +63,7 @@ export function EditTeacherDialog({ teacher, trigger }: EditTeacherDialogProps) 
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {LEVELS.map((l) => (
+                {TEACHER_LEVELS.map((l) => (
                   <SelectItem key={l} value={l}>
                     {l}
                   </SelectItem>
@@ -88,11 +88,11 @@ export function EditTeacherDialog({ teacher, trigger }: EditTeacherDialogProps) 
 
           <div className="space-y-1">
             <Label htmlFor="bio">{t("teachers.bio")}</Label>
-            <textarea
+            <Textarea
               id="bio"
-              className="w-full rounded-md border bg-background px-3 py-2 text-sm min-h-[80px] resize-none focus:outline-none focus:ring-2 focus:ring-ring"
               value={data.bio}
               onChange={(e) => setData("bio", e.target.value)}
+              className="min-h-[80px] resize-none"
             />
           </div>
 

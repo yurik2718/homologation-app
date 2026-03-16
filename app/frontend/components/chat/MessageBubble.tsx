@@ -1,6 +1,5 @@
 import { FormattedDate } from "@/components/common/FormattedDate"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { cn, getInitials } from "@/lib/utils"
+import { cn } from "@/lib/utils"
 import type { ChatMessage } from "@/types/models.d"
 
 interface MessageBubbleProps {
@@ -9,40 +8,40 @@ interface MessageBubbleProps {
 }
 
 export function MessageBubble({ message, isOwn }: MessageBubbleProps) {
-  const initials = getInitials(message.user.name)
-
   return (
-    <div className={cn("flex gap-2", isOwn && "flex-row-reverse")}>
-      <Avatar className="h-8 w-8 shrink-0">
-        <AvatarFallback className="text-xs">{initials}</AvatarFallback>
-      </Avatar>
-      <div className={cn("max-w-[75%] space-y-1", isOwn && "items-end")}>
-        <div className={cn("flex items-baseline gap-2", isOwn && "flex-row-reverse")}>
-          <span className="text-xs font-medium">{message.user.name}</span>
-          <span className="text-xs text-muted-foreground">
-            <FormattedDate date={message.createdAt} />
-          </span>
+    <div
+      className={cn(
+        "chat-box max-w-72 break-words px-3 py-2 shadow-lg",
+        isOwn
+          ? "self-end rounded-[16px_16px_0_16px] bg-primary/90 text-primary-foreground/75"
+          : "self-start rounded-[16px_16px_16px_0] bg-muted"
+      )}
+    >
+      {!isOwn && (
+        <span className="mb-0.5 block text-xs font-medium text-foreground/80">
+          {message.user.name}
+        </span>
+      )}
+      <p className="whitespace-pre-wrap">{message.body}</p>
+      {message.attachments.length > 0 && (
+        <div className="mt-1 flex flex-wrap gap-1">
+          {message.attachments.map((a) => (
+            <span key={a.id} className="rounded bg-background/20 px-2 py-0.5 text-xs">
+              {a.filename}
+            </span>
+          ))}
         </div>
-        <div
-          className={cn(
-            "rounded-lg px-3 py-2 text-sm",
-            isOwn
-              ? "bg-primary text-primary-foreground"
-              : "bg-muted",
-          )}
-        >
-          <p className="whitespace-pre-wrap break-words">{message.body}</p>
-        </div>
-        {message.attachments.length > 0 && (
-          <div className="flex flex-wrap gap-1">
-            {message.attachments.map((a) => (
-              <span key={a.id} className="rounded bg-muted px-2 py-0.5 text-xs">
-                {a.filename}
-              </span>
-            ))}
-          </div>
+      )}
+      <span
+        className={cn(
+          "mt-1 block text-xs font-light italic",
+          isOwn
+            ? "text-end text-primary-foreground/85"
+            : "text-foreground/75"
         )}
-      </div>
+      >
+        <FormattedDate date={message.createdAt} mode="time" />
+      </span>
     </div>
   )
 }

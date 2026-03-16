@@ -1,21 +1,13 @@
 import { useTranslation } from "react-i18next"
-import { formatDistanceToNow } from "date-fns"
-import { es, enUS, ru } from "date-fns/locale"
-
-const DATE_LOCALES = { es, en: enUS, ru }
+import { formatDate, type DateMode } from "@/lib/utils"
 
 interface FormattedDateProps {
   date: string
+  mode?: DateMode
 }
 
-export function FormattedDate({ date }: FormattedDateProps) {
+export function FormattedDate({ date, mode = "relative" }: FormattedDateProps) {
   const { i18n } = useTranslation()
-  const locale =
-    DATE_LOCALES[i18n.language as keyof typeof DATE_LOCALES] ?? es
 
-  return (
-    <span>
-      {formatDistanceToNow(new Date(date), { addSuffix: true, locale })}
-    </span>
-  )
+  return <span>{formatDate(date, mode, i18n.language)}</span>
 }

@@ -52,7 +52,7 @@ class ApplicationController < ActionController::Base
       canConfirmPayment: user.coordinator? || user.super_admin?,
       canManageUsers: user.super_admin?,
       canManageTeachers: user.coordinator? || user.super_admin?,
-      canAccessInbox: user.coordinator? || user.super_admin?,
+      canAccessChats: user.coordinator? || user.super_admin?,
       canAccessAdmin: user.super_admin?,
       canCreateRequest: user.student?,
       canCreateLesson: user.teacher? || user.coordinator? || user.super_admin?,

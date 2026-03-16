@@ -1,8 +1,11 @@
 import { useState } from "react"
 import { usePage, router, useForm } from "@inertiajs/react"
 import { useTranslation } from "react-i18next"
+import type { ColumnDef } from "@tanstack/react-table"
 import { Plus, Trash2, X } from "lucide-react"
 import { AuthenticatedLayout } from "@/components/layout/AuthenticatedLayout"
+import { DataTable } from "@/components/data-table"
+import { ConfirmDialog } from "@/components/common/ConfirmDialog"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
@@ -14,38 +17,93 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
 import { routes } from "@/lib/routes"
+import { ROLE_COLORS } from "@/lib/colors"
+import { ALL_ROLES } from "@/lib/constants"
+import { formatDate } from "@/lib/utils"
 import type { SharedProps } from "@/types"
 import type { AdminUsersProps, AdminUser } from "@/types/pages"
 
-const ROLE_COLORS: Record<string, string> = {
-  super_admin: "bg-red-100 text-red-700",
-  coordinator: "bg-blue-100 text-blue-700",
-  teacher: "bg-green-100 text-green-700",
-  student: "bg-gray-100 text-gray-600",
-}
-
-const ALL_ROLES = ["super_admin", "coordinator", "teacher", "student"]
-
 export default function AdminUsers() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { users } = usePage<SharedProps & AdminUsersProps>().props
   const [showAddUser, setShowAddUser] = useState(false)
   const [editingUser, setEditingUser] = useState<AdminUser | null>(null)
   const [deactivatingUser, setDeactivatingUser] = useState<AdminUser | null>(null)
 
+  const columns: ColumnDef<AdminUser>[] = [
+    {
+      accessorKey: "name",
+      header: t("common.name"),
+      cell: ({ row }) => <span className="font-medium">{row.original.name}</span>,
+    },
+    {
+      accessorKey: "email",
+      header: t("auth.email"),
+      cell: ({ row }) => <span className="text-muted-foreground">{row.original.email}</span>,
+    },
+    {
+      accessorKey: "roles",
+      header: t("admin.user_management.roles"),
+      enableSorting: false,
+      cell: ({ row }) => {
+        const user = row.original
+        return (
+          <div>
+            <div className="flex flex-wrap gap-1">
+              {user.roles.map((role) => (
+                <RoleBadge key={role} role={role} userId={user.id} />
+              ))}
+            </div>
+            {!user.discarded && <AssignRoleButtons user={user} />}
+          </div>
+        )
+      },
+    },
+    {
+      accessorKey: "createdAt",
+      header: t("common.created_at"),
+      cell: ({ row }) => (
+        <span className="text-muted-foreground">
+          {formatDate(row.original.createdAt, "date", i18n.language)}
+        </span>
+      ),
+    },
+    {
+      id: "actions",
+      header: t("common.actions"),
+      enableSorting: false,
+      cell: ({ row }) => {
+        const user = row.original
+        if (user.discarded) {
+          return <Badge variant="secondary">{t("admin.user_management.deactivated")}</Badge>
+        }
+        return (
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={() => setEditingUser(user)} className="min-h-[36px]">
+              {t("admin.user_management.edit_user")}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setDeactivatingUser(user)}
+              className="min-h-[36px] text-destructive border-destructive/30 hover:bg-destructive/10"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+        )
+      },
+    },
+  ]
+
   return (
-    <AuthenticatedLayout>
+    <AuthenticatedLayout
+      breadcrumbs={[
+        { label: t("nav.admin"), href: routes.admin.root },
+        { label: t("admin.users") },
+      ]}
+    >
       <div className="space-y-6">
         <div className="flex items-center justify-between gap-2">
           <h1 className="text-2xl font-bold">{t("admin.users")}</h1>
@@ -55,45 +113,18 @@ export default function AdminUsers() {
           </Button>
         </div>
 
-        {/* Desktop table */}
-        <div className="hidden md:block overflow-x-auto rounded-lg border">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b bg-muted/30">
-                <th className="p-3 text-left font-medium">{t("common.name")}</th>
-                <th className="p-3 text-left font-medium">{t("auth.email")}</th>
-                <th className="p-3 text-left font-medium">{t("admin.user_management.roles")}</th>
-                <th className="p-3 text-left font-medium">{t("common.created_at")}</th>
-                <th className="p-3 text-left font-medium">{t("common.actions")}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((user) => (
-                <UserRow
-                  key={user.id}
-                  user={user}
-                  onEdit={() => setEditingUser(user)}
-                  onDeactivate={() => setDeactivatingUser(user)}
-                />
-              ))}
-            </tbody>
-          </table>
-          {users.length === 0 && (
-            <p className="p-6 text-center text-muted-foreground">{t("admin.no_users")}</p>
-          )}
-        </div>
-
-        {/* Mobile cards */}
-        <div className="md:hidden space-y-3">
-          {users.map((user) => (
+        <DataTable
+          columns={columns}
+          data={users}
+          searchColumn="name"
+          renderMobileCard={(user) => (
             <UserCard
-              key={user.id}
               user={user}
               onEdit={() => setEditingUser(user)}
               onDeactivate={() => setDeactivatingUser(user)}
             />
-          ))}
-        </div>
+          )}
+        />
 
         <AddUserDialog open={showAddUser} onClose={() => setShowAddUser(false)} />
 
@@ -101,12 +132,20 @@ export default function AdminUsers() {
           <EditUserDialog user={editingUser} onClose={() => setEditingUser(null)} />
         )}
 
-        {deactivatingUser && (
-          <DeactivateDialog
-            user={deactivatingUser}
-            onClose={() => setDeactivatingUser(null)}
-          />
-        )}
+        <ConfirmDialog
+          open={!!deactivatingUser}
+          onOpenChange={(open) => !open && setDeactivatingUser(null)}
+          title={t("admin.user_management.deactivate")}
+          description={t("admin.user_management.deactivate_confirm", { name: deactivatingUser?.name })}
+          onConfirm={() => {
+            if (deactivatingUser) {
+              router.delete(routes.admin.user(deactivatingUser.id), {
+                onSuccess: () => setDeactivatingUser(null),
+              })
+            }
+          }}
+          destructive
+        />
       </div>
     </AuthenticatedLayout>
   )
@@ -119,12 +158,13 @@ function RoleBadge({ role, userId }: { role: string; userId: number }) {
       {t(`auth.roles.${role}`, { defaultValue: role })}
       <button
         className="ml-0.5 hover:opacity-70 min-w-[20px] min-h-[20px] flex items-center justify-center"
-        onClick={() =>
+        onClick={(e) => {
+          e.stopPropagation()
           router.delete(routes.admin.removeRole(userId), {
             data: { role_name: role },
             preserveScroll: true,
           })
-        }
+        }}
         aria-label={`Remove ${role} role`}
       >
         <X className="h-3 w-3" />
@@ -143,65 +183,15 @@ function AssignRoleButtons({ user }: { user: AdminUser }) {
         <button
           key={role}
           className="text-xs text-muted-foreground border rounded px-1.5 py-0.5 hover:bg-muted min-h-[28px]"
-          onClick={() =>
+          onClick={(e) => {
+            e.stopPropagation()
             router.post(routes.admin.assignRole(user.id), { role_name: role }, { preserveScroll: true })
-          }
+          }}
         >
           + {t(`auth.roles.${role}`, { defaultValue: role })}
         </button>
       ))}
     </div>
-  )
-}
-
-function UserRow({
-  user,
-  onEdit,
-  onDeactivate,
-}: {
-  user: AdminUser
-  onEdit: () => void
-  onDeactivate: () => void
-}) {
-  const { t, i18n } = useTranslation()
-  return (
-    <tr className={`border-b ${user.discarded ? "opacity-50" : "hover:bg-muted/30"}`}>
-      <td className="p-3 font-medium">{user.name}</td>
-      <td className="p-3 text-muted-foreground">{user.email}</td>
-      <td className="p-3">
-        <div className="flex flex-wrap gap-1">
-          {user.roles.map((role) => (
-            <RoleBadge key={role} role={role} userId={user.id} />
-          ))}
-        </div>
-        {!user.discarded && <AssignRoleButtons user={user} />}
-      </td>
-      <td className="p-3 text-muted-foreground">
-        {new Date(user.createdAt).toLocaleDateString(i18n.language)}
-      </td>
-      <td className="p-3">
-        <div className="flex gap-2">
-          {!user.discarded && (
-            <>
-              <Button variant="outline" size="sm" onClick={onEdit} className="min-h-[36px]">
-                {t("admin.user_management.edit_user")}
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={onDeactivate}
-                className="min-h-[36px] text-destructive border-destructive/30 hover:bg-destructive/10"
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </>
-          )}
-          {user.discarded && (
-            <Badge variant="secondary">{t("admin.user_management.deactivated")}</Badge>
-          )}
-        </div>
-      </td>
-    </tr>
   )
 }
 
@@ -234,7 +224,7 @@ function UserCard({
       {!user.discarded && <AssignRoleButtons user={user} />}
       <div className="flex items-center justify-between">
         <p className="text-xs text-muted-foreground">
-          {new Date(user.createdAt).toLocaleDateString(i18n.language)}
+          {formatDate(user.createdAt, "date", i18n.language)}
         </p>
         {!user.discarded && (
           <div className="flex gap-2">
@@ -380,37 +370,5 @@ function EditUserDialog({
         </form>
       </DialogContent>
     </Dialog>
-  )
-}
-
-function DeactivateDialog({
-  user,
-  onClose,
-}: {
-  user: AdminUser
-  onClose: () => void
-}) {
-  const { t } = useTranslation()
-  function handleConfirm() {
-    router.delete(routes.admin.user(user.id), { onSuccess: onClose })
-  }
-
-  return (
-    <AlertDialog open onOpenChange={onClose}>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>{t("admin.user_management.deactivate")}</AlertDialogTitle>
-          <AlertDialogDescription>
-            {t("admin.user_management.deactivate_confirm", { name: user.name })}
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
-          <AlertDialogAction onClick={handleConfirm} className="bg-destructive hover:bg-destructive/90">
-            {t("admin.user_management.deactivate")}
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
   )
 }

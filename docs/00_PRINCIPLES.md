@@ -17,10 +17,10 @@ If no → don't build it.
 - Command menu (Cmd+K)
 - Audit logs
 - Rich text editor (textarea is fine)
-- Complex data tables with column sorting
+- Complex data tables beyond what @tanstack/react-table provides out of the box
 - Multiple form libraries (Inertia `useForm` is enough)
 - Data export / GDPR self-service portal
-- Zustand / TanStack Table / react-hook-form + zod
+- Zustand / react-hook-form + zod
 
 ## Stack Simplification
 
@@ -28,7 +28,7 @@ If no → don't build it.
 |---|---|
 | Tiptap rich text | `<textarea>` from shadcn/ui |
 | react-hook-form + zod | Inertia.js `useForm()` (built-in validation) |
-| @tanstack/react-table | shadcn/ui `<Table>` + simple React state |
+| Custom table logic | @tanstack/react-table + shadcn/ui `<Table>` via `<DataTable>` |
 | zustand | Inertia shared data + `useState` |
 | DOMPurify | No rich text = no XSS risk from user HTML |
 | Dark mode + ThemeSwitch | Light mode only |
@@ -44,6 +44,7 @@ npm install react-i18next i18next i18next-browser-languagedetector  # i18n
 npm install react-dropzone                  # File drag & drop
 npm install @rails/activestorage            # Direct upload
 npm install @rails/actioncable              # WebSocket chat
+npm install @tanstack/react-table            # Data tables
 npm install recharts                        # Admin charts
 npm install lucide-react                    # Icons
 npm install date-fns                        # Date formatting

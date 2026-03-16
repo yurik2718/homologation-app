@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { router } from "@inertiajs/react"
 import { routes } from "@/lib/routes"
+import { formatDate } from "@/lib/utils"
 import { LessonCard } from "./LessonCard"
 import type { LessonItem } from "@/types/pages"
 
@@ -43,7 +44,7 @@ export function WeekGrid({ lessons, weekStart, onLessonClick }: WeekGridProps) {
     router.get(routes.lessons, {}, { preserveState: true })
   }
 
-  const weekLabel = `${days[0].toLocaleDateString(i18n.language, { month: "short", day: "numeric" })} – ${days[4].toLocaleDateString(i18n.language, { month: "short", day: "numeric", year: "numeric" })}`
+  const weekLabel = `${formatDate(days[0], "date", i18n.language)} – ${formatDate(days[4], "date", i18n.language)}`
 
   return (
     <div className="hidden lg:block">
@@ -68,7 +69,7 @@ export function WeekGrid({ lessons, weekStart, onLessonClick }: WeekGridProps) {
           <div />
           {days.map((d, i) => (
             <div key={i} className="text-center text-xs font-medium text-muted-foreground pb-2 border-b">
-              {d.toLocaleDateString(i18n.language, { weekday: "short", day: "numeric" })}
+              {formatDate(d, "date", i18n.language)}
             </div>
           ))}
 

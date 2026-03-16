@@ -31,7 +31,7 @@ Rails.application.routes.draw do
     resources :messages, only: [ :create ]
   end
 
-  resources :inbox, only: [ :index, :show ]
+  resources :chats, only: [ :index, :show ]
   resources :lessons, only: [ :index, :create, :show, :update, :destroy ]
   namespace :admin do
     root "dashboard#index"

@@ -1,5 +1,31 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { formatDistanceToNow, format } from "date-fns"
+import { es, enUS, ru } from "date-fns/locale"
+
+const DATE_LOCALES: Record<string, typeof es> = { es, en: enUS, ru }
+
+export type DateMode = "relative" | "date" | "time" | "datetime"
+
+export function formatDate(
+  date: string | Date,
+  mode: DateMode = "relative",
+  locale = "es"
+): string {
+  const d = typeof date === "string" ? new Date(date) : date
+  const loc = DATE_LOCALES[locale] ?? es
+
+  switch (mode) {
+    case "relative":
+      return formatDistanceToNow(d, { addSuffix: true, locale: loc })
+    case "date":
+      return format(d, "PP", { locale: loc })
+    case "time":
+      return format(d, "HH:mm", { locale: loc })
+    case "datetime":
+      return format(d, "PP HH:mm", { locale: loc })
+  }
+}
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))

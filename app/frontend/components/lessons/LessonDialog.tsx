@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { routes } from "@/lib/routes"
+import { LESSON_DURATIONS } from "@/lib/constants"
 import type { LessonItem } from "@/types/pages"
 
 interface LessonDialogProps {
@@ -118,7 +119,7 @@ export function LessonDialog({ open, onClose, lesson, assignedStudents }: Lesson
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {[30, 45, 60, 90].map((m) => (
+                {LESSON_DURATIONS.map((m) => (
                   <SelectItem key={m} value={String(m)}>
                     {t("lessons.duration_minutes", { minutes: m })}
                   </SelectItem>

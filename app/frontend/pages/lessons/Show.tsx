@@ -6,17 +6,13 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { ExternalLink, Pencil } from "lucide-react"
+import { LESSON_STATUS_COLORS } from "@/lib/colors"
+import { formatDate } from "@/lib/utils"
 import type { SharedProps } from "@/types"
 import type { LessonsShowProps } from "@/types/pages"
 
-const STATUS_COLORS: Record<string, string> = {
-  scheduled: "bg-blue-100 text-blue-700",
-  completed: "bg-gray-100 text-gray-600",
-  cancelled: "bg-red-50 text-red-600",
-}
-
 export default function LessonsShow() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { lesson } = usePage<SharedProps & LessonsShowProps>().props
   const { features } = usePage<SharedProps>().props
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -45,7 +41,7 @@ export default function LessonsShow() {
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">{t("lessons.date")}</span>
-            <span>{new Date(lesson.scheduledAt).toLocaleString()}</span>
+            <span>{formatDate(lesson.scheduledAt, "datetime", i18n.language)}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">{t("lessons.duration")}</span>
@@ -53,7 +49,7 @@ export default function LessonsShow() {
           </div>
           <div className="flex justify-between items-center">
             <span className="text-muted-foreground">{t("lessons.status.scheduled")}</span>
-            <Badge className={STATUS_COLORS[lesson.status] ?? ""} variant="secondary">
+            <Badge className={LESSON_STATUS_COLORS[lesson.status] ?? ""} variant="secondary">
               {t(`lessons.status.${lesson.status}`)}
             </Badge>
           </div>
