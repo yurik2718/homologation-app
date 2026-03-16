@@ -50,7 +50,12 @@
       "coordinator": "Coordinador",
       "teacher": "Profesor",
       "student": "Estudiante"
-    }
+    },
+    "or_email": "O continúa con tu email",
+    "privacy_notice": "Al continuar, aceptas nuestra",
+    "branding_headline": "Gestiona tus trámites de homologación de forma sencilla y segura.",
+    "branding_sub": "Seguimiento en tiempo real, comunicación directa con coordinadores y sincronización automática con tu expediente.",
+    "branding_footer": "© 2026 HomologApp"
   },
   "profile": {
     "complete_title": "Completa tu perfil",

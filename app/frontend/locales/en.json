@@ -50,7 +50,12 @@
       "coordinator": "Coordinator",
       "teacher": "Teacher",
       "student": "Student"
-    }
+    },
+    "or_email": "Or continue with email",
+    "privacy_notice": "By continuing, you agree to our",
+    "branding_headline": "Manage your homologation process simply and securely.",
+    "branding_sub": "Real-time tracking, direct communication with coordinators and automatic sync with your case file.",
+    "branding_footer": "© 2026 HomologApp"
   },
   "profile": {
     "complete_title": "Complete Your Profile",
