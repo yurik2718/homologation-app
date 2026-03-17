@@ -27,9 +27,9 @@ export function AuthenticatedLayout({ children, breadcrumbs, fixedHeight }: Auth
 
   return (
     <TooltipProvider>
-      <SidebarProvider>
+      <SidebarProvider className={fixedHeight ? "max-h-svh" : undefined}>
         <AppSidebar />
-        <SidebarInset>
+        <SidebarInset className={fixedHeight ? "overflow-hidden" : undefined}>
           <Header breadcrumbs={breadcrumbs} />
           <div className={cn("flex flex-1 flex-col p-4 md:p-6", fixedHeight ? "overflow-hidden min-h-0" : "overflow-y-auto")}>
             {children}
