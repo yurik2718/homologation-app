@@ -250,10 +250,25 @@ export interface LessonsShowProps {
 }
 
 // admin/Lessons
+export interface MonthDayLesson {
+  id: number
+  teacherId: number
+  teacherName: string
+  studentName: string
+  scheduledAt: string
+  durationMinutes: number
+  status: "scheduled" | "completed" | "cancelled"
+  meetingLinkReady: boolean
+}
+
 export interface AdminLessonsProps {
+  view: "week" | "month" | "list"
   lessons: LessonItem[]
   teachers: Array<{ id: number; name: string }>
   students: Array<{ id: number; name: string }>
+  weekStart?: string
+  monthStart?: string
+  monthSummary?: Record<string, MonthDayLesson[]>
 }
 
 // admin/Dashboard

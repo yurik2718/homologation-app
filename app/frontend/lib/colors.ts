@@ -30,6 +30,30 @@ export const ROLE_COLORS: Record<string, string> = {
   student: "bg-gray-100 text-gray-600",
 }
 
+// Teacher color palette for admin calendar views
+export interface TeacherColor {
+  bg: string
+  border: string
+  text: string
+  dot: string
+}
+
+export const TEACHER_COLORS: TeacherColor[] = [
+  { bg: "bg-blue-100", border: "border-blue-300", text: "text-blue-800", dot: "bg-blue-500" },
+  { bg: "bg-emerald-100", border: "border-emerald-300", text: "text-emerald-800", dot: "bg-emerald-500" },
+  { bg: "bg-violet-100", border: "border-violet-300", text: "text-violet-800", dot: "bg-violet-500" },
+  { bg: "bg-amber-100", border: "border-amber-300", text: "text-amber-800", dot: "bg-amber-500" },
+  { bg: "bg-rose-100", border: "border-rose-300", text: "text-rose-800", dot: "bg-rose-500" },
+  { bg: "bg-cyan-100", border: "border-cyan-300", text: "text-cyan-800", dot: "bg-cyan-500" },
+  { bg: "bg-orange-100", border: "border-orange-300", text: "text-orange-800", dot: "bg-orange-500" },
+  { bg: "bg-indigo-100", border: "border-indigo-300", text: "text-indigo-800", dot: "bg-indigo-500" },
+]
+
+export function getTeacherColor(teacherId: number, teacherIds: number[]): TeacherColor {
+  const idx = teacherIds.indexOf(teacherId)
+  return TEACHER_COLORS[(idx >= 0 ? idx : teacherId) % TEACHER_COLORS.length]
+}
+
 // Calendar lesson card color
 export function getLessonCardColor(lesson: LessonItem): string {
   if (lesson.status === "completed" || lesson.status === "cancelled") {

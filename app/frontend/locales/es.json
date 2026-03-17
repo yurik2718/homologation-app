@@ -299,10 +299,17 @@
     "week": "Semana",
     "day": "Día",
     "month": "Mes",
+    "list": "Lista",
     "today": "Hoy",
     "link_ready": "Enlace listo",
     "link_needed": "Falta enlace",
-    "done": "Completada"
+    "done": "Completada",
+    "all_teachers": "Todos los profesores",
+    "open_link": "Abrir enlace",
+    "no_lessons_week": "No hay clases esta semana",
+    "no_lessons_month": "No hay clases este mes",
+    "lessons_count": "{{count}} clase(s)",
+    "go_to_week": "Ir a esta semana"
   },
   "nav": {
     "dashboard": "Inicio",

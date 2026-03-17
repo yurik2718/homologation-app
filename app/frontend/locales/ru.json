@@ -299,10 +299,17 @@
     "week": "Неделя",
     "day": "День",
     "month": "Месяц",
+    "list": "Список",
     "today": "Сегодня",
     "link_ready": "Ссылка готова",
     "link_needed": "Нужна ссылка",
-    "done": "Завершено"
+    "done": "Завершено",
+    "all_teachers": "Все учителя",
+    "open_link": "Открыть ссылку",
+    "no_lessons_week": "На этой неделе нет уроков",
+    "no_lessons_month": "В этом месяце нет уроков",
+    "lessons_count": "{{count}} урок(ов)",
+    "go_to_week": "Перейти к неделе"
   },
   "nav": {
     "dashboard": "Главная",

@@ -101,13 +101,13 @@ export function TeacherCard({ teacher, availableStudents }: TeacherCardProps) {
         </div>
 
         <div className="flex flex-wrap gap-2">
-          <Button variant="outline" size="sm" className="h-8 text-xs" asChild>
-            <Link href={routes.lessons}>{t("teachers.view_calendar")}</Link>
+          <Button variant="outline" size="sm" className="min-h-[44px] text-xs" asChild>
+            <Link href={`${routes.admin.lessons}?view=week&teacher_id=${teacher.id}`}>{t("teachers.view_calendar")}</Link>
           </Button>
           <EditTeacherDialog
             teacher={teacher}
             trigger={
-              <Button variant="outline" size="sm" className="h-8 text-xs">
+              <Button variant="outline" size="sm" className="min-h-[44px] text-xs">
                 {t("teachers.edit_profile")}
               </Button>
             }

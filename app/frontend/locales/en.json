@@ -299,10 +299,17 @@
     "week": "Week",
     "day": "Day",
     "month": "Month",
+    "list": "List",
     "today": "Today",
     "link_ready": "Link ready",
     "link_needed": "Link needed",
-    "done": "Done"
+    "done": "Done",
+    "all_teachers": "All teachers",
+    "open_link": "Open Link",
+    "no_lessons_week": "No lessons this week",
+    "no_lessons_month": "No lessons this month",
+    "lessons_count": "{{count}} lesson(s)",
+    "go_to_week": "Go to this week"
   },
   "nav": {
     "dashboard": "Dashboard",
