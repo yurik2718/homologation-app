@@ -222,7 +222,9 @@
     "charts": {
       "requests_over_time": "Заявки за период",
       "by_status": "По статусу",
-      "avg_response_time": "Среднее время ответа"
+      "avg_response_time": "Среднее время ответа",
+      "requests_label": "Заявки",
+      "no_data": "Данных пока нет"
     },
     "failed_syncs": "{{count}} ошибок синхронизации",
     "view_all_requests": "Все заявки",
