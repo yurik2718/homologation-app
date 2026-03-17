@@ -1,21 +1,25 @@
+import { useTranslation } from "react-i18next"
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
 
 interface OverviewChartProps {
   data: Record<string, number>
 }
 
-export function OverviewChart({ data }: OverviewChartProps) {
+const MONTH_KEYS_BY_LOCALE: Record<string, string[]> = {
+  en: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+  es: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
+  ru: ["Янв", "Фев", "Мар", "Апр", "Май", "Июн", "Июл", "Авг", "Сен", "Окт", "Ноя", "Дек"],
+}
 
-  const MONTH_KEYS = [
-    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
-  ]
+export function OverviewChart({ data }: OverviewChartProps) {
+  const { i18n } = useTranslation()
+  const monthKeys = MONTH_KEYS_BY_LOCALE[i18n.language] ?? MONTH_KEYS_BY_LOCALE.en
 
   const chartData = Object.entries(data)
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([month, count]) => {
       const monthIdx = parseInt(month.split("-")[1], 10) - 1
-      return { name: MONTH_KEYS[monthIdx] ?? month, total: count }
+      return { name: monthKeys[monthIdx] ?? month, total: count }
     })
 
   return (

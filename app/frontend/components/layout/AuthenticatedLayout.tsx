@@ -2,6 +2,7 @@ import { useEffect } from "react"
 import { usePage } from "@inertiajs/react"
 import { useTranslation } from "react-i18next"
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
+import { TooltipProvider } from "@/components/ui/tooltip"
 import { AppSidebar } from "@/components/layout/AppSidebar"
 import { Header, type BreadcrumbItem } from "@/components/layout/Header"
 import type { SharedProps } from "@/types"
@@ -23,14 +24,16 @@ export function AuthenticatedLayout({ children, breadcrumbs }: AuthenticatedLayo
   }, [auth.user?.locale, i18n])
 
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <Header breadcrumbs={breadcrumbs} />
-        <div className="flex flex-1 flex-col p-4 md:p-6 overflow-y-auto">
-          {children}
-        </div>
-      </SidebarInset>
-    </SidebarProvider>
+    <TooltipProvider>
+      <SidebarProvider>
+        <AppSidebar />
+        <SidebarInset>
+          <Header breadcrumbs={breadcrumbs} />
+          <div className="flex flex-1 flex-col p-4 md:p-6 overflow-y-auto">
+            {children}
+          </div>
+        </SidebarInset>
+      </SidebarProvider>
+    </TooltipProvider>
   )
 }

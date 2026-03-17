@@ -22,7 +22,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { OverviewChart } from "@/components/dashboard/OverviewChart"
 import { RecentRequests } from "@/components/dashboard/RecentRequests"
 import { routes } from "@/lib/routes"
-import type { SharedProps } from "@/types/index"
+import type { SharedProps } from "@/types"
 import type {
   DashboardIndexProps,
   DashboardStudentStats,
@@ -41,17 +41,15 @@ export default function DashboardIndex() {
       breadcrumbs={[{ label: t("nav.dashboard") }]}
     >
       <Main>
-        <div className="space-y-6">
-          {features.canCreateRequest ? (
-            <StudentDashboard stats={stats as DashboardStudentStats} />
-          ) : (
-            <AdminDashboard
-              stats={stats as DashboardAdminStats}
-              requestsByMonth={requestsByMonth ?? {}}
-              recentRequests={recentRequests ?? []}
-            />
-          )}
-        </div>
+        {features.canCreateRequest ? (
+          <StudentDashboard stats={stats as DashboardStudentStats} />
+        ) : (
+          <AdminDashboard
+            stats={stats as DashboardAdminStats}
+            requestsByMonth={requestsByMonth ?? {}}
+            recentRequests={recentRequests ?? []}
+          />
+        )}
       </Main>
     </AuthenticatedLayout>
   )
@@ -62,8 +60,8 @@ export default function DashboardIndex() {
 function StudentDashboard({ stats }: { stats: DashboardStudentStats }) {
   const { t } = useTranslation()
   return (
-    <>
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
+    <div className="space-y-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-bold tracking-tight">{t("nav.dashboard")}</h1>
         <Link href={routes.newRequest}>
           <Button className="w-full sm:w-auto min-h-[44px]">
@@ -84,7 +82,7 @@ function StudentDashboard({ stats }: { stats: DashboardStudentStats }) {
           value={stats.pendingRequests}
         />
       </div>
-    </>
+    </div>
   )
 }
 
@@ -102,12 +100,10 @@ function AdminDashboard({
   const { t } = useTranslation()
 
   return (
-    <>
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight">{t("nav.dashboard")}</h1>
-      </div>
+    <div className="space-y-6">
+      <h1 className="text-2xl font-bold tracking-tight">{t("nav.dashboard")}</h1>
 
-      <Tabs orientation="vertical" defaultValue="overview" className="space-y-4">
+      <Tabs defaultValue="overview" className="space-y-4">
         <div className="w-full overflow-x-auto pb-2">
           <TabsList>
             <TabsTrigger value="overview">{t("admin.overview")}</TabsTrigger>
@@ -191,12 +187,12 @@ function AdminDashboard({
           </div>
           <div className="flex justify-center pt-4">
             <Link href={routes.requests}>
-              <Button variant="outline" className="min-h-[44px]">{t("admin.view_failed_syncs")}</Button>
+              <Button variant="outline" className="min-h-[44px]">{t("admin.view_all_requests")}</Button>
             </Link>
           </div>
         </TabsContent>
       </Tabs>
-    </>
+    </div>
   )
 }
 

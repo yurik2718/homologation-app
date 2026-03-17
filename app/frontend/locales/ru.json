@@ -212,6 +212,7 @@
       "avg_response_time": "Среднее время ответа"
     },
     "failed_syncs": "{{count}} ошибок синхронизации",
+    "view_all_requests": "Все заявки",
     "view_failed_syncs": "Просмотр заявок",
     "recent_requests": "Последние заявки",
     "overview": "Обзор",
@@ -302,7 +303,11 @@
     "notifications": "Уведомления",
     "profile": "Профиль",
     "admin": "Администрирование",
-    "language": "Язык"
+    "language": "Язык",
+    "general": "Основное",
+    "management": "Управление",
+    "other": "Прочее",
+    "settings": "Настройки"
   },
   "privacy": {
     "title": "Политика конфиденциальности",

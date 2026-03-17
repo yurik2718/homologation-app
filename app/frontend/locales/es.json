@@ -212,6 +212,7 @@
       "avg_response_time": "Tiempo medio de respuesta"
     },
     "failed_syncs": "{{count}} sincronización(es) fallida(s)",
+    "view_all_requests": "Ver todas las solicitudes",
     "view_failed_syncs": "Ver solicitudes",
     "recent_requests": "Solicitudes recientes",
     "overview": "Resumen",
@@ -302,7 +303,11 @@
     "notifications": "Notificaciones",
     "profile": "Perfil",
     "admin": "Administración",
-    "language": "Idioma"
+    "language": "Idioma",
+    "general": "Principal",
+    "management": "Gestión",
+    "other": "Otro",
+    "settings": "Configuración"
   },
   "privacy": {
     "title": "Política de privacidad",
