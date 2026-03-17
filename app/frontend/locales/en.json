@@ -22,6 +22,7 @@
     "download_all": "Download all",
     "required": "Required",
     "optional": "Optional",
+    "confirm": "Confirm",
     "error": "Error",
     "success": "Success",
     "create": "Create",
@@ -172,7 +173,9 @@
     "crm_syncing": "Syncing...",
     "crm_error": "Sync Error",
     "crm_retry": "Retry Sync",
-    "crm_not_synced": "Not Synced"
+    "crm_not_synced": "Not Synced",
+    "confirm_status_title": "Change Status",
+    "confirm_status_description": "Are you sure you want to change the status to \"{{status}}\"?"
   },
   "admin": {
     "dashboard": "Admin Dashboard",
@@ -205,6 +208,11 @@
     "failed_syncs": "{{count}} failed sync(s)",
     "view_failed_syncs": "View requests",
     "recent_requests": "Recent Requests",
+    "overview": "Overview",
+    "new_users": "New Users",
+    "requests_this_month": "Requests This Month",
+    "from_last_month": "from last month",
+    "recent_requests_desc": "{{count}} new request(s) this month.",
     "no_users": "No users found"
   },
   "chats": {

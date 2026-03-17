@@ -37,7 +37,7 @@ export function ConversationList({ conversations, selectedId, onSelect }: Conver
   ]
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full min-h-0 flex-col">
       {/* Search */}
       <label
         className={cn(
@@ -72,7 +72,7 @@ export function ConversationList({ conversations, selectedId, onSelect }: Conver
       </div>
 
       {/* Conversation List */}
-      <ScrollArea className="-mx-3 h-full p-3">
+      <ScrollArea className="-mx-3 min-h-0 flex-1 p-3">
         {filtered.length === 0 ? (
           <p className="py-8 text-center text-sm text-muted-foreground">{t("chats.no_conversations")}</p>
         ) : (

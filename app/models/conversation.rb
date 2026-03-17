@@ -4,6 +4,7 @@ class Conversation < ApplicationRecord
              foreign_key: :teacher_student_id, optional: true
 
   has_many :messages, dependent: :destroy
+  has_one  :latest_message, -> { order(created_at: :desc) }, class_name: "Message"
   has_many :conversation_participants, dependent: :destroy
   has_many :participants, through: :conversation_participants, source: :user
 

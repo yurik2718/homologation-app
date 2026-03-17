@@ -11,7 +11,7 @@ export function MessageBubble({ message, isOwn }: MessageBubbleProps) {
   return (
     <div
       className={cn(
-        "chat-box max-w-72 break-words px-3 py-2 shadow-lg",
+        "chat-box max-w-72 break-words px-3 py-2 shadow-lg sm:max-w-sm lg:max-w-md",
         isOwn
           ? "self-end rounded-[16px_16px_0_16px] bg-primary/90 text-primary-foreground/75"
           : "self-start rounded-[16px_16px_16px_0] bg-muted"

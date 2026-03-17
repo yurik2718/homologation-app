@@ -176,10 +176,17 @@ export interface DashboardAdminStats {
   openRequests: number
   awaitingPayment: number
   resolved: number
+  totalUsers: number
+  newUsersThisMonth: number
+  usersChange: number
+  requestsThisMonth: number
+  requestsChange: number
 }
 
 export interface DashboardIndexProps {
   stats: DashboardStudentStats | DashboardAdminStats
+  requestsByMonth?: Record<string, number>
+  recentRequests?: RequestListItem[]
 }
 
 // Shared lesson item for calendar/lessons/admin pages

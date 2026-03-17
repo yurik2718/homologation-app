@@ -1,17 +1,28 @@
 # frozen_string_literal: true
 
 class ChatsController < InertiaController
-  CHAT_INCLUDES = [
+  LIST_INCLUDES = [
     :homologation_request, :teacher_student_link,
     :conversation_participants,
     teacher_student_link: [ :teacher, :student ],
-    messages: :user
+    latest_message: :user
+  ].freeze
+
+  DETAIL_INCLUDES = [
+    :homologation_request, :teacher_student_link,
+    :conversation_participants,
+    teacher_student_link: [ :teacher, :student ],
+    latest_message: :user,
+    messages: :user,
+    homologation_request: :user
   ].freeze
 
   def index
     authorize :chats
 
-    conversations = Conversation.includes(CHAT_INCLUDES).order(last_message_at: :desc)
+    conversations = policy_scope(Conversation, policy_scope_class: ChatsPolicy::Scope)
+      .includes(LIST_INCLUDES)
+      .order(last_message_at: :desc)
 
     render inertia: "chats/Index", props: {
       conversations: conversations.map { |c| chat_conversation_json(c) }
@@ -19,12 +30,14 @@ class ChatsController < InertiaController
   end
 
   def show
-    @conversation = Conversation
-      .includes(*CHAT_INCLUDES, homologation_request: :user)
+    @conversation = policy_scope(Conversation, policy_scope_class: ChatsPolicy::Scope)
+      .includes(*DETAIL_INCLUDES)
       .find(params[:id])
     authorize @conversation, :show?
 
-    conversations = Conversation.includes(CHAT_INCLUDES).order(last_message_at: :desc)
+    conversations = policy_scope(Conversation, policy_scope_class: ChatsPolicy::Scope)
+      .includes(LIST_INCLUDES)
+      .order(last_message_at: :desc)
 
     render inertia: "chats/Index", props: {
       conversations: conversations.map { |c| chat_conversation_json(c) },
@@ -35,7 +48,7 @@ class ChatsController < InertiaController
   private
 
   def chat_conversation_json(c)
-    last_msg = c.messages.max_by(&:created_at)
+    last_msg = c.latest_message
     {
       id: c.id,
       type: c.homologation_request_id.present? ? "request" : "teacher_student",

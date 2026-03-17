@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { useForm, router, Link } from "@inertiajs/react"
 import { useTranslation } from "react-i18next"
 import { usePage } from "@inertiajs/react"
@@ -6,6 +7,16 @@ import { Badge } from "@/components/ui/badge"
 import { StatusBadge } from "@/components/common/StatusBadge"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import {
   Dialog,
   DialogContent,
@@ -35,11 +46,19 @@ function RequestContext({ context }: {
   const { features, selectOptions } = usePage<SharedProps>().props
 
   const paymentForm = useForm({ payment_amount: "" })
+  const [pendingStatus, setPendingStatus] = useState<string | null>(null)
 
   const statusOptions = selectOptions?.request_statuses ?? []
 
   const handleStatusChange = (newStatus: string) => {
-    router.patch(routes.request(context.requestId), { status: newStatus }, { preserveScroll: true })
+    setPendingStatus(newStatus)
+  }
+
+  const confirmStatusChange = () => {
+    if (pendingStatus) {
+      router.patch(routes.request(context.requestId), { status: pendingStatus }, { preserveScroll: true })
+      setPendingStatus(null)
+    }
   }
 
   const handlePaymentConfirm = () => {
@@ -113,6 +132,23 @@ function RequestContext({ context }: {
           </DialogContent>
         </Dialog>
       )}
+
+      <AlertDialog open={!!pendingStatus} onOpenChange={(open) => !open && setPendingStatus(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("coordinator.confirm_status_title")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("coordinator.confirm_status_description", {
+                status: pendingStatus ? t(`requests.status.${pendingStatus}`) : "",
+              })}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmStatusChange}>{t("common.confirm")}</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <div className="space-y-1">
         <p className="text-xs text-muted-foreground">AmoCRM</p>

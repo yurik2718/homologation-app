@@ -22,6 +22,7 @@
     "download_all": "Скачать всё",
     "required": "Обязательно",
     "optional": "Необязательно",
+    "confirm": "Подтвердить",
     "error": "Ошибка",
     "success": "Успешно",
     "create": "Создать",
@@ -172,7 +173,9 @@
     "crm_syncing": "Синхронизация...",
     "crm_error": "Ошибка синхронизации",
     "crm_retry": "Повторить синхронизацию",
-    "crm_not_synced": "Не синхронизировано"
+    "crm_not_synced": "Не синхронизировано",
+    "confirm_status_title": "Изменить статус",
+    "confirm_status_description": "Вы уверены, что хотите изменить статус на «{{status}}»?"
   },
   "admin": {
     "dashboard": "Панель управления",
@@ -205,6 +208,11 @@
     "failed_syncs": "{{count}} ошибок синхронизации",
     "view_failed_syncs": "Просмотр заявок",
     "recent_requests": "Последние заявки",
+    "overview": "Обзор",
+    "new_users": "Новые пользователи",
+    "requests_this_month": "Заявок за месяц",
+    "from_last_month": "по сравнению с прошлым месяцем",
+    "recent_requests_desc": "{{count}} новая(ых) заявка(ок) за этот месяц.",
     "no_users": "Пользователи не найдены"
   },
   "chats": {

@@ -59,29 +59,27 @@ export function ChatWindow({ conversationId, messages: initialMessages, postUrl 
   }, {})
 
   return (
-    <div className="flex h-full flex-col gap-2 rounded-md px-4 pt-0 pb-4">
-      <div className="flex size-full flex-1">
-        <div className="relative -me-4 flex flex-1 flex-col overflow-y-hidden">
-          <div className="flex h-40 w-full grow flex-col-reverse justify-start gap-4 overflow-y-auto py-2 pe-4 pb-4">
-            {messages.length === 0 ? (
-              <p className="self-center text-center text-sm text-muted-foreground py-8">
-                {t("chat.no_messages")}
-              </p>
-            ) : (
-              Object.keys(grouped).reverse().map((dateKey) => (
-                <Fragment key={dateKey}>
-                  {grouped[dateKey].slice().reverse().map((msg) => (
-                    <MessageBubble
-                      key={msg.id}
-                      message={msg}
-                      isOwn={msg.user.id === auth.user?.id}
-                    />
-                  ))}
-                  <div className="text-center text-xs text-muted-foreground">{dateKey}</div>
-                </Fragment>
-              ))
-            )}
-          </div>
+    <div className="flex h-full min-h-0 flex-col gap-2 rounded-md px-4 pt-0 pb-4">
+      <div className="relative min-h-0 flex-1">
+        <div className="flex h-full flex-col gap-4 overflow-y-auto py-2 pe-4">
+          {messages.length === 0 ? (
+            <p className="self-center text-center text-sm text-muted-foreground py-8">
+              {t("chat.no_messages")}
+            </p>
+          ) : (
+            Object.keys(grouped).map((dateKey) => (
+              <Fragment key={dateKey}>
+                <div className="text-center text-xs text-muted-foreground">{dateKey}</div>
+                {grouped[dateKey].map((msg) => (
+                  <MessageBubble
+                    key={msg.id}
+                    message={msg}
+                    isOwn={msg.user.id === auth.user?.id}
+                  />
+                ))}
+              </Fragment>
+            ))
+          )}
           <div ref={bottomRef} />
         </div>
       </div>

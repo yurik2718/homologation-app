@@ -22,6 +22,7 @@
     "download_all": "Descargar todo",
     "required": "Obligatorio",
     "optional": "Opcional",
+    "confirm": "Confirmar",
     "error": "Error",
     "success": "Éxito",
     "create": "Crear",
@@ -172,7 +173,9 @@
     "crm_syncing": "Sincronizando...",
     "crm_error": "Error de sincronización",
     "crm_retry": "Reintentar sincronización",
-    "crm_not_synced": "No sincronizado"
+    "crm_not_synced": "No sincronizado",
+    "confirm_status_title": "Cambiar estado",
+    "confirm_status_description": "¿Estás seguro de que quieres cambiar el estado a \"{{status}}\"?"
   },
   "admin": {
     "dashboard": "Panel de administración",
@@ -205,6 +208,11 @@
     "failed_syncs": "{{count}} sincronización(es) fallida(s)",
     "view_failed_syncs": "Ver solicitudes",
     "recent_requests": "Solicitudes recientes",
+    "overview": "Resumen",
+    "new_users": "Nuevos usuarios",
+    "requests_this_month": "Solicitudes este mes",
+    "from_last_month": "respecto al mes anterior",
+    "recent_requests_desc": "{{count}} nueva(s) solicitud(es) este mes.",
     "no_users": "No se encontraron usuarios"
   },
   "chats": {
