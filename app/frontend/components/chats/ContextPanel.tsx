@@ -62,7 +62,7 @@ function RequestContext({ context }: {
   }
 
   const handlePaymentConfirm = () => {
-    router.post(routes.confirmPayment(context.requestId), { payment_amount: paymentForm.data.payment_amount })
+    paymentForm.post(routes.confirmPayment(context.requestId))
   }
 
   return (
@@ -106,7 +106,7 @@ function RequestContext({ context }: {
       {features.canConfirmPayment && context.status === "awaiting_payment" && (
         <Dialog>
           <DialogTrigger asChild>
-            <Button size="sm" className="w-full">
+            <Button size="sm" className="w-full min-h-[44px]">
               {t("coordinator.confirm_payment")}
             </Button>
           </DialogTrigger>
@@ -126,7 +126,11 @@ function RequestContext({ context }: {
                 onChange={(e) => paymentForm.setData("payment_amount", e.target.value)}
               />
             </div>
-            <Button onClick={handlePaymentConfirm} disabled={!paymentForm.data.payment_amount}>
+            <Button
+              onClick={handlePaymentConfirm}
+              disabled={!paymentForm.data.payment_amount || paymentForm.processing}
+              className="min-h-[44px]"
+            >
               {t("coordinator.confirm_sync")}
             </Button>
           </DialogContent>
@@ -161,7 +165,7 @@ function RequestContext({ context }: {
             <Button
               variant="outline"
               size="sm"
-              className="w-full"
+              className="w-full min-h-[44px]"
               onClick={() => router.post(routes.retrySync(context.requestId))}
             >
               {t("coordinator.crm_retry")}
@@ -172,7 +176,7 @@ function RequestContext({ context }: {
         )}
       </div>
 
-      <Button variant="outline" size="sm" className="w-full" asChild>
+      <Button variant="outline" size="sm" className="w-full min-h-[44px]" asChild>
         <Link href={routes.request(context.requestId)}>{t("common.back")}</Link>
       </Button>
     </div>

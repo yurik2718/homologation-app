@@ -8,11 +8,14 @@ export function useChannel<T>(
   channelName: string,
   params: Record<string, unknown>,
   onReceived: (data: T) => void,
+  enabled = true,
 ) {
   const callbackRef = useRef(onReceived)
   callbackRef.current = onReceived
 
   useEffect(() => {
+    if (!enabled) return
+
     const subscription = consumer.subscriptions.create(
       { channel: channelName, ...params },
       {
@@ -26,5 +29,5 @@ export function useChannel<T>(
       subscription.unsubscribe()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- params identity changes each render, use JSON key
-  }, [channelName, JSON.stringify(params)])
+  }, [channelName, JSON.stringify(params), enabled])
 }
