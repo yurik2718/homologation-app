@@ -261,6 +261,23 @@ export interface MonthDayLesson {
   meetingLinkReady: boolean
 }
 
+export interface UserProfile {
+  id: number
+  name: string
+  email: string
+  avatarUrl: string | null
+  roles: string[]
+  phone: string | null
+  whatsapp: string | null
+  conversationId: number | null
+  country: string | null
+  locale: string | null
+  createdAt: string
+  teacherLevel?: string | null
+  hourlyRate?: number | null
+  permanentMeetingLink?: string | null
+}
+
 export interface AdminLessonsProps {
   view: "week" | "month" | "list"
   lessons: LessonItem[]
@@ -269,6 +286,7 @@ export interface AdminLessonsProps {
   weekStart?: string
   monthStart?: string
   monthSummary?: Record<string, MonthDayLesson[]>
+  userProfiles?: Record<number, UserProfile>
 }
 
 // admin/Dashboard

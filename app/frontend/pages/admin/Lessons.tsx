@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useCallback } from "react"
 import { usePage, router } from "@inertiajs/react"
 import { useTranslation } from "react-i18next"
 import type { ColumnDef } from "@tanstack/react-table"
@@ -19,25 +19,37 @@ import {
 import { Button } from "@/components/ui/button"
 import { AdminWeekGrid } from "@/components/admin/lessons/AdminWeekGrid"
 import { AdminMonthView } from "@/components/admin/lessons/AdminMonthView"
+import { UserProfileSheet } from "@/components/admin/lessons/UserProfileSheet"
 import { routes } from "@/lib/routes"
 import { LESSON_STATUS_COLORS } from "@/lib/colors"
 import { formatDate } from "@/lib/utils"
 import type { SharedProps } from "@/types"
-import type { AdminLessonsProps, LessonItem } from "@/types/pages"
+import type { AdminLessonsProps, LessonItem, UserProfile } from "@/types/pages"
 
 export default function AdminLessons() {
   const { t, i18n } = useTranslation()
-  const { view, lessons, teachers, students, weekStart, monthStart, monthSummary } =
+  const { view, lessons, teachers, students, weekStart, monthStart, monthSummary, userProfiles } =
     usePage<SharedProps & AdminLessonsProps>().props
 
   const [teacherFilter, setTeacherFilter] = useState("")
   const [studentFilter, setStudentFilter] = useState("")
   const [statusFilter, setStatusFilter] = useState("")
-  // Sync teacher filter from URL params on initial load
   const [weekTeacherFilter, setWeekTeacherFilter] = useState(() => {
     const url = new URL(window.location.href)
     return url.searchParams.get("teacher_id") ?? ""
   })
+
+  // User profile sidebar state
+  const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null)
+  const [sheetOpen, setSheetOpen] = useState(false)
+
+  const openUserProfile = useCallback((userId: number) => {
+    const profile = userProfiles?.[userId]
+    if (profile) {
+      setSelectedUser(profile)
+      setSheetOpen(true)
+    }
+  }, [userProfiles])
 
   function switchView(newView: string) {
     const params: Record<string, string> = { view: newView }
@@ -77,10 +89,22 @@ export default function AdminLessons() {
     {
       accessorKey: "teacherName",
       header: t("lessons.teacher"),
+      cell: ({ row }) => (
+        <ClickableName
+          name={row.original.teacherName}
+          onClick={() => openUserProfile(row.original.teacherId)}
+        />
+      ),
     },
     {
       accessorKey: "studentName",
       header: t("lessons.student"),
+      cell: ({ row }) => (
+        <ClickableName
+          name={row.original.studentName}
+          onClick={() => openUserProfile(row.original.studentId)}
+        />
+      ),
     },
     {
       id: "duration",
@@ -163,7 +187,9 @@ export default function AdminLessons() {
             <DataTable
               columns={columns}
               data={lessons}
-              renderMobileCard={(lesson) => <LessonCard lesson={lesson} />}
+              renderMobileCard={(lesson) => (
+                <LessonMobileCard lesson={lesson} onUserClick={openUserProfile} />
+              )}
               toolbarContent={
                 <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-end">
                   <Select value={teacherFilter} onValueChange={setTeacherFilter}>
@@ -222,12 +248,39 @@ export default function AdminLessons() {
             />
           )}
         </div>
+
+        <UserProfileSheet
+          user={selectedUser}
+          open={sheetOpen}
+          onOpenChange={setSheetOpen}
+        />
       </Main>
     </AuthenticatedLayout>
   )
 }
 
-function LessonCard({ lesson }: { lesson: LessonItem }) {
+function ClickableName({ name, onClick }: { name: string; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={(e) => {
+        e.stopPropagation()
+        onClick()
+      }}
+      className="text-primary hover:underline font-medium text-left py-1 px-0.5 -my-1 min-h-[44px] inline-flex items-center"
+    >
+      {name}
+    </button>
+  )
+}
+
+function LessonMobileCard({
+  lesson,
+  onUserClick,
+}: {
+  lesson: LessonItem
+  onUserClick: (userId: number) => void
+}) {
   const { t, i18n } = useTranslation()
 
   return (
@@ -242,7 +295,11 @@ function LessonCard({ lesson }: { lesson: LessonItem }) {
           </Badge>
         </div>
         <div className="text-sm text-muted-foreground">
-          {t("lessons.teacher")}: {lesson.teacherName} · {t("lessons.student")}: {lesson.studentName}
+          {t("lessons.teacher")}:{" "}
+          <ClickableName name={lesson.teacherName} onClick={() => onUserClick(lesson.teacherId)} />
+          {" · "}
+          {t("lessons.student")}:{" "}
+          <ClickableName name={lesson.studentName} onClick={() => onUserClick(lesson.studentId)} />
         </div>
         <div className="text-sm text-muted-foreground">
           {t("lessons.duration_minutes", { minutes: lesson.durationMinutes })} ·{" "}

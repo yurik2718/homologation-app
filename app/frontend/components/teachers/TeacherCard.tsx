@@ -93,7 +93,7 @@ export function TeacherCard({ teacher, availableStudents }: TeacherCardProps) {
             teacherName={teacher.name}
             availableStudents={availableStudents}
             trigger={
-              <Button variant="outline" size="sm" className="h-7 rounded-full text-xs">
+              <Button variant="outline" size="sm" className="min-h-[44px] rounded-full text-xs">
                 + {t("teachers.assign_student")}
               </Button>
             }
