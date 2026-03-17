@@ -330,6 +330,9 @@
     "general": "General",
     "management": "Management",
     "other": "Other",
+    "homologation": "Homologation",
+    "teaching": "Teaching",
+    "administration": "Administration",
     "settings": "Settings"
   },
   "settings": {

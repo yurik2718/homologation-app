@@ -330,6 +330,9 @@
     "general": "Основное",
     "management": "Управление",
     "other": "Прочее",
+    "homologation": "Омологация",
+    "teaching": "Обучение",
+    "administration": "Администрирование",
     "settings": "Настройки"
   },
   "settings": {

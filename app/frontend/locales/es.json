@@ -330,6 +330,9 @@
     "general": "Principal",
     "management": "Gestión",
     "other": "Otro",
+    "homologation": "Homologación",
+    "teaching": "Docencia",
+    "administration": "Administración",
     "settings": "Configuración"
   },
   "settings": {

@@ -83,111 +83,174 @@ export function AppSidebar() {
   const { auth, features, unreadNotificationsCount } = props
   const user = auth.user
 
-  const navGroups: NavGroup[] = [
-    {
-      label: t("nav.general"),
-      items: [
+  // Super admin gets 4 domain-oriented groups; other roles get the flat layout
+  const isSuperAdmin = features.canAccessAdmin
+
+  const navGroups: NavGroup[] = isSuperAdmin
+    ? [
         {
-          show: features.canSeeDashboard,
-          href: routes.root,
-          icon: LayoutDashboard,
-          label: t("nav.dashboard"),
+          label: t("nav.homologation"),
+          items: [
+            {
+              show: true,
+              href: routes.root,
+              icon: LayoutDashboard,
+              label: t("nav.dashboard"),
+            },
+            {
+              show: true,
+              href: routes.requests,
+              icon: FileText,
+              label: t("nav.all_requests"),
+              exact: true,
+            },
+            {
+              show: true,
+              href: routes.chats,
+              icon: MessagesSquare,
+              label: t("nav.chats"),
+            },
+          ],
         },
         {
-          show: features.canSeeAllRequests,
-          href: routes.requests,
-          icon: FileText,
-          label: t("nav.all_requests"),
-          exact: true,
+          label: t("nav.teaching"),
+          items: [
+            {
+              show: true,
+              href: routes.teachers,
+              icon: GraduationCap,
+              label: t("nav.teachers"),
+            },
+            {
+              show: true,
+              href: routes.admin.lessons,
+              icon: BookOpen,
+              label: t("nav.all_lessons"),
+            },
+            {
+              show: true,
+              href: routes.calendar,
+              icon: Calendar,
+              label: t("nav.calendar"),
+            },
+          ],
         },
         {
-          show: features.canSeeMyRequests,
-          href: routes.requests,
-          icon: FileText,
-          label: t("nav.my_requests"),
-          exact: true,
+          label: t("nav.administration"),
+          items: [
+            {
+              show: true,
+              href: routes.admin.users,
+              icon: Users,
+              label: t("admin.users"),
+            },
+            {
+              show: true,
+              href: routes.admin.root,
+              icon: ShieldCheck,
+              label: t("nav.admin"),
+              exact: true,
+            },
+          ],
         },
         {
-          show: features.canCreateRequest,
-          href: routes.newRequest,
-          icon: FilePlus,
-          label: t("nav.new_request"),
+          label: t("nav.other"),
+          items: [
+            {
+              show: true,
+              href: routes.notifications,
+              icon: Bell,
+              label: t("nav.notifications"),
+              badge: unreadNotificationsCount > 0 ? unreadNotificationsCount : undefined,
+            },
+            {
+              show: true,
+              href: routes.settings.root,
+              icon: Settings,
+              label: t("nav.settings"),
+            },
+          ],
+        },
+      ]
+    : [
+        {
+          label: t("nav.general"),
+          items: [
+            {
+              show: features.canSeeDashboard,
+              href: routes.root,
+              icon: LayoutDashboard,
+              label: t("nav.dashboard"),
+            },
+            {
+              show: features.canSeeMyRequests,
+              href: routes.requests,
+              icon: FileText,
+              label: t("nav.my_requests"),
+              exact: true,
+            },
+            {
+              show: features.canCreateRequest,
+              href: routes.newRequest,
+              icon: FilePlus,
+              label: t("nav.new_request"),
+            },
+            {
+              show: features.canSeeChat,
+              href: routes.conversations,
+              icon: MessageCircle,
+              label: t("nav.chat"),
+            },
+            {
+              show: features.canSeeMyLessons,
+              href: routes.lessons,
+              icon: BookOpen,
+              label: t("nav.my_lessons"),
+            },
+            {
+              show: features.canSeeCalendar,
+              href: routes.lessons,
+              icon: Calendar,
+              label: t("nav.calendar"),
+            },
+          ],
         },
         {
-          show: features.canAccessChats,
-          href: routes.chats,
-          icon: MessagesSquare,
-          label: t("nav.chats"),
+          label: t("nav.management"),
+          items: [
+            {
+              show: features.canManageTeachers,
+              href: routes.teachers,
+              icon: GraduationCap,
+              label: t("nav.teachers"),
+            },
+            {
+              show: features.canSeeAllLessons,
+              href: routes.admin.lessons,
+              icon: BookOpen,
+              label: t("nav.all_lessons"),
+            },
+          ],
         },
         {
-          show: features.canSeeChat,
-          href: routes.conversations,
-          icon: MessageCircle,
-          label: t("nav.chat"),
+          label: t("nav.other"),
+          items: [
+            {
+              show: true,
+              href: routes.notifications,
+              icon: Bell,
+              label: t("nav.notifications"),
+              badge: unreadNotificationsCount > 0 ? unreadNotificationsCount : undefined,
+            },
+            {
+              show: true,
+              href: routes.settings.root,
+              icon: Settings,
+              label: t("nav.settings"),
+            },
+          ],
         },
-        {
-          show: features.canSeeMyLessons,
-          href: routes.lessons,
-          icon: BookOpen,
-          label: t("nav.my_lessons"),
-        },
-        {
-          show: features.canSeeCalendar,
-          href: routes.lessons,
-          icon: Calendar,
-          label: t("nav.calendar"),
-        },
-      ],
-    },
-    {
-      label: t("nav.management"),
-      items: [
-        {
-          show: features.canManageUsers,
-          href: routes.admin.users,
-          icon: Users,
-          label: t("admin.users"),
-        },
-        {
-          show: features.canManageTeachers,
-          href: routes.teachers,
-          icon: GraduationCap,
-          label: t("nav.teachers"),
-        },
-        {
-          show: features.canSeeAllLessons,
-          href: routes.admin.lessons,
-          icon: BookOpen,
-          label: t("nav.all_lessons"),
-        },
-        {
-          show: features.canAccessAdmin,
-          href: routes.admin.root,
-          icon: ShieldCheck,
-          label: t("nav.admin"),
-          exact: true,
-        },
-      ],
-    },
-    {
-      label: t("nav.other"),
-      items: [
-        {
-          show: true,
-          href: routes.notifications,
-          icon: Bell,
-          label: t("nav.notifications"),
-          badge: unreadNotificationsCount > 0 ? unreadNotificationsCount : undefined,
-        },
-        {
-          show: true,
-          href: routes.settings.root,
-          icon: Settings,
-          label: t("nav.settings"),
-        },
-      ],
-    },
-  ]
+      ]
 
   const visibleGroups = navGroups
     .map((group) => ({
