@@ -1,11 +1,12 @@
 import { useForm, Link, usePage, router } from "@inertiajs/react"
 import { useTranslation } from "react-i18next"
 import { AuthenticatedLayout } from "@/components/layout/AuthenticatedLayout"
+import { Main } from "@/components/layout/Main"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
 import { routes } from "@/lib/routes"
@@ -55,17 +56,20 @@ export default function Edit() {
   const title = profile.profileComplete ? t("profile.edit_title") : t("profile.complete_title")
 
   return (
-    <AuthenticatedLayout>
-      <div className="mx-auto max-w-lg px-4 py-6">
+    <AuthenticatedLayout
+      breadcrumbs={[{ label: t("nav.profile") }]}
+    >
+      <Main>
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
+        </div>
+        <div className="mx-auto max-w-lg">
         <Card>
-          <CardHeader>
-            <CardTitle className="text-xl">{title}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-5">
+          <CardContent className="pt-6">
+            <form onSubmit={handleSubmit} className="space-y-4">
 
               {/* Name */}
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <Label htmlFor="name">{t("profile.name")}</Label>
                 <Input
                   id="name"
@@ -77,7 +81,7 @@ export default function Edit() {
               </div>
 
               {/* WhatsApp */}
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <Label htmlFor="whatsapp">
                   {t("profile.whatsapp")} <span className="text-destructive">*</span>
                 </Label>
@@ -93,7 +97,7 @@ export default function Edit() {
               </div>
 
               {/* Phone */}
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <Label htmlFor="phone">{t("profile.phone")}</Label>
                 <Input
                   id="phone"
@@ -105,7 +109,7 @@ export default function Edit() {
               </div>
 
               {/* Birthday */}
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <Label htmlFor="birthday">
                   {t("profile.birthday")} <span className="text-destructive">*</span>
                 </Label>
@@ -120,7 +124,7 @@ export default function Edit() {
               </div>
 
               {/* Country */}
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <Label htmlFor="country">
                   {t("profile.country")} <span className="text-destructive">*</span>
                 </Label>
@@ -143,7 +147,7 @@ export default function Edit() {
               </div>
 
               {/* Language */}
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <Label htmlFor="locale">{t("profile.locale")}</Label>
                 <Select
                   value={data.locale}
@@ -179,7 +183,7 @@ export default function Edit() {
                 <div className="space-y-4 rounded-md border p-4">
                   <p className="text-sm font-medium">{t("profile.guardian_section")}</p>
                   {GUARDIAN_FIELDS.map(({ key, type, label }) => (
-                    <div key={key} className="space-y-2">
+                    <div key={key} className="space-y-1.5">
                       <Label htmlFor={key}>{t(label)}</Label>
                       <Input
                         id={key}
@@ -285,7 +289,8 @@ export default function Edit() {
             </form>
           </CardContent>
         </Card>
-      </div>
+        </div>
+      </Main>
     </AuthenticatedLayout>
   )
 }

@@ -27,9 +27,9 @@ export function AuthenticatedLayout({ children, breadcrumbs }: AuthenticatedLayo
       <AppSidebar />
       <SidebarInset>
         <Header breadcrumbs={breadcrumbs} />
-        <main className="flex-1 p-4 md:p-6">
+        <div className="flex flex-1 flex-col p-4 md:p-6 overflow-y-auto">
           {children}
-        </main>
+        </div>
       </SidebarInset>
     </SidebarProvider>
   )

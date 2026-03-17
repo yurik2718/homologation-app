@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next"
 import type { ColumnDef } from "@tanstack/react-table"
 import { Plus, Trash2, X } from "lucide-react"
 import { AuthenticatedLayout } from "@/components/layout/AuthenticatedLayout"
+import { Main } from "@/components/layout/Main"
 import { DataTable } from "@/components/data-table"
 import { ConfirmDialog } from "@/components/common/ConfirmDialog"
 import { Button } from "@/components/ui/button"
@@ -80,14 +81,14 @@ export default function AdminUsers() {
         }
         return (
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={() => setEditingUser(user)} className="min-h-[36px]">
+            <Button variant="outline" size="sm" onClick={() => setEditingUser(user)} className="min-h-[44px]">
               {t("admin.user_management.edit_user")}
             </Button>
             <Button
               variant="outline"
               size="sm"
               onClick={() => setDeactivatingUser(user)}
-              className="min-h-[36px] text-destructive border-destructive/30 hover:bg-destructive/10"
+              className="min-h-[44px] text-destructive border-destructive/30 hover:bg-destructive/10"
             >
               <Trash2 className="h-4 w-4" />
             </Button>
@@ -104,9 +105,10 @@ export default function AdminUsers() {
         { label: t("admin.users") },
       ]}
     >
+      <Main>
       <div className="space-y-6">
-        <div className="flex items-center justify-between gap-2">
-          <h1 className="text-2xl font-bold">{t("admin.users")}</h1>
+        <div className="flex items-center justify-between gap-2 mb-6">
+          <h1 className="text-2xl font-bold tracking-tight">{t("admin.users")}</h1>
           <Button onClick={() => setShowAddUser(true)} className="min-h-[44px]">
             <Plus className="mr-2 h-4 w-4" />
             {t("admin.user_management.add_user")}
@@ -147,6 +149,7 @@ export default function AdminUsers() {
           destructive
         />
       </div>
+      </Main>
     </AuthenticatedLayout>
   )
 }
@@ -309,10 +312,10 @@ function AddUserDialog({ open, onClose }: { open: boolean; onClose: () => void }
             />
           </div>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose}>
+            <Button type="button" variant="outline" onClick={onClose} className="min-h-[44px]">
               {t("common.cancel")}
             </Button>
-            <Button type="submit" disabled={processing}>
+            <Button type="submit" disabled={processing} className="min-h-[44px]">
               {t("common.save")}
             </Button>
           </DialogFooter>
@@ -360,10 +363,10 @@ function EditUserDialog({
             {errors.name && <p className="text-sm text-destructive mt-1">{errors.name}</p>}
           </div>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose}>
+            <Button type="button" variant="outline" onClick={onClose} className="min-h-[44px]">
               {t("common.cancel")}
             </Button>
-            <Button type="submit" disabled={processing}>
+            <Button type="submit" disabled={processing} className="min-h-[44px]">
               {t("common.save")}
             </Button>
           </DialogFooter>

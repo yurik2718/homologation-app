@@ -1,6 +1,7 @@
 import { usePage, router } from "@inertiajs/react"
 import { useTranslation } from "react-i18next"
 import { AuthenticatedLayout } from "@/components/layout/AuthenticatedLayout"
+import { Main } from "@/components/layout/Main"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { FormattedDate } from "@/components/common/FormattedDate"
@@ -63,33 +64,37 @@ export default function Index() {
   }
 
   return (
-    <AuthenticatedLayout>
-      <div className="mx-auto max-w-2xl px-4 py-6">
-        <div className="flex items-center justify-between mb-4">
-          <h1 className="text-xl font-semibold">{t("notifications.title")}</h1>
-          {notifications.some((n) => !n.readAt) && (
-            <Button variant="outline" size="sm" className="min-h-[44px]" onClick={handleMarkAllRead}>
-              {t("notifications.mark_all_read")}
-            </Button>
-          )}
-        </div>
-
-        <Card>
-          <CardContent className="p-2">
-            {notifications.length === 0 ? (
-              <p className="text-center text-muted-foreground py-8 text-sm">
-                {t("notifications.no_notifications")}
-              </p>
-            ) : (
-              <div className="divide-y">
-                {notifications.map((n) => (
-                  <NotificationRow key={n.id} notification={n} />
-                ))}
-              </div>
+    <AuthenticatedLayout
+      breadcrumbs={[{ label: t("nav.notifications") }]}
+    >
+      <Main>
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl font-bold tracking-tight">{t("notifications.title")}</h1>
+            {notifications.some((n) => !n.readAt) && (
+              <Button variant="outline" size="sm" className="min-h-[44px]" onClick={handleMarkAllRead}>
+                {t("notifications.mark_all_read")}
+              </Button>
             )}
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+
+          <Card>
+            <CardContent className="p-2">
+              {notifications.length === 0 ? (
+                <p className="text-center text-muted-foreground py-8 text-sm">
+                  {t("notifications.no_notifications")}
+                </p>
+              ) : (
+                <div className="divide-y">
+                  {notifications.map((n) => (
+                    <NotificationRow key={n.id} notification={n} />
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </Main>
     </AuthenticatedLayout>
   )
 }

@@ -9,6 +9,7 @@ import {
   Plus,
 } from "lucide-react"
 import { AuthenticatedLayout } from "@/components/layout/AuthenticatedLayout"
+import { Main } from "@/components/layout/Main"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -33,19 +34,25 @@ export default function DashboardIndex() {
   const { stats, features, requestsByMonth, recentRequests } =
     usePage<SharedProps & DashboardIndexProps>().props
 
+  const { t } = useTranslation()
+
   return (
-    <AuthenticatedLayout>
-      <div className="space-y-6">
-        {features.canCreateRequest ? (
-          <StudentDashboard stats={stats as DashboardStudentStats} />
-        ) : (
-          <AdminDashboard
-            stats={stats as DashboardAdminStats}
-            requestsByMonth={requestsByMonth ?? {}}
-            recentRequests={recentRequests ?? []}
-          />
-        )}
-      </div>
+    <AuthenticatedLayout
+      breadcrumbs={[{ label: t("nav.dashboard") }]}
+    >
+      <Main>
+        <div className="space-y-6">
+          {features.canCreateRequest ? (
+            <StudentDashboard stats={stats as DashboardStudentStats} />
+          ) : (
+            <AdminDashboard
+              stats={stats as DashboardAdminStats}
+              requestsByMonth={requestsByMonth ?? {}}
+              recentRequests={recentRequests ?? []}
+            />
+          )}
+        </div>
+      </Main>
     </AuthenticatedLayout>
   )
 }
@@ -56,10 +63,10 @@ function StudentDashboard({ stats }: { stats: DashboardStudentStats }) {
   const { t } = useTranslation()
   return (
     <>
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
         <h1 className="text-2xl font-bold tracking-tight">{t("nav.dashboard")}</h1>
         <Link href={routes.newRequest}>
-          <Button className="w-full sm:w-auto">
+          <Button className="w-full sm:w-auto min-h-[44px]">
             <Plus className="mr-2 h-4 w-4" />
             {t("requests.new_request")}
           </Button>
@@ -96,7 +103,7 @@ function AdminDashboard({
 
   return (
     <>
-      <div className="mb-2 flex items-center justify-between space-y-2">
+      <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold tracking-tight">{t("nav.dashboard")}</h1>
       </div>
 
@@ -184,7 +191,7 @@ function AdminDashboard({
           </div>
           <div className="flex justify-center pt-4">
             <Link href={routes.requests}>
-              <Button variant="outline">{t("admin.view_failed_syncs")}</Button>
+              <Button variant="outline" className="min-h-[44px]">{t("admin.view_failed_syncs")}</Button>
             </Link>
           </div>
         </TabsContent>

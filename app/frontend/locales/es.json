@@ -97,6 +97,10 @@
     "submit_request": "Enviar solicitud",
     "save_draft": "Guardar borrador",
     "no_requests": "Aún no tienes solicitudes",
+    "empty_hint": "Crea tu primera solicitud de homologación para empezar.",
+    "detail": {
+      "requester": "Solicitante"
+    },
     "status": {
       "draft": "Borrador",
       "submitted": "Enviada",

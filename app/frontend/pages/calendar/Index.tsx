@@ -2,6 +2,7 @@ import { useState } from "react"
 import { usePage } from "@inertiajs/react"
 import { useTranslation } from "react-i18next"
 import { AuthenticatedLayout } from "@/components/layout/AuthenticatedLayout"
+import { Main } from "@/components/layout/Main"
 import { Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { WeekGrid } from "@/components/lessons/WeekGrid"
@@ -32,26 +33,30 @@ export default function CalendarIndex() {
   }
 
   return (
-    <AuthenticatedLayout>
-    <div className="space-y-4">
-      <div className="flex items-center justify-between flex-wrap gap-2">
-        <h1 className="text-xl font-bold">{t("calendar.title")}</h1>
-        <Button onClick={openNew} className="min-h-[44px]">
-          <Plus className="h-4 w-4 mr-1.5" />
-          {t("lessons.new_lesson")}
-        </Button>
-      </div>
+    <AuthenticatedLayout
+      breadcrumbs={[{ label: t("nav.calendar") }]}
+    >
+      <Main>
+        <div className="space-y-6">
+          <div className="flex items-center justify-between flex-wrap gap-2 mb-6">
+            <h1 className="text-2xl font-bold tracking-tight">{t("calendar.title")}</h1>
+            <Button onClick={openNew} className="min-h-[44px]">
+              <Plus className="h-4 w-4 mr-1.5" />
+              {t("lessons.new_lesson")}
+            </Button>
+          </div>
 
-      <WeekGrid lessons={lessons} weekStart={weekStart} onLessonClick={openEdit} />
-      <DayView lessons={lessons} onLessonClick={openEdit} />
+          <WeekGrid lessons={lessons} weekStart={weekStart} onLessonClick={openEdit} />
+          <DayView lessons={lessons} onLessonClick={openEdit} />
 
-      <LessonDialog
-        open={dialogOpen}
-        onClose={closeDialog}
-        lesson={selectedLesson}
-        assignedStudents={assignedStudents}
-      />
-    </div>
+          <LessonDialog
+            open={dialogOpen}
+            onClose={closeDialog}
+            lesson={selectedLesson}
+            assignedStudents={assignedStudents}
+          />
+        </div>
+      </Main>
     </AuthenticatedLayout>
   )
 }

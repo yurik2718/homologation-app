@@ -5,12 +5,12 @@ class HomologationRequestsController < InertiaController
   def index
     authorize HomologationRequest
     @requests = policy_scope(HomologationRequest).kept.includes(:user).order(updated_at: :desc)
-    render inertia: "Requests/Index", props: { requests: @requests.map { |r| request_list_json(r) } }
+    render inertia: "requests/Index", props: { requests: @requests.map { |r| request_list_json(r) } }
   end
 
   def new
     authorize HomologationRequest.new
-    render inertia: "Requests/New"
+    render inertia: "requests/New"
   end
 
   def create
@@ -39,7 +39,7 @@ class HomologationRequestsController < InertiaController
         # already a participant (concurrent requests) — ignore
       end
     end
-    render inertia: "Requests/Show", props: { request: request_detail_json(@request) }
+    render inertia: "requests/Show", props: { request: request_detail_json(@request) }
   end
 
   def update

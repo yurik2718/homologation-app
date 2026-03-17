@@ -6,9 +6,8 @@ import { format } from "date-fns"
 import { es, enUS, ru } from "date-fns/locale"
 import { ArrowLeft, MessagesSquare, Info, Send } from "lucide-react"
 import { cn, getInitials } from "@/lib/utils"
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
-import { AppSidebar } from "@/components/layout/AppSidebar"
-import { Header } from "@/components/layout/Header"
+import { AuthenticatedLayout } from "@/components/layout/AuthenticatedLayout"
+import { Main } from "@/components/layout/Main"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -31,14 +30,6 @@ export default function ChatsIndex() {
   const { conversations, selectedConversation: initialSelected = null } =
     usePage<SharedProps & InboxIndexProps>().props
   const { auth } = usePage<SharedProps>().props
-
-  // Sync locale (normally done in AuthenticatedLayout)
-  useEffect(() => {
-    const locale = auth.user?.locale
-    if (locale && i18n.language !== locale) {
-      void i18n.changeLanguage(locale)
-    }
-  }, [auth.user?.locale, i18n])
 
   const [selected, setSelected] = useState<InboxConversationDetail | null>(initialSelected)
   const [mobileSelected, setMobileSelected] = useState<InboxConversationDetail | null>(
@@ -128,6 +119,7 @@ export default function ChatsIndex() {
     : null
 
   return (
+    <Main fixed>
     <section className="flex h-full gap-6">
       {/* Left Side */}
       <div className={cn(
@@ -137,7 +129,7 @@ export default function ChatsIndex() {
         <div className="sticky top-0 z-10 -mx-4 bg-background px-4 pb-3 shadow-md sm:static sm:z-auto sm:mx-0 sm:p-0 sm:shadow-none">
           <div className="flex items-center justify-between py-2">
             <div className="flex gap-2">
-              <h1 className="text-2xl font-bold">{t("chats.title")}</h1>
+              <h1 className="text-2xl font-bold tracking-tight">{t("chats.title")}</h1>
               <MessagesSquare size={20} />
             </div>
           </div>
@@ -351,18 +343,13 @@ export default function ChatsIndex() {
         </div>
       )}
     </section>
+    </Main>
   )
 }
 
-// Custom layout: sidebar + header, main is fixed height (flex grow overflow-hidden)
+// Use AuthenticatedLayout with breadcrumbs
 ChatsIndex.layout = (children: React.ReactNode) => (
-  <SidebarProvider>
-    <AppSidebar />
-    <SidebarInset>
-      <Header />
-      <main className="flex grow flex-col overflow-hidden px-4 py-6 md:px-6">
-        {children}
-      </main>
-    </SidebarInset>
-  </SidebarProvider>
+  <AuthenticatedLayout breadcrumbs={[{ label: "Chats" }]}>
+    {children}
+  </AuthenticatedLayout>
 )

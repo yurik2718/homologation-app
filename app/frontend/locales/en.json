@@ -97,6 +97,10 @@
     "submit_request": "Submit Request",
     "save_draft": "Save Draft",
     "no_requests": "You don't have any requests yet",
+    "empty_hint": "Create your first homologation request to get started.",
+    "detail": {
+      "requester": "Requester"
+    },
     "status": {
       "draft": "Draft",
       "submitted": "Submitted",

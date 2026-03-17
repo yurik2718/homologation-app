@@ -11,6 +11,7 @@ import {
   AlertCircle,
 } from "lucide-react"
 import { AuthenticatedLayout } from "@/components/layout/AuthenticatedLayout"
+import { Main } from "@/components/layout/Main"
 import { DataTable } from "@/components/data-table"
 import { StatsCard } from "@/components/admin/StatsCard"
 import { RequestsByMonthChart, RequestsByStatusChart } from "@/components/admin/Charts"
@@ -58,8 +59,11 @@ export default function AdminDashboard() {
     <AuthenticatedLayout
       breadcrumbs={[{ label: t("admin.dashboard") }]}
     >
+      <Main>
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold">{t("admin.dashboard")}</h1>
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold tracking-tight">{t("admin.dashboard")}</h1>
+        </div>
 
         {/* Stats grid */}
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
@@ -130,6 +134,7 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
       </div>
+      </Main>
     </AuthenticatedLayout>
   )
 }

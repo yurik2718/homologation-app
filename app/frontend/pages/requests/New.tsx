@@ -1,6 +1,7 @@
 import { useForm, usePage } from "@inertiajs/react"
 import { useTranslation } from "react-i18next"
 import { AuthenticatedLayout } from "@/components/layout/AuthenticatedLayout"
+import { Main } from "@/components/layout/Main"
 import { FileDropZone } from "@/components/documents/FileDropZone"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -14,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
 import { getOptionLabel } from "@/lib/utils"
 import { routes } from "@/lib/routes"
 import type { SharedProps } from "@/types/index"
@@ -51,315 +52,191 @@ export default function RequestsNew() {
   }
 
   return (
-    <AuthenticatedLayout>
-      <div className="max-w-2xl mx-auto space-y-6">
-        <h1 className="text-2xl font-bold">{t("requests.new_request")}</h1>
+    <AuthenticatedLayout
+      breadcrumbs={[
+        { label: t("nav.my_requests"), href: routes.requests },
+        { label: t("requests.new_request") },
+      ]}
+    >
+      <Main>
+        <div className="max-w-2xl mx-auto">
+          <h1 className="text-2xl font-bold mb-6">{t("requests.new_request")}</h1>
 
-        <form
-          onSubmit={(e) => {
-            e.preventDefault()
-            handleSubmit("submit")
-          }}
-          className="space-y-6"
-        >
-          {/* Section: About You */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">
-                {t("requests.form.section_about")}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label>{t("requests.form.name")}</Label>
-                <Input value={auth.user?.name ?? ""} disabled />
-              </div>
-            </CardContent>
-          </Card>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault()
+              handleSubmit("submit")
+            }}
+            className="space-y-5"
+          >
+            {/* Name (read-only from profile) */}
+            <FormField label={t("requests.form.name")}>
+              <Input value={auth.user?.name ?? ""} disabled />
+            </FormField>
 
-          {/* Section: Your Request */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">
-                {t("requests.form.section_request")}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="service_type">
-                  {t("requests.form.service_type")} *
-                </Label>
-                <Select
-                  value={data.service_type}
-                  onValueChange={(v) => setData("service_type", v)}
-                >
-                  <SelectTrigger id="service_type">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {(selectOptions.service_types ?? []).map((opt) => (
-                      <SelectItem key={opt.key} value={opt.key}>
-                        {getOptionLabel(opt, locale)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {errors.service_type && (
-                  <p className="text-sm text-destructive">{errors.service_type}</p>
-                )}
-              </div>
+            {/* Service Requested */}
+            <FormField label={t("requests.form.service_type")} required error={errors.service_type}>
+              <Select
+                value={data.service_type}
+                onValueChange={(v) => setData("service_type", v)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="-" />
+                </SelectTrigger>
+                <SelectContent>
+                  {(selectOptions.service_types ?? []).map((opt) => (
+                    <SelectItem key={opt.key} value={opt.key}>
+                      {getOptionLabel(opt, locale)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </FormField>
 
-              <div className="space-y-2">
-                <Label htmlFor="subject">
-                  {t("requests.form.subject")} *
-                </Label>
-                <Input
-                  id="subject"
-                  value={data.subject}
-                  onChange={(e) => setData("subject", e.target.value)}
-                />
-                {errors.subject && (
-                  <p className="text-sm text-destructive">{errors.subject}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="description">{t("requests.form.description")}</Label>
-                <Textarea
-                  id="description"
-                  value={data.description}
-                  onChange={(e) => setData("description", e.target.value)}
-                  placeholder={t("requests.form.description_hint")}
-                  rows={4}
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Section: Education */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">
-                {t("requests.form.section_education")}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label>{t("requests.form.identity_card")}</Label>
-                <Input
-                  value={data.identity_card}
-                  onChange={(e) => setData("identity_card", e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>{t("requests.form.passport")}</Label>
-                <Input
-                  value={data.passport}
-                  onChange={(e) => setData("passport", e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>{t("requests.form.education_system")}</Label>
-                <Select
-                  value={data.education_system}
-                  onValueChange={(v) => setData("education_system", v)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {(selectOptions.education_systems ?? []).map((opt) => (
-                      <SelectItem key={opt.key} value={opt.key}>
-                        {getOptionLabel(opt, locale)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label>{t("requests.form.studies_finished")}</Label>
-                <Select
-                  value={data.studies_finished}
-                  onValueChange={(v) => setData("studies_finished", v)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {(selectOptions.studies_finished ?? []).map((opt) => (
-                      <SelectItem key={opt.key} value={opt.key}>
-                        {getOptionLabel(opt, locale)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label>{t("requests.form.study_type_spain")}</Label>
-                <Select
-                  value={data.study_type_spain}
-                  onValueChange={(v) => setData("study_type_spain", v)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {(selectOptions.study_types_spain ?? []).map((opt) => (
-                      <SelectItem key={opt.key} value={opt.key}>
-                        {getOptionLabel(opt, locale)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label>{t("requests.form.studies_spain")}</Label>
-                <Input
-                  value={data.studies_spain}
-                  onChange={(e) => setData("studies_spain", e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>{t("requests.form.university")}</Label>
-                <Select
-                  value={data.university}
-                  onValueChange={(v) => setData("university", v)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {(selectOptions.universities ?? []).map((opt) => (
-                      <SelectItem key={opt.key} value={opt.key}>
-                        {getOptionLabel(opt, locale)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Section: Optional */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">
-                {t("requests.form.section_optional")}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label>{t("requests.form.language_level")}</Label>
-                <Select
-                  value={data.language_knowledge}
-                  onValueChange={(v) => setData("language_knowledge", v)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {(selectOptions.language_levels ?? []).map((opt) => (
-                      <SelectItem key={opt.key} value={opt.key}>
-                        {getOptionLabel(opt, locale)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label>{t("requests.form.language_certificate")}</Label>
-                <Select
-                  value={data.language_certificate}
-                  onValueChange={(v) => setData("language_certificate", v)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {(selectOptions.language_certificates ?? []).map((opt) => (
-                      <SelectItem key={opt.key} value={opt.key}>
-                        {getOptionLabel(opt, locale)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label>{t("requests.form.referral_source")}</Label>
-                <Select
-                  value={data.referral_source}
-                  onValueChange={(v) => setData("referral_source", v)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {(selectOptions.referral_sources ?? []).map((opt) => (
-                      <SelectItem key={opt.key} value={opt.key}>
-                        {getOptionLabel(opt, locale)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Section: Documents */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">
-                {t("requests.form.section_documents")}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <Label>{t("requests.form.application_file")}</Label>
-                <FileDropZone
-                  name="homologation_request[application][]"
-                  multiple={false}
-                  onUpload={(ids) => setData("application", ids)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>{t("requests.form.originals_files")}</Label>
-                <FileDropZone
-                  name="homologation_request[originals][]"
-                  multiple={true}
-                  onUpload={(ids) => setData("originals", ids)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>{t("requests.form.other_files")}</Label>
-                <FileDropZone
-                  name="homologation_request[documents][]"
-                  multiple={true}
-                  onUpload={(ids) => setData("documents", ids)}
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Privacy + Submit */}
-          <div className="space-y-4">
-            <div className="flex items-start gap-3">
-              <Checkbox
-                id="privacy_accepted"
-                checked={data.privacy_accepted}
-                onCheckedChange={(checked) =>
-                  setData("privacy_accepted", checked === true)
-                }
-                className="mt-0.5"
+            {/* Subject */}
+            <FormField label={t("requests.form.subject")} required error={errors.subject}>
+              <Input
+                value={data.subject}
+                onChange={(e) => setData("subject", e.target.value)}
               />
-              <Label htmlFor="privacy_accepted" className="text-sm leading-relaxed cursor-pointer">
-                {t("requests.form.privacy_policy")}
-              </Label>
-            </div>
-            {errors.privacy_accepted && (
-              <p className="text-sm text-destructive">{errors.privacy_accepted}</p>
-            )}
+            </FormField>
 
-            <div className="flex flex-col gap-3 sm:flex-row">
+            {/* Description */}
+            <FormField label={t("requests.form.description")} hint={t("requests.form.description_hint")}>
+              <Textarea
+                value={data.description}
+                onChange={(e) => setData("description", e.target.value)}
+                rows={5}
+              />
+            </FormField>
+
+            <Separator />
+
+            {/* Identity Card */}
+            <FormField label={t("requests.form.identity_card")} hint={t("requests.form.passport")}>
+              <Input
+                value={data.identity_card}
+                onChange={(e) => setData("identity_card", e.target.value)}
+              />
+            </FormField>
+
+            {/* Education System */}
+            <FormField label={t("requests.form.education_system")}>
+              <Select
+                value={data.education_system}
+                onValueChange={(v) => setData("education_system", v)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="-" />
+                </SelectTrigger>
+                <SelectContent>
+                  {(selectOptions.education_systems ?? []).map((opt) => (
+                    <SelectItem key={opt.key} value={opt.key}>
+                      {getOptionLabel(opt, locale)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </FormField>
+
+            {/* Studies Finished */}
+            <FormField label={t("requests.form.studies_finished")}>
+              <Select
+                value={data.studies_finished}
+                onValueChange={(v) => setData("studies_finished", v)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="-" />
+                </SelectTrigger>
+                <SelectContent>
+                  {(selectOptions.studies_finished ?? []).map((opt) => (
+                    <SelectItem key={opt.key} value={opt.key}>
+                      {getOptionLabel(opt, locale)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </FormField>
+
+            {/* Type of studies in Spain */}
+            <FormField label={t("requests.form.study_type_spain")}>
+              <Select
+                value={data.study_type_spain}
+                onValueChange={(v) => setData("study_type_spain", v)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="-" />
+                </SelectTrigger>
+                <SelectContent>
+                  {(selectOptions.study_types_spain ?? []).map((opt) => (
+                    <SelectItem key={opt.key} value={opt.key}>
+                      {getOptionLabel(opt, locale)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </FormField>
+
+            {/* Studies to be carried out in Spain */}
+            <FormField label={t("requests.form.studies_spain")}>
+              <Input
+                value={data.studies_spain}
+                onChange={(e) => setData("studies_spain", e.target.value)}
+              />
+            </FormField>
+
+            {/* University */}
+            <FormField label={t("requests.form.university")}>
+              <Select
+                value={data.university}
+                onValueChange={(v) => setData("university", v)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="-" />
+                </SelectTrigger>
+                <SelectContent>
+                  {(selectOptions.universities ?? []).map((opt) => (
+                    <SelectItem key={opt.key} value={opt.key}>
+                      {getOptionLabel(opt, locale)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </FormField>
+
+            <Separator />
+
+            {/* Privacy checkbox */}
+            <div className="space-y-1">
+              <div className="flex items-start gap-3">
+                <Checkbox
+                  id="privacy_accepted"
+                  checked={data.privacy_accepted}
+                  onCheckedChange={(checked) =>
+                    setData("privacy_accepted", checked === true)
+                  }
+                  className="mt-0.5"
+                />
+                <Label htmlFor="privacy_accepted" className="text-sm leading-relaxed cursor-pointer">
+                  {t("requests.form.privacy_policy")}
+                </Label>
+              </div>
+              {errors.privacy_accepted && (
+                <p className="text-sm text-destructive">{errors.privacy_accepted}</p>
+              )}
+            </div>
+
+            {/* Attachments */}
+            <FormField label={t("requests.form.section_documents")} hint={t("common.optional")}>
+              <FileDropZone
+                name="homologation_request[documents][]"
+                multiple={true}
+                onUpload={(ids) => setData("documents", ids)}
+              />
+            </FormField>
+
+            {/* Submit buttons */}
+            <div className="flex flex-col gap-3 sm:flex-row pt-2">
               <Button
                 type="submit"
                 disabled={processing}
@@ -377,9 +254,35 @@ export default function RequestsNew() {
                 {t("requests.save_draft")}
               </Button>
             </div>
-          </div>
-        </form>
-      </div>
+          </form>
+        </div>
+      </Main>
     </AuthenticatedLayout>
+  )
+}
+
+function FormField({
+  label,
+  required,
+  hint,
+  error,
+  children,
+}: {
+  label: string
+  required?: boolean
+  hint?: string
+  error?: string | string[]
+  children: React.ReactNode
+}) {
+  return (
+    <div className="space-y-1.5">
+      <Label className="text-sm font-medium">
+        {label}
+        {required && <span className="text-destructive ml-0.5">*</span>}
+      </Label>
+      {children}
+      {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
+      {error && <p className="text-sm text-destructive">{Array.isArray(error) ? error[0] : error}</p>}
+    </div>
   )
 }

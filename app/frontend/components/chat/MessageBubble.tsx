@@ -1,3 +1,4 @@
+import { Paperclip } from "lucide-react"
 import { FormattedDate } from "@/components/common/FormattedDate"
 import { cn } from "@/lib/utils"
 import type { ChatMessage } from "@/types/models.d"
@@ -24,11 +25,18 @@ export function MessageBubble({ message, isOwn }: MessageBubbleProps) {
       )}
       <p className="whitespace-pre-wrap">{message.body}</p>
       {message.attachments.length > 0 && (
-        <div className="mt-1 flex flex-wrap gap-1">
+        <div className="mt-2 space-y-1">
           {message.attachments.map((a) => (
-            <span key={a.id} className="rounded bg-background/20 px-2 py-0.5 text-xs">
-              {a.filename}
-            </span>
+            <div
+              key={a.id}
+              className={cn(
+                "flex items-center gap-1.5 rounded px-2 py-1 text-xs",
+                isOwn ? "bg-background/20" : "bg-background/60"
+              )}
+            >
+              <Paperclip className="h-3 w-3 shrink-0" />
+              <span className="truncate">{a.filename}</span>
+            </div>
           ))}
         </div>
       )}

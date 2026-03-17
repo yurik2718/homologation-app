@@ -2,11 +2,13 @@ import { useState } from "react"
 import { Link, router, usePage } from "@inertiajs/react"
 import { useTranslation } from "react-i18next"
 import type { ColumnDef } from "@tanstack/react-table"
-import { Plus } from "lucide-react"
+import { Plus, FileText } from "lucide-react"
 import { AuthenticatedLayout } from "@/components/layout/AuthenticatedLayout"
+import { Main } from "@/components/layout/Main"
 import { DataTable } from "@/components/data-table"
 import { StatusBadge } from "@/components/common/StatusBadge"
 import { FormattedDate } from "@/components/common/FormattedDate"
+import { LongText } from "@/components/common/LongText"
 import { SearchInput } from "@/components/common/SearchInput"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -39,7 +41,11 @@ export default function RequestsIndex() {
     {
       accessorKey: "subject",
       header: t("requests.table.subject"),
-      cell: ({ row }) => <span className="font-medium">{row.original.subject}</span>,
+      cell: ({ row }) => (
+        <LongText className="max-w-[300px] font-medium">
+          {row.original.subject}
+        </LongText>
+      ),
     },
     {
       accessorKey: "id",
@@ -50,7 +56,7 @@ export default function RequestsIndex() {
     {
       accessorKey: "createdAt",
       header: t("requests.table.created"),
-      cell: ({ row }) => <FormattedDate date={row.original.createdAt} />,
+      cell: ({ row }) => <FormattedDate date={row.original.createdAt} mode="date" />,
     },
     {
       accessorKey: "updatedAt",
@@ -67,10 +73,10 @@ export default function RequestsIndex() {
 
   return (
     <AuthenticatedLayout
-      breadcrumbs={[{ label: t("nav.requests") }]}
+      breadcrumbs={[{ label: t("nav.my_requests") }]}
     >
-      <div className="space-y-4">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <Main>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4">
           <h1 className="text-2xl font-bold">{t("requests.title")}</h1>
           {features.canCreateRequest && (
             <Link href={routes.newRequest}>
@@ -82,39 +88,64 @@ export default function RequestsIndex() {
           )}
         </div>
 
-        <DataTable
-          columns={columns}
-          data={filtered}
-          onRowClick={(r) => router.visit(routes.request(r.id))}
-          searchColumn="subject"
-          searchValue={search}
-          renderMobileCard={(r) => <RequestCard request={r} />}
-          toolbarContent={
-            <div className="flex flex-col gap-2 sm:flex-row">
-              <SearchInput
-                value={search}
-                onChange={setSearch}
-                placeholder={t("common.search")}
-                className="sm:max-w-xs"
-              />
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="sm:w-48">
-                  <SelectValue placeholder={t("requests.table.status_filter")} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t("common.filter")}</SelectItem>
-                  {STATUSES.map((s) => (
-                    <SelectItem key={s} value={s}>
-                      {t(`requests.status.${s}`)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          }
-        />
-      </div>
+        {requests.length === 0 ? (
+          <EmptyState canCreate={features.canCreateRequest ?? false} />
+        ) : (
+          <DataTable
+            columns={columns}
+            data={filtered}
+            onRowClick={(r) => router.visit(routes.request(r.id))}
+            searchColumn="subject"
+            searchValue={search}
+            renderMobileCard={(r) => <RequestCard request={r} />}
+            toolbarContent={
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <SearchInput
+                  value={search}
+                  onChange={setSearch}
+                  placeholder={t("common.search")}
+                  className="sm:max-w-xs"
+                />
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="sm:w-48">
+                    <SelectValue placeholder={t("requests.table.status_filter")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">{t("common.filter")}</SelectItem>
+                    {STATUSES.map((s) => (
+                      <SelectItem key={s} value={s}>
+                        {t(`requests.status.${s}`)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            }
+          />
+        )}
+      </Main>
     </AuthenticatedLayout>
+  )
+}
+
+function EmptyState({ canCreate }: { canCreate: boolean }) {
+  const { t } = useTranslation()
+  return (
+    <div className="flex flex-col items-center justify-center py-16 text-center">
+      <div className="rounded-full bg-muted p-4 mb-4">
+        <FileText className="h-8 w-8 text-muted-foreground" />
+      </div>
+      <h2 className="text-lg font-semibold mb-1">{t("requests.no_requests")}</h2>
+      <p className="text-sm text-muted-foreground mb-6">{t("requests.empty_hint")}</p>
+      {canCreate && (
+        <Link href={routes.newRequest}>
+          <Button className="min-h-[44px]">
+            <Plus className="mr-2 h-4 w-4" />
+            {t("requests.new_request")}
+          </Button>
+        </Link>
+      )}
+    </div>
   )
 }
 

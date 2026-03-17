@@ -178,6 +178,176 @@ end
 | Writing tests or test conventions | `docs/16_TESTING.md` |
 | Questioning a design decision | `docs/00_PRINCIPLES.md` + `docs/01_ARCHITECTURE.md` |
 
+## UI Standards
+
+Every page must follow these patterns exactly. No exceptions. Reference: `shadcn-admin` by satnaing.
+
+### Page structure template
+
+```tsx
+// ✅ Standard page (list, dashboard, form)
+export default function PageName() {
+  return (
+    <AuthenticatedLayout breadcrumbs={[{ label: t("nav.page_name") }]}>
+      <Main>
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl font-bold tracking-tight">{t("page.title")}</h1>
+          {/* Optional: primary action button */}
+        </div>
+        {/* Page content */}
+      </Main>
+    </AuthenticatedLayout>
+  )
+}
+
+// ✅ Fixed layout page (chat, split-pane — content fills available height)
+export default function FixedPage() {
+  return (
+    <AuthenticatedLayout breadcrumbs={[...]}>
+      <Main fixed>
+        {/* Content with flex-1 and overflow */}
+      </Main>
+    </AuthenticatedLayout>
+  )
+}
+```
+
+### Typography
+
+| Element | Classes | When |
+|---------|---------|------|
+| Page title | `text-2xl font-bold tracking-tight` | Top of every page |
+| Section title | `text-lg font-semibold` | Inside cards/sections |
+| Card title | `<CardTitle className="text-base">` | shadcn Card headers |
+| Body text | `text-sm` | Default content |
+| Helper/hint | `text-xs text-muted-foreground` | Under form fields |
+| Error | `text-sm text-destructive` | Validation errors |
+
+### Spacing
+
+| Context | Class | Notes |
+|---------|-------|-------|
+| Page title → content gap | `mb-6` on title row | Always 24px |
+| Between page sections | `space-y-6` | Cards, sections |
+| Inside Card content | `space-y-4` | Between items |
+| Form fields | `space-y-4` | Between field groups |
+| Field label → input | `space-y-1.5` | Label to control |
+
+### Buttons
+
+```tsx
+// ✅ Primary action (submit, confirm, create)
+<Button className="min-h-[44px]">Action</Button>
+
+// ✅ Secondary action (cancel, save draft)
+<Button variant="outline" className="min-h-[44px]">Cancel</Button>
+
+// ✅ Destructive (delete, remove)
+<Button variant="destructive" className="min-h-[44px]">Delete</Button>
+
+// ✅ Small inline action (inside cards, tables) — still 44px on mobile
+<Button variant="outline" size="sm" className="min-h-[44px]">Edit</Button>
+
+// ✅ Icon button
+<Button variant="ghost" size="icon" className="size-9">
+  <Icon className="h-4 w-4" />
+</Button>
+```
+
+**Rule: ALL interactive elements must have min 44px touch target on mobile.**
+
+### Form fields
+
+```tsx
+// ✅ Standard field pattern
+<div className="space-y-1.5">
+  <Label>Field Name <span className="text-destructive">*</span></Label>
+  <Input value={data.field} onChange={...} />
+  <p className="text-xs text-muted-foreground">Helper text</p>
+  {errors.field && <p className="text-sm text-destructive">{errors.field}</p>}
+</div>
+```
+
+### Cards
+
+```tsx
+// ✅ Content card
+<Card>
+  <CardHeader>
+    <CardTitle className="text-base">Section</CardTitle>
+  </CardHeader>
+  <CardContent className="space-y-4">...</CardContent>
+</Card>
+
+// ✅ Clickable card (mobile list items)
+<Card className="cursor-pointer hover:bg-muted/50 transition-colors">
+  <CardContent className="p-4">...</CardContent>
+</Card>
+```
+
+**Never create card-like divs manually. Always use `<Card>`.**
+
+### Responsive layout
+
+```tsx
+// ✅ Title + action bar
+<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
+  <h1 className="text-2xl font-bold tracking-tight">Title</h1>
+  <Button className="w-full sm:w-auto min-h-[44px]">Action</Button>
+</div>
+
+// ✅ Two-column layout (sidebar + main)
+<div className="flex flex-col lg:grid lg:grid-cols-[1fr_320px] gap-6">
+  <div className="order-2 lg:order-1">Main</div>
+  <div className="order-1 lg:order-2">Sidebar</div>
+</div>
+
+// ✅ Grid cards
+<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+```
+
+### Empty states
+
+```tsx
+// ✅ Empty state pattern
+<div className="flex flex-col items-center justify-center py-16 text-center">
+  <div className="rounded-full bg-muted p-4 mb-4">
+    <Icon className="h-8 w-8 text-muted-foreground" />
+  </div>
+  <h2 className="text-lg font-semibold mb-1">{t("page.no_items")}</h2>
+  <p className="text-sm text-muted-foreground mb-6">{t("page.empty_hint")}</p>
+  <Button>Create First Item</Button>
+</div>
+```
+
+### Breadcrumbs
+
+```tsx
+// ✅ Top-level page
+<AuthenticatedLayout breadcrumbs={[{ label: t("nav.requests") }]}>
+
+// ✅ Detail page
+<AuthenticatedLayout breadcrumbs={[
+  { label: t("nav.my_requests"), href: routes.requests },
+  { label: request.subject },
+]}>
+```
+
+**Every page must have breadcrumbs.** Top-level = 1 item. Detail = parent + current.
+
+### Imports order
+
+1. React hooks (`useState`, `useEffect`)
+2. Inertia (`router`, `usePage`, `Link`)
+3. i18n (`useTranslation`)
+4. Libraries (`@tanstack/react-table`, `lucide-react`, `date-fns`)
+5. Layout (`AuthenticatedLayout`, `Main`)
+6. UI components (`Button`, `Card`, `Input`)
+7. Common components (`StatusBadge`, `FormattedDate`, `LongText`)
+8. Feature components (`ChatWindow`, `FileDropZone`)
+9. Lib (`routes`, `utils`, `colors`)
+10. Types (`SharedProps`, page props)
+
 ## Banned Patterns
 
-`.as_json` · `react-hook-form` · `zod` · `<a href>` · `fetch()`/`axios` · `window.location` · hardcoded URL paths · role checks in React · Tiptap · zustand · dark mode · AmoCRM sync before `payment_confirmed` · skipping `authorize` · skipping tests
+`.as_json` · `react-hook-form` · `zod` · `<a href>` · `fetch()`/`axios` · `window.location` · hardcoded URL paths · role checks in React · Tiptap · zustand · dark mode · AmoCRM sync before `payment_confirmed` · skipping `authorize` · skipping tests · custom card-like `<div>` instead of `<Card>` · buttons without `min-h-[44px]` · pages without breadcrumbs · pages without `<Main>` wrapper

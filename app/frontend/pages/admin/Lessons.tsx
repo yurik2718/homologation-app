@@ -3,6 +3,7 @@ import { usePage, router } from "@inertiajs/react"
 import { useTranslation } from "react-i18next"
 import type { ColumnDef } from "@tanstack/react-table"
 import { AuthenticatedLayout } from "@/components/layout/AuthenticatedLayout"
+import { Main } from "@/components/layout/Main"
 import { DataTable } from "@/components/data-table"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -92,8 +93,11 @@ export default function AdminLessons() {
         { label: t("nav.all_lessons") },
       ]}
     >
-      <div className="space-y-4">
-        <h1 className="text-xl font-bold">{t("nav.all_lessons")}</h1>
+      <Main>
+      <div className="space-y-6">
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold tracking-tight">{t("nav.all_lessons")}</h1>
+        </div>
 
         <DataTable
           columns={columns}
@@ -140,6 +144,7 @@ export default function AdminLessons() {
           }
         />
       </div>
+      </Main>
     </AuthenticatedLayout>
   )
 }
