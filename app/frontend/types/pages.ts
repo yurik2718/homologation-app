@@ -231,14 +231,19 @@ export interface LessonItem {
   notes: string | null
 }
 
-// calendar/Index (teacher)
+// calendar/Index (teacher + student)
 export interface CalendarIndexProps {
+  view: "week" | "month" | "list"
   lessons: LessonItem[]
-  weekStart: string
+  weekStart?: string
+  monthStart?: string
+  monthSummary?: Record<string, MonthDayLesson[]>
+  upcoming?: LessonItem[]
+  past?: LessonItem[]
   assignedStudents: Array<{ id: number; name: string }>
 }
 
-// lessons/Index (student)
+// lessons/Index (student) — legacy, kept for compatibility
 export interface LessonsIndexProps {
   upcoming: LessonItem[]
   past: LessonItem[]

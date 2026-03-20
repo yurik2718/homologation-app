@@ -82,7 +82,7 @@ const UserCard = memo(function UserCard({ user, initials }: { user: User; initia
 export function AppSidebar() {
   const { t } = useTranslation()
   const { url, props } = usePage<SharedProps>()
-  const { auth, features, unreadNotificationsCount } = props
+  const { auth, features, unreadNotificationsCount, unreadChatsCount } = props
   const user = auth.user
 
   // Super admin gets 4 domain-oriented groups; other roles get the flat layout
@@ -111,6 +111,7 @@ export function AppSidebar() {
               href: routes.chats,
               icon: MessagesSquare,
               label: t("nav.chats"),
+              badge: unreadChatsCount > 0 ? unreadChatsCount : undefined,
             },
           ],
         },
@@ -131,7 +132,7 @@ export function AppSidebar() {
             },
             {
               show: true,
-              href: routes.calendar,
+              href: routes.lessons,
               icon: Calendar,
               label: t("nav.calendar"),
             },
@@ -202,18 +203,13 @@ export function AppSidebar() {
               href: routes.conversations,
               icon: MessageCircle,
               label: t("nav.chat"),
-            },
-            {
-              show: features.canSeeMyLessons,
-              href: routes.lessons,
-              icon: BookOpen,
-              label: t("nav.my_lessons"),
+              badge: unreadChatsCount > 0 ? unreadChatsCount : undefined,
             },
             {
               show: features.canSeeCalendar,
               href: routes.lessons,
-              icon: Calendar,
-              label: t("nav.calendar"),
+              icon: BookOpen,
+              label: t("nav.my_lessons"),
             },
           ],
         },
@@ -253,7 +249,7 @@ export function AppSidebar() {
           ],
         },
       ],
-  [isSuperAdmin, features, unreadNotificationsCount, t])
+  [isSuperAdmin, features, unreadNotificationsCount, unreadChatsCount, t])
 
   const visibleGroups = useMemo(() =>
     navGroups
@@ -309,7 +305,9 @@ export function AppSidebar() {
                       </Link>
                     </SidebarMenuButton>
                     {item.badge != null && (
-                      <SidebarMenuBadge>{item.badge}</SidebarMenuBadge>
+                      <SidebarMenuBadge className="!bg-primary !text-primary-foreground rounded-full h-5 min-w-5 px-1.5 text-[11px] font-semibold">
+                        {item.badge}
+                      </SidebarMenuBadge>
                     )}
                   </SidebarMenuItem>
                 ))}

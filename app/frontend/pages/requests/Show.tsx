@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { router, usePage } from "@inertiajs/react"
 import { useTranslation } from "react-i18next"
-import { Paperclip, Download } from "lucide-react"
+import { Paperclip, Download, MessageSquare } from "lucide-react"
 import { AuthenticatedLayout } from "@/components/layout/AuthenticatedLayout"
 import { Main } from "@/components/layout/Main"
 import { ChatWindow } from "@/components/chat/ChatWindow"
@@ -28,9 +28,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { formatBytes } from "@/lib/utils"
+import { formatBytes, getOptionLabel } from "@/lib/utils"
 import { routes } from "@/lib/routes"
-import type { SharedProps } from "@/types/index"
+import type { SharedProps, SelectOption } from "@/types/index"
 import type { RequestsShowProps, FileInfo } from "@/types/pages"
 
 const COORDINATOR_STATUS_OPTIONS: Record<string, string[]> = {
@@ -44,7 +44,9 @@ const COORDINATOR_STATUS_OPTIONS: Record<string, string[]> = {
 
 export default function RequestsShow() {
   const { t } = useTranslation()
-  const { request, features } = usePage<SharedProps & RequestsShowProps>().props
+  const { auth, request, features, selectOptions } =
+    usePage<SharedProps & RequestsShowProps>().props
+  const locale = auth.user?.locale ?? "es"
   const [paymentDialogOpen, setPaymentDialogOpen] = useState(false)
   const [paymentAmount, setPaymentAmount] = useState("")
 
@@ -55,18 +57,44 @@ export default function RequestsShow() {
   }
 
   const handleConfirmPayment = () => {
-    router.post(routes.confirmPayment(request.id), { payment_amount: paymentAmount }, {
-      onSuccess: () => setPaymentDialogOpen(false),
-    })
+    router.post(
+      routes.confirmPayment(request.id),
+      { payment_amount: paymentAmount },
+      { onSuccess: () => setPaymentDialogOpen(false) }
+    )
   }
 
-  const crmStatus = request.amoCrmLeadId && request.amoCrmSyncedAt
-    ? "synced"
-    : request.amoCrmLeadId
-      ? "syncing"
-      : request.amoCrmSyncError
-        ? "error"
-        : "not_synced"
+  const crmStatus =
+    request.amoCrmLeadId && request.amoCrmSyncedAt
+      ? "synced"
+      : request.amoCrmLeadId
+        ? "syncing"
+        : request.amoCrmSyncError
+          ? "error"
+          : "not_synced"
+
+  /** Resolve a raw key (e.g. "equivalencia") to its localized label via selectOptions. */
+  const resolveOption = (
+    key: string | null | undefined,
+    optionsKey: string
+  ): string | null => {
+    if (!key) return null
+    const options: SelectOption[] = selectOptions[optionsKey] ?? []
+    const found = options.find((o) => o.key === key)
+    return found ? getOptionLabel(found, locale) : key
+  }
+
+  const hasEducation =
+    request.educationSystem ||
+    request.studiesFinished ||
+    request.studyTypeSpain ||
+    request.studiesSpain ||
+    request.university
+
+  const hasAdditional =
+    request.languageKnowledge ||
+    request.languageCertificate ||
+    request.referralSource
 
   return (
     <AuthenticatedLayout
@@ -92,13 +120,32 @@ export default function RequestsShow() {
                   postUrl={routes.requestMessages(request.id)}
                 />
               ) : (
-                <p className="p-4 text-sm text-muted-foreground">{t("chat.no_messages")}</p>
+                <div className="flex flex-col items-center justify-center h-full py-12 text-center px-4">
+                  <div className="rounded-full bg-muted p-3 mb-3">
+                    <MessageSquare className="h-6 w-6 text-muted-foreground" />
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {t("requests.detail.chat_not_available")}
+                  </p>
+                </div>
               )}
             </CardContent>
           </Card>
 
           {/* Right: Metadata sidebar */}
           <div className="order-1 lg:order-2 space-y-4 overflow-y-auto">
+            {/* Status card — prominent at the top */}
+            <Card>
+              <CardContent className="pt-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">
+                    {t("requests.table.status")}
+                  </span>
+                  <StatusBadge status={request.status} />
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Coordinator actions */}
             {features.canConfirmPayment && (
               <Card>
@@ -108,7 +155,9 @@ export default function RequestsShow() {
                       <Label>{t("coordinator.change_status")}</Label>
                       <Select onValueChange={handleStatusChange}>
                         <SelectTrigger>
-                          <SelectValue placeholder={t("coordinator.change_status")} />
+                          <SelectValue
+                            placeholder={t("coordinator.change_status")}
+                          />
                         </SelectTrigger>
                         <SelectContent>
                           {availableStatuses.map((s) => (
@@ -145,12 +194,16 @@ export default function RequestsShow() {
                       </div>
                       {request.amoCrmSyncError && (
                         <div className="space-y-1">
-                          <p className="text-xs text-destructive">{request.amoCrmSyncError}</p>
+                          <p className="text-xs text-destructive">
+                            {request.amoCrmSyncError}
+                          </p>
                           <Button
                             variant="outline"
                             size="sm"
                             className="min-h-[44px]"
-                            onClick={() => router.post(routes.retrySync(request.id))}
+                            onClick={() =>
+                              router.post(routes.retrySync(request.id))
+                            }
                           >
                             {t("coordinator.crm_retry")}
                           </Button>
@@ -162,46 +215,148 @@ export default function RequestsShow() {
               </Card>
             )}
 
-            {/* Request details card */}
+            {/* Request info — single card with sections */}
             <Card>
-              <CardContent className="pt-4 space-y-2.5 text-sm">
-                <DetailRow label={t("requests.detail.requester")} value={request.user.name} />
-                <DetailRow label={t("requests.table.created")} value={<FormattedDate date={request.createdAt} mode="datetime" />} />
-                <DetailRow label={t("requests.table.last_activity")} value={<FormattedDate date={request.updatedAt} mode="datetime" />} />
-
-                <Separator />
-
-                <DetailRow label={t("requests.table.status")}>
-                  <StatusBadge status={request.status} />
-                </DetailRow>
-
-                {request.user.name && (
-                  <DetailRow label={t("requests.form.name")} value={request.user.name} />
-                )}
-                <DetailRow label={t("requests.form.service_type")} value={request.serviceType} />
-                {request.identityCard && (
-                  <DetailRow label={t("requests.form.identity_card")} value={request.identityCard} />
-                )}
-                {request.educationSystem && (
-                  <DetailRow label={t("requests.form.education_system")} value={request.educationSystem} />
-                )}
-                {request.studiesFinished && (
-                  <DetailRow label={t("requests.form.studies_finished")} value={request.studiesFinished} />
-                )}
-                {request.studyTypeSpain && (
-                  <DetailRow label={t("requests.form.study_type_spain")} value={request.studyTypeSpain} />
-                )}
-                {request.studiesSpain && (
-                  <DetailRow label={t("requests.form.studies_spain")} value={request.studiesSpain} />
-                )}
-                {request.university && (
-                  <DetailRow label={t("requests.form.university")} value={request.university} />
-                )}
-                {request.paymentAmount && (
+              <CardContent className="pt-4 space-y-4 text-sm">
+                {/* Details section */}
+                <SectionLabel>{t("requests.detail.section_details")}</SectionLabel>
+                <div className="space-y-2.5">
                   <DetailRow
-                    label={t("coordinator.payment_amount")}
-                    value={`\u20AC${request.paymentAmount}`}
+                    label={t("requests.detail.requester")}
+                    value={request.user.name}
                   />
+                  <DetailRow
+                    label={t("requests.form.service_type")}
+                    value={resolveOption(
+                      request.serviceType,
+                      "service_types"
+                    )}
+                  />
+                  {request.description && (
+                    <DetailRow
+                      label={t("requests.form.description")}
+                      value={request.description}
+                    />
+                  )}
+                  {request.identityCard && (
+                    <DetailRow
+                      label={t("requests.form.identity_card")}
+                      value={request.identityCard}
+                    />
+                  )}
+                  <DetailRow
+                    label={t("requests.table.created")}
+                    value={
+                      <FormattedDate
+                        date={request.createdAt}
+                        mode="datetime"
+                      />
+                    }
+                  />
+                  <DetailRow
+                    label={t("requests.table.last_activity")}
+                    value={
+                      <FormattedDate
+                        date={request.updatedAt}
+                        mode="datetime"
+                      />
+                    }
+                  />
+                  {request.paymentAmount && (
+                    <DetailRow
+                      label={t("coordinator.payment_amount")}
+                      value={`\u20AC${request.paymentAmount}`}
+                    />
+                  )}
+                </div>
+
+                {/* Education section */}
+                {hasEducation && (
+                  <>
+                    <Separator />
+                    <SectionLabel>{t("requests.detail.section_education")}</SectionLabel>
+                    <div className="space-y-2.5">
+                      {request.educationSystem && (
+                        <DetailRow
+                          label={t("requests.form.education_system")}
+                          value={resolveOption(
+                            request.educationSystem,
+                            "education_systems"
+                          )}
+                        />
+                      )}
+                      {request.studiesFinished && (
+                        <DetailRow
+                          label={t("requests.form.studies_finished")}
+                          value={resolveOption(
+                            request.studiesFinished,
+                            "studies_finished"
+                          )}
+                        />
+                      )}
+                      {request.studyTypeSpain && (
+                        <DetailRow
+                          label={t("requests.form.study_type_spain")}
+                          value={resolveOption(
+                            request.studyTypeSpain,
+                            "study_types_spain"
+                          )}
+                        />
+                      )}
+                      {request.studiesSpain && (
+                        <DetailRow
+                          label={t("requests.form.studies_spain")}
+                          value={request.studiesSpain}
+                        />
+                      )}
+                      {request.university && (
+                        <DetailRow
+                          label={t("requests.form.university")}
+                          value={resolveOption(
+                            request.university,
+                            "universities"
+                          )}
+                        />
+                      )}
+                    </div>
+                  </>
+                )}
+
+                {/* Additional info section */}
+                {hasAdditional && (
+                  <>
+                    <Separator />
+                    <SectionLabel>{t("requests.detail.section_additional")}</SectionLabel>
+                    <div className="space-y-2.5">
+                      {request.languageKnowledge && (
+                        <DetailRow
+                          label={t("requests.form.language_level")}
+                          value={resolveOption(
+                            request.languageKnowledge,
+                            "language_levels"
+                          )}
+                        />
+                      )}
+                      {request.languageCertificate && (
+                        <DetailRow
+                          label={t("requests.form.language_certificate")}
+                          value={resolveOption(
+                            request.languageCertificate,
+                            "language_certificates"
+                          )}
+                        />
+                      )}
+                      {request.referralSource && (
+                        <DetailRow
+                          label={t("requests.form.referral_source")}
+                          value={resolveOption(
+                            request.referralSource,
+                            "referral_sources"
+                          )}
+                        />
+                      )}
+                    </div>
+                  </>
                 )}
               </CardContent>
             </Card>
@@ -210,11 +365,17 @@ export default function RequestsShow() {
             {request.files.length > 0 && (
               <Card>
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">{t("requests.form.section_documents")}</CardTitle>
+                  <CardTitle className="text-sm font-medium">
+                    {t("requests.form.section_documents")}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-1.5">
                   {request.files.map((file) => (
-                    <FileRow key={file.id} file={file} requestId={request.id} />
+                    <FileRow
+                      key={file.id}
+                      file={file}
+                      requestId={request.id}
+                    />
                   ))}
                 </CardContent>
               </Card>
@@ -227,7 +388,9 @@ export default function RequestsShow() {
       <Dialog open={paymentDialogOpen} onOpenChange={setPaymentDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t("coordinator.confirm_dialog_title")}</DialogTitle>
+            <DialogTitle>
+              {t("coordinator.confirm_dialog_title")}
+            </DialogTitle>
             <DialogDescription>
               {t("coordinator.confirm_dialog_description")}
             </DialogDescription>
@@ -245,16 +408,32 @@ export default function RequestsShow() {
             />
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setPaymentDialogOpen(false)}>
+            <Button
+              variant="outline"
+              className="min-h-[44px]"
+              onClick={() => setPaymentDialogOpen(false)}
+            >
               {t("common.cancel")}
             </Button>
-            <Button onClick={handleConfirmPayment} disabled={!paymentAmount}>
+            <Button
+              className="min-h-[44px]"
+              onClick={handleConfirmPayment}
+              disabled={!paymentAmount}
+            >
               {t("coordinator.confirm_sync")}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
     </AuthenticatedLayout>
+  )
+}
+
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+      {children}
+    </span>
   )
 }
 
@@ -270,7 +449,7 @@ function DetailRow({
   return (
     <div className="flex flex-col gap-0.5">
       <span className="text-xs text-muted-foreground">{label}</span>
-      <span className="font-medium text-sm">{children ?? value}</span>
+      <span className="text-sm">{children ?? value}</span>
     </div>
   )
 }
@@ -279,11 +458,16 @@ function FileRow({ file, requestId }: { file: FileInfo; requestId: number }) {
   return (
     <a
       href={routes.downloadDocument(requestId, file.id)}
+      download
       className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-muted transition-colors group"
     >
       <Paperclip className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-      <span className="truncate flex-1 text-primary group-hover:underline">{file.filename}</span>
-      <span className="text-xs text-muted-foreground shrink-0">{formatBytes(file.byteSize)}</span>
+      <span className="truncate flex-1 text-primary group-hover:underline">
+        {file.filename}
+      </span>
+      <span className="text-xs text-muted-foreground shrink-0">
+        {formatBytes(file.byteSize)}
+      </span>
       <Download className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
     </a>
   )

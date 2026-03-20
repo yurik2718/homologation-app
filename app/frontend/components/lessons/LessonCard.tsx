@@ -7,9 +7,10 @@ import type { LessonItem } from "@/types/pages"
 interface LessonCardProps {
   lesson: LessonItem
   onClick?: (lesson: LessonItem) => void
+  showTeacherName?: boolean
 }
 
-export function LessonCard({ lesson, onClick }: LessonCardProps) {
+export function LessonCard({ lesson, onClick, showTeacherName }: LessonCardProps) {
   const { t, i18n } = useTranslation()
   const time = formatDate(lesson.scheduledAt, "time", i18n.language)
 
@@ -25,7 +26,7 @@ export function LessonCard({ lesson, onClick }: LessonCardProps) {
       tabIndex={0}
       onKeyDown={(e) => e.key === "Enter" && onClick?.(lesson)}
     >
-      <div className="font-medium">{lesson.studentName}</div>
+      <div className="font-medium">{showTeacherName ? lesson.teacherName : lesson.studentName}</div>
       <div className="opacity-75">{time} · {t("lessons.duration_minutes", { minutes: lesson.durationMinutes })}</div>
       {lesson.status === "completed" && (
         <div className="mt-0.5 opacity-60">{t("calendar.done")}</div>

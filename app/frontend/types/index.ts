@@ -25,7 +25,6 @@ export interface AppFeatures {
   canSeeMyRequests: boolean
   canSeeAllLessons: boolean
   canSeeCalendar: boolean
-  canSeeMyLessons: boolean
   canSeeChat: boolean
 }
 
@@ -34,6 +33,7 @@ export interface SharedProps extends PageProps {
   flash: { notice?: string; alert?: string }
   features: AppFeatures
   unreadNotificationsCount: number
+  unreadChatsCount: number
   selectOptions: Record<string, SelectOption[]>
 }
 

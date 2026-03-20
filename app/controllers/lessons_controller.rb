@@ -5,28 +5,53 @@ class LessonsController < InertiaController
 
   def index
     authorize Lesson
-    if current_user.teacher?
-      week_start = params[:week_start] ? Date.parse(params[:week_start]) : Date.current.beginning_of_week
-      week_lessons = policy_scope(Lesson).includes(:student, teacher: :teacher_profile)
-                                         .where(scheduled_at: week_start..(week_start + 6.days).end_of_day)
-                                         .order(:scheduled_at)
-      assigned_students = current_user.teacher_student_links.includes(:student).map do |ts|
-        { id: ts.student_id, name: ts.student.name }
+    if current_user.teacher? || current_user.student?
+      view = params[:view].presence || "week"
+      assigned_students = if current_user.teacher?
+        current_user.teacher_student_links.includes(:student).map { |ts| { id: ts.student_id, name: ts.student.name } }
+      else
+        []
       end
-      render inertia: "calendar/Index", props: {
-        lessons: week_lessons.map { |l| lesson_json(l) },
-        weekStart: week_start.iso8601,
-        assignedStudents: assigned_students
-      }
-    elsif current_user.student?
-      lessons = policy_scope(Lesson).includes(teacher: :teacher_profile).order(:scheduled_at)
-      render inertia: "lessons/Index", props: {
-        upcoming: lessons.where("scheduled_at >= ?", Time.current).map { |l| lesson_json(l) },
-        past: lessons.where("scheduled_at < ?", Time.current).order(scheduled_at: :desc).map { |l| lesson_json(l) }
-      }
+
+      case view
+      when "month"
+        month_date = params[:month].present? ? Date.parse("#{params[:month]}-01") : Date.current.beginning_of_month
+        month_start = month_date.beginning_of_month
+        month_end = month_date.end_of_month
+        lessons = policy_scope(Lesson).includes(:student, teacher: :teacher_profile)
+                                       .where(scheduled_at: month_start.beginning_of_day..month_end.end_of_day)
+                                       .where.not(status: "cancelled")
+                                       .order(:scheduled_at)
+        month_summary = lessons.group_by { |l| l.scheduled_at.to_date.iso8601 }.transform_values do |day_lessons|
+          day_lessons.map { |l| month_lesson_json(l) }
+        end
+        render inertia: "calendar/Index", props: {
+          view: "month", lessons: [], weekStart: nil, monthStart: month_start.iso8601,
+          monthSummary: month_summary, assignedStudents: assigned_students
+        }
+      when "list"
+        lessons = policy_scope(Lesson).includes(:student, teacher: :teacher_profile).order(:scheduled_at)
+        render inertia: "calendar/Index", props: {
+          view: "list", lessons: [],
+          upcoming: lessons.where("scheduled_at >= ?", Time.current).map { |l| lesson_json(l) },
+          past: lessons.where("scheduled_at < ?", Time.current).order(scheduled_at: :desc).map { |l| lesson_json(l) },
+          assignedStudents: assigned_students
+        }
+      else # week
+        week_start = params[:week_start].present? ? Date.parse(params[:week_start]).beginning_of_week(:monday) : Date.current.beginning_of_week(:monday)
+        week_lessons = policy_scope(Lesson).includes(:student, teacher: :teacher_profile)
+                                           .where(scheduled_at: week_start.beginning_of_day..(week_start + 6.days).end_of_day)
+                                           .order(:scheduled_at)
+        render inertia: "calendar/Index", props: {
+          view: "week", lessons: week_lessons.map { |l| lesson_json(l) },
+          weekStart: week_start.iso8601, assignedStudents: assigned_students
+        }
+      end
     else
       redirect_to admin_lessons_path
     end
+  rescue Date::Error
+    redirect_to lessons_path
   end
 
   def show

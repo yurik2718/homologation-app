@@ -21,6 +21,7 @@ class ApplicationController < ActionController::Base
       flash: { notice: flash[:notice], alert: flash[:alert] },
       features: Current.user ? build_features(Current.user) : {},
       unreadNotificationsCount: Current.user ? Current.user.notifications.unread.count : 0,
+      unreadChatsCount: Current.user ? ConversationParticipant.unread(Current.user).count : 0,
       selectOptions: Rails.application.config.select_options
     }
   end
@@ -62,8 +63,7 @@ class ApplicationController < ActionController::Base
       canSeeAllRequests: user.super_admin?,
       canSeeMyRequests: user.student?,
       canSeeAllLessons: user.coordinator? || user.super_admin?,
-      canSeeCalendar: user.teacher?,
-      canSeeMyLessons: user.student?,
+      canSeeCalendar: user.teacher? || user.student?,
       canSeeChat: user.teacher? || user.student?
     }
   end

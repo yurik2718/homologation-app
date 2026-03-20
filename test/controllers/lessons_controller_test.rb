@@ -12,7 +12,7 @@ class LessonsControllerTest < ActionDispatch::IntegrationTest
     sign_in users(:student_ana)
     get lessons_path
     assert_response :ok
-    assert_equal "lessons/Index", inertia.component
+    assert_equal "calendar/Index", inertia.component
   end
 
   test "coordinator redirects to admin lessons" do

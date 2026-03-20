@@ -35,6 +35,10 @@ class ChatsController < InertiaController
       .find(params[:id])
     authorize @conversation, :show?
 
+    # Mark conversation as read for current user
+    participant = @conversation.conversation_participants.detect { |p| p.user_id == current_user.id }
+    participant&.update_columns(last_read_at: Time.current)
+
     conversations = policy_scope(Conversation, policy_scope_class: ChatsPolicy::Scope)
       .includes(LIST_INCLUDES)
       .order(last_message_at: :desc)

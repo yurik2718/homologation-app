@@ -99,7 +99,11 @@
     "no_requests": "Aún no tienes solicitudes",
     "empty_hint": "Crea tu primera solicitud de homologación para empezar.",
     "detail": {
-      "requester": "Solicitante"
+      "requester": "Solicitante",
+      "section_details": "Datos de la solicitud",
+      "section_education": "Educación",
+      "section_additional": "Información adicional",
+      "chat_not_available": "El chat estará disponible después de enviar la solicitud"
     },
     "status": {
       "draft": "Borrador",
@@ -121,34 +125,55 @@
       "status_filter": "Estado"
     },
     "form": {
+      "intro": "Rellena el formulario a continuación. Tras el envío, un coordinador se pondrá en contacto contigo a través del chat para aclarar los detalles. También puedes guardar un borrador y volver más tarde.",
       "section_about": "Sobre ti",
       "section_request": "Tu solicitud",
       "section_education": "Educación",
-      "section_optional": "Opcional",
+      "section_optional": "Información adicional",
+      "section_optional_description": "Estos datos nos ayudarán a tramitar tu solicitud más rápido",
       "section_documents": "Documentos",
+      "section_documents_description": "Adjunta los documentos necesarios para tu solicitud",
       "name": "Nombre y apellidos",
       "service_type": "Servicio solicitado",
       "subject": "Asunto",
+      "subject_hint": "Describe brevemente qué quieres homologar, por ejemplo: Diploma de ingeniería de la UNAM",
       "description": "Descripción",
       "description_hint": "Introduce los detalles de tu solicitud. Un miembro de nuestro equipo responderá lo antes posible.",
       "identity_card": "Documento de identidad",
+      "identity_card_hint": "NIE, DNI o número de pasaporte",
       "passport": "Pasaporte",
       "education_system": "Sistema educativo de estudios",
+      "education_system_hint": "País donde obtuviste tu título",
       "studies_finished": "¿Estudios terminados?",
       "study_type_spain": "Tipo de estudios a realizar en España",
       "studies_spain": "Estudios a realizar en España",
+      "studies_spain_hint": "Por ejemplo: Grado en Derecho, Máster en Ingeniería Civil",
       "university": "Universidad donde vas a estudiar",
-      "language_level": "Nivel de idioma",
+      "language_level": "Nivel de español",
+      "language_level_hint": "Tu nivel según el Marco Común Europeo (MCER)",
       "language_certificate": "Certificado de idioma",
       "referral_source": "¿Cómo nos encontraste?",
-      "privacy_policy": "He leído y acepto la política de privacidad",
+      "privacy_policy_prefix": "He leído y acepto la",
+      "privacy_policy_link": "política de privacidad",
+      "placeholder_select": "Seleccionar...",
+      "placeholder_service_type": "Selecciona el servicio",
+      "placeholder_education_system": "Selecciona el país de estudios",
+      "placeholder_studies_finished": "Selecciona el estado",
+      "placeholder_study_type_spain": "Selecciona el tipo de estudios",
+      "placeholder_university": "Selecciona la universidad",
+      "placeholder_language_level": "Selecciona tu nivel",
+      "placeholder_language_certificate": "Selecciona el certificado",
+      "placeholder_referral_source": "Selecciona una opción",
       "application_file": "Solicitud (заявление)",
       "originals_files": "Documentos originales",
       "other_files": "Otros documentos",
+      "documents_hint": "Copia del diploma, notas académicas, traducción jurada (si la tienes)",
       "drop_file": "Arrastra un archivo aquí o haz clic para seleccionar",
       "drop_files": "Arrastra archivos aquí o haz clic para seleccionar",
       "max_size": "Máximo {{size}} MB por archivo"
-    }
+    },
+    "submitting": "Enviando...",
+    "saving_draft": "Guardando..."
   },
   "chat": {
     "title": "Conversación",
@@ -384,6 +409,6 @@
     "amocrm_title": "Transferencia a AmoCRM",
     "amocrm_body": "Una vez confirmado el pago, sus datos de solicitud (nombre, contacto, tipo de servicio, documentos) se sincronizan con nuestro sistema CRM (AmoCRM) para gestionar el proceso de homologación. No vendemos ni compartimos sus datos con terceros.",
     "deletion_title": "Solicitar eliminación de datos",
-    "deletion_body": "Para solicitar la eliminación de sus datos, contacte con nosotros por correo electrónico. Procesaremos su solicitud en un plazo de 30 días conforme al RGPD."
+    "deletion_body": "Para solicitar la eliminación de sus datos, contacte con nosotros. Procesaremos su solicitud en un plazo de 30 días conforme al RGPD."
   }
 }

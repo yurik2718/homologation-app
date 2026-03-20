@@ -99,7 +99,11 @@
     "no_requests": "You don't have any requests yet",
     "empty_hint": "Create your first homologation request to get started.",
     "detail": {
-      "requester": "Requester"
+      "requester": "Requester",
+      "section_details": "Request Details",
+      "section_education": "Education",
+      "section_additional": "Additional Information",
+      "chat_not_available": "Chat will be available after submitting your request"
     },
     "status": {
       "draft": "Draft",
@@ -121,34 +125,55 @@
       "status_filter": "Status"
     },
     "form": {
+      "intro": "Fill out the form below. After submission, a coordinator will contact you via chat to clarify the details. You can also save a draft and come back later.",
       "section_about": "About You",
       "section_request": "Your Request",
       "section_education": "Education",
-      "section_optional": "Optional",
+      "section_optional": "Additional Information",
+      "section_optional_description": "This information will help us process your request faster",
       "section_documents": "Documents",
+      "section_documents_description": "Attach the necessary documents for your request",
       "name": "Name and Surname",
       "service_type": "Service Requested",
       "subject": "Subject",
+      "subject_hint": "Briefly describe what you want to homologate, e.g.: Engineering degree from UNAM",
       "description": "Description",
       "description_hint": "Please enter the details of your request. A member of our team will respond as soon as possible.",
       "identity_card": "Identity Card",
+      "identity_card_hint": "NIE, DNI or passport number",
       "passport": "Passport",
       "education_system": "Educational System of Studies",
+      "education_system_hint": "Country where you obtained your degree",
       "studies_finished": "Studies Finished?",
       "study_type_spain": "Type of Studies in Spain",
       "studies_spain": "Studies to Be Carried Out in Spain",
+      "studies_spain_hint": "For example: Law Degree, Master's in Civil Engineering",
       "university": "University Where You Are Going to Study",
-      "language_level": "Language Level",
+      "language_level": "Spanish Level",
+      "language_level_hint": "Your level according to the Common European Framework (CEFR)",
       "language_certificate": "Language Certificate",
       "referral_source": "How Did You Find Us?",
-      "privacy_policy": "I have read and accept the privacy policy",
+      "privacy_policy_prefix": "I have read and accept the",
+      "privacy_policy_link": "Privacy Policy",
+      "placeholder_select": "Select...",
+      "placeholder_service_type": "Select a service",
+      "placeholder_education_system": "Select country of studies",
+      "placeholder_studies_finished": "Select status",
+      "placeholder_study_type_spain": "Select type of studies",
+      "placeholder_university": "Select university",
+      "placeholder_language_level": "Select your level",
+      "placeholder_language_certificate": "Select certificate",
+      "placeholder_referral_source": "Select an option",
       "application_file": "Application Form",
       "originals_files": "Original Documents",
       "other_files": "Other Documents",
+      "documents_hint": "Diploma copy, academic transcript, sworn translation (if available)",
       "drop_file": "Drop file here or click to browse",
       "drop_files": "Drop files here or click to browse",
       "max_size": "Maximum {{size}} MB per file"
-    }
+    },
+    "submitting": "Submitting...",
+    "saving_draft": "Saving..."
   },
   "chat": {
     "title": "Conversation",
@@ -384,6 +409,6 @@
     "amocrm_title": "Transfer to AmoCRM",
     "amocrm_body": "Once payment is confirmed, your request data (name, contact, service type, documents) is synced with our CRM system (AmoCRM) to manage the homologation process. We do not sell or share your data with third parties.",
     "deletion_title": "Request Data Deletion",
-    "deletion_body": "To request the deletion of your data, contact us by email. We will process your request within 30 days in accordance with GDPR."
+    "deletion_body": "To request the deletion of your data, contact us. We will process your request within 30 days in accordance with GDPR."
   }
 }
