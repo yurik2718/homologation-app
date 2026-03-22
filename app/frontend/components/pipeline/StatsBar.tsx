@@ -20,7 +20,7 @@ export function StatsBar({ stats }: StatsBarProps) {
       <StatCell
         label={t("pipeline.stats.active")}
         value={stats.active}
-        accent="text-foreground"
+        accent="text-amber-600"
       />
       <StatCell
         label={t("pipeline.stats.revenue")}
@@ -47,6 +47,8 @@ export function StatsBar({ stats }: StatsBarProps) {
       <StatCell
         label={t("pipeline.stats.cotejo")}
         value={stats.cotejo}
+        accent="text-violet-600"
+        sub={`${stats.cotejoMinisterio ?? 0}🏛 ${stats.cotejoDelegacion ?? 0}🏢`}
       />
     </div>
   )
@@ -57,11 +59,13 @@ function StatCell({
   value,
   accent,
   labelAccent,
+  sub,
 }: {
   label: string
   value: string | number
   accent?: string
   labelAccent?: string
+  sub?: string
 }) {
   return (
     <div className="bg-card px-3 py-2.5 text-center">
@@ -74,6 +78,9 @@ function StatCell({
       <p className={cn("text-lg font-bold tabular-nums leading-tight mt-0.5", accent)}>
         {value}
       </p>
+      {sub && (
+        <p className="text-[10px] text-muted-foreground tabular-nums mt-0.5">{sub}</p>
+      )}
     </div>
   )
 }

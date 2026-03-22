@@ -352,6 +352,8 @@ export interface PipelineStats {
   byYear: Record<string, number>
   noPago: number
   cotejo: number
+  cotejoMinisterio: number
+  cotejoDelegacion: number
 }
 
 export interface PipelineFilters {

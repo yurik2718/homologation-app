@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { DocumentTags } from "@/components/pipeline/DocumentTags"
-import { STAGE_COLORS, STAGE_SHORT_LABELS, YEAR_COLORS } from "@/components/pipeline/constants"
+import { STAGE_COLORS, STAGE_SHORT_LABELS, SERVICE_TYPE_COLORS, YEAR_COLORS } from "@/components/pipeline/constants"
 import { routes } from "@/lib/routes"
 import { cn, getOptionLabel } from "@/lib/utils"
 import type { SharedProps } from "@/types"
@@ -65,21 +65,18 @@ export function PipelineCard({ card, stage, onEdit }: PipelineCardProps) {
   return (
     <Card
       className={cn(
-        "cursor-pointer hover:shadow-md transition-all border-l-4",
+        "cursor-pointer hover:shadow-md transition-all border-l-4 min-h-[180px]",
         color?.border ?? "border-l-gray-300"
       )}
       onClick={() => onEdit(card)}
     >
-      <CardContent className="p-3 space-y-2">
+      <CardContent className="p-3 flex flex-col gap-2 h-full">
         {/* Row 1: Name + amount */}
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
             <p className="font-semibold text-sm truncate">{card.studentName}</p>
             {card.identityCard && (
-              <p className="text-[11px] text-muted-foreground font-mono">{card.identityCard}</p>
-            )}
-            {card.phone && (
-              <p className="text-xs text-muted-foreground">{card.phone}</p>
+              <p className="text-[11px] text-muted-foreground font-mono">🛂 {card.identityCard}</p>
             )}
           </div>
           <span className="text-xs font-bold text-foreground whitespace-nowrap font-mono">
@@ -92,7 +89,11 @@ export function PipelineCard({ card, stage, onEdit }: PipelineCardProps) {
           <span className={cn("text-[11px] font-bold px-1.5 py-0.5 rounded", yearColor.bg, yearColor.text)}>
             {card.year}
           </span>
-          <span className="text-[11px] font-bold px-1.5 py-0.5 rounded bg-pink-600 text-white">
+          <span className={cn(
+            "text-[11px] font-bold px-1.5 py-0.5 rounded",
+            SERVICE_TYPE_COLORS[card.serviceType]?.bg ?? "bg-pink-600",
+            SERVICE_TYPE_COLORS[card.serviceType]?.text ?? "text-white",
+          )}>
             {card.serviceType}
           </span>
           {card.country && (
@@ -114,14 +115,17 @@ export function PipelineCard({ card, stage, onEdit }: PipelineCardProps) {
             </span>
           )}
           {card.countryMissing && (
-            <span className="text-[11px] font-bold px-1.5 py-0.5 rounded bg-red-500 text-white">?</span>
+            <span className="text-[11px] font-bold px-1.5 py-0.5 rounded bg-red-500 text-white">❓ Sin país</span>
           )}
         </div>
 
-        {/* Row 3: Notes */}
-        {card.pipelineNotes && (
-          <p className="text-xs text-muted-foreground line-clamp-2">{card.pipelineNotes}</p>
-        )}
+        {/* Row 3: Notes — always reserve 2-line height for layout consistency */}
+        <p className={cn(
+          "text-xs line-clamp-2 min-h-[2lh]",
+          card.pipelineNotes ? "text-muted-foreground" : "invisible"
+        )}>
+          {card.pipelineNotes || "\u00A0"}
+        </p>
 
         {/* Row 4: Document tags (clickable) */}
         <DocumentTags
@@ -131,29 +135,29 @@ export function PipelineCard({ card, stage, onEdit }: PipelineCardProps) {
           cardId={card.id}
         />
 
-        {/* Row 5: Actions — retreat narrow, advance wide */}
-        <div className="flex items-center gap-1.5 pt-0.5">
-          {card.canRetreat && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-8 w-10 text-xs"
-              disabled={busy}
-              onClick={retreat}
-            >
-              &larr;
-            </Button>
-          )}
-          {card.canAdvance && (
-            <Button
-              size="sm"
-              className="h-8 flex-1 text-xs bg-emerald-700/85 hover:bg-emerald-700 text-white"
-              disabled={busy}
-              onClick={advance}
-            >
-              {advanceLabel}
-            </Button>
-          )}
+        {/* Row 5: Actions — retreat narrow (flex-1), advance wide (flex-2) */}
+        <div className="flex items-center gap-1.5 pt-0.5 mt-auto">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="min-h-[44px] md:min-h-0 md:h-8 flex-1 text-xs"
+            disabled={busy || !card.canRetreat}
+            onClick={retreat}
+          >
+            &larr;
+          </Button>
+          <Button
+            size="sm"
+            className={cn(
+              "min-h-[44px] md:min-h-0 md:h-8 flex-[2] text-xs text-white",
+              color?.bg ?? "bg-emerald-700",
+              `hover:opacity-90`,
+            )}
+            disabled={busy || !card.canAdvance}
+            onClick={advance}
+          >
+            {advanceLabel}
+          </Button>
         </div>
       </CardContent>
     </Card>

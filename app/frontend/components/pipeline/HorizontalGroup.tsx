@@ -26,7 +26,7 @@ export function HorizontalGroup({ stage, cards, icon, onEditCard }: HorizontalGr
             {t(`pipeline.stages.${stage}`)}
           </h3>
           {subtitle && (
-            <p className="text-[11px] text-muted-foreground">{subtitle}</p>
+            <p className={`text-[11px] ${color?.text ?? "text-muted-foreground"}`}>{subtitle}</p>
           )}
         </div>
         <span className="text-lg font-bold text-muted-foreground tabular-nums">

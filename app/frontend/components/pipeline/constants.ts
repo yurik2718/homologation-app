@@ -41,6 +41,13 @@ export const YEAR_COLORS: Record<number, { bg: string; text: string }> = {
   2026: { bg: "bg-amber-500", text: "text-white" },
 }
 
+/** Service type badge colors (reference: TC map) */
+export const SERVICE_TYPE_COLORS: Record<string, { bg: string; text: string }> = {
+  homologacion: { bg: "bg-violet-500", text: "text-white" },
+  equivalencia: { bg: "bg-amber-500", text: "text-white" },
+  uned:         { bg: "bg-cyan-500", text: "text-white" },
+}
+
 /** Short stage labels for advance button */
 export const STAGE_SHORT_LABELS: Record<string, string> = {
   pago_recibido: "Pago",

@@ -39,7 +39,7 @@ export default function Pipeline() {
       <Main>
         <div className="space-y-4">
           {/* Title */}
-          <h1 className="text-2xl font-bold tracking-tight">{t("pipeline.title")}</h1>
+          <h1 className="text-2xl font-bold tracking-tight mb-6">{t("pipeline.title")}</h1>
 
           {/* Stats — compact inline strip */}
           <StatsBar stats={stats} />

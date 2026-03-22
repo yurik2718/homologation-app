@@ -13,7 +13,7 @@ class Admin::PipelineController < InertiaController
     scope = scope.where(service_type: params[:service_type]) if params[:service_type].present?
     scope = search(scope, params[:q]) if params[:q].present?
 
-    all_requests = scope.order(updated_at: :desc).to_a
+    all_requests = scope.order(created_at: :desc).to_a
 
     grouped = HomologationRequest::PIPELINE_STAGES.each_with_object({}) do |stage, hash|
       hash[stage] = all_requests
@@ -27,7 +27,9 @@ class Admin::PipelineController < InertiaController
       revenue: all_requests.sum { |r| r.payment_amount.to_f },
       byYear: all_requests.group_by(&:year).transform_values(&:size),
       noPago: all_requests.count { |r| r.payment_amount.nil? || r.payment_amount.zero? },
-      cotejo: all_requests.count { |r| r.pipeline_stage.start_with?("cotejo_") }
+      cotejo: all_requests.count { |r| r.pipeline_stage.start_with?("cotejo_") },
+      cotejoMinisterio: all_requests.count { |r| r.pipeline_stage == "cotejo_ministerio" },
+      cotejoDelegacion: all_requests.count { |r| r.pipeline_stage == "cotejo_delegacion" }
     }
 
     render inertia: "admin/Pipeline", props: {
