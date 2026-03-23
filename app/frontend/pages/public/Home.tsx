@@ -11,8 +11,7 @@ import {
   BarChart3,
   Globe,
   ClipboardCheck,
-  CreditCard,
-  CheckCircle2,
+  Sparkles,
 } from "lucide-react"
 import { PublicLayout } from "@/components/layout/PublicLayout"
 import { Button } from "@/components/ui/button"
@@ -111,8 +110,8 @@ function TrustSection({ t }: { t: (key: string) => string }) {
   const stats = [
     { value: 500, suffix: "+", label: t("public.home.stat_students") },
     { value: 98, suffix: "%", label: t("public.home.stat_success") },
-    { value: 3, suffix: "+", label: t("public.home.stat_years") },
-    { value: 3, suffix: "", label: t("public.home.stat_languages") },
+    { value: 10, suffix: "+", label: t("public.home.stat_years") },
+    { value: 20, suffix: "+", label: t("public.home.stat_countries") },
   ]
 
   return (
@@ -194,8 +193,9 @@ function HowItWorksSection({ t }: { t: (key: string) => string }) {
   const steps = [
     { icon: ClipboardCheck, label: t("public.home.step_1") },
     { icon: FileCheck, label: t("public.home.step_2") },
-    { icon: CreditCard, label: t("public.home.step_3") },
-    { icon: CheckCircle2, label: t("public.home.step_4") },
+    { icon: Shield, label: t("public.home.step_3") },
+    { icon: GraduationCap, label: t("public.home.step_4") },
+    { icon: Sparkles, label: t("public.home.step_5") },
   ]
 
   return (
@@ -204,7 +204,7 @@ function HowItWorksSection({ t }: { t: (key: string) => string }) {
         title={t("public.home.how_title")}
         subtitle={t("public.home.how_subtitle")}
       />
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
         {steps.map(({ icon: Icon, label }, i) => (
           <Reveal key={i} direction="up" delay={i * 120}>
             <Card className="border bg-white text-center transition-all duration-300 hover:shadow-lg hover:border-[#2D7FF9]/20 group">

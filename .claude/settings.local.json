@@ -7,7 +7,8 @@
       "Bash(npm run:*)",
       "Bash(npx:*)",
       "Bash(bin/rails routes:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(ruby -e \"require ''yaml''; YAML.load_file\\(''config/locales/es.yml''\\)\")"
     ]
   }
 }

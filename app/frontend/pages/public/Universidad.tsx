@@ -24,7 +24,7 @@ import {
   SectionHeading,
 } from "@/components/public/shared"
 import { Reveal, TiltCard } from "@/components/public/animations"
-import { routes } from "@/lib/routes"
+import { publicRoute, publicPages, routes } from "@/lib/routes"
 import type { SharedProps } from "@/types"
 import type { PublicPageProps } from "@/types/pages"
 
@@ -132,7 +132,7 @@ export default function Universidad() {
         title={t("public.universidad.cta_title")}
         subtitle={t("public.universidad.cta_subtitle")}
       >
-        <GradientButton href={routes.register}>
+        <GradientButton href={publicRoute(publicPages.precios, seo.locale)}>
           {t("public.universidad.cta_start")}
         </GradientButton>
       </PublicCta>

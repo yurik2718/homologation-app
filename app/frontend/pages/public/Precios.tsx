@@ -39,7 +39,7 @@ export default function Precios() {
     },
     {
       key: "completo",
-      features: 6,
+      features: 8,
       highlighted: true,
     },
     {

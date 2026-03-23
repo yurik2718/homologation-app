@@ -25,7 +25,7 @@ import {
   PublicSection,
   SectionHeading,
 } from "@/components/public/shared"
-import { routes } from "@/lib/routes"
+import { publicRoute, publicPages, routes } from "@/lib/routes"
 import type { SharedProps } from "@/types"
 import type { PublicPageProps } from "@/types/pages"
 
@@ -160,7 +160,7 @@ export default function Homologacion() {
         title={t("public.homologacion.cta_title")}
         subtitle={t("public.homologacion.cta_subtitle")}
       >
-        <GradientButton href={routes.register}>
+        <GradientButton href={publicRoute(publicPages.precios, seo.locale)}>
           {t("public.homologacion.cta_start")}
         </GradientButton>
       </PublicCta>
