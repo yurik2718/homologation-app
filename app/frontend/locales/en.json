@@ -509,7 +509,7 @@
       "hero_title_accent": "simple and reliable",
       "hero_subtitle": "We accompany you at every step of the homologation process, university access, and Spanish learning. Real-time tracking and direct communication with coordinators.",
       "cta_start": "Start homologation",
-      "cta_consult": "Free consultation",
+      "cta_consult": "Book a consultation",
       "stat_students": "students served",
       "stat_success": "successful homologations",
       "stat_years": "years of experience",
@@ -629,7 +629,7 @@
       "hero_title_1": "Learn",
       "hero_title_accent": "Spanish in Spain",
       "hero_subtitle": "Spanish classes for foreigners with certified native teachers. From level A1 to C2, online or in person.",
-      "cta_trial": "Free trial class",
+      "cta_trial": "Book a trial class",
       "formats_title": "Study formats",
       "format_individual_title": "Individual",
       "format_individual_desc": "Personalized classes at your own pace. Flexible schedule adapted to you.",
@@ -655,10 +655,10 @@
       "cta_subtitle": "Book your no-commitment trial class and meet our teachers."
     },
     "consulta": {
-      "hero_title_1": "Free",
+      "hero_title_1": "Expert",
       "hero_title_accent": "consultation",
-      "hero_subtitle": "Questions about homologation, university access, or Spanish classes? We advise you with no commitment.",
-      "includes_title": "What's included?",
+      "hero_subtitle": "Personalized advice on homologation, university admission, and Spanish courses from experienced professionals.",
+      "includes_title": "What you get",
       "includes_1": "Analysis of your particular case and documentation",
       "includes_2": "Available options based on your profile",
       "includes_3": "Timeline and cost estimation",
@@ -666,11 +666,11 @@
       "includes_5": "Answers to all your questions",
       "pricing_title": "Consultation options",
       "plan_30_title": "Express consultation",
-      "plan_30_price": "Free",
-      "plan_30_desc": "30 minutes by video call or chat. Basic questions resolved.",
+      "plan_30_price": "€19",
+      "plan_30_desc": "30 minutes by video call. Quick answers and next steps for your case.",
       "plan_60_title": "Full consultation",
-      "plan_60_price": "€29",
-      "plan_60_desc": "60 minutes with complete case analysis and personalized action plan.",
+      "plan_60_price": "€39",
+      "plan_60_desc": "60 minutes with in-depth case analysis, document review, and a personalized action plan.",
       "contact_title": "Prefer to contact us directly?",
       "form_title": "Request consultation",
       "field_name": "Name",
@@ -727,7 +727,7 @@
       "cta_title": "Ready to get started?",
       "cta_subtitle": "Choose your plan and start today.",
       "cta_start": "Create account",
-      "cta_consult": "Free consultation"
+      "cta_consult": "Book a consultation"
     }
   },
   "seo": {

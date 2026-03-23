@@ -6,7 +6,8 @@
       "Bash(find /home/wsl-user/homologation-app/app/frontend/pages -name *Pipeline* -type f)",
       "Bash(npm run:*)",
       "Bash(npx:*)",
-      "Bash(bin/rails routes:*)"
+      "Bash(bin/rails routes:*)",
+      "Bash(node:*)"
     ]
   }
 }
