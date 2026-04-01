@@ -89,7 +89,9 @@ module Admin
         roles: u.roles.map(&:name), locale: u.locale,
         avatarUrl: u.avatar_url, createdAt: u.created_at.iso8601,
         discarded: u.discarded?,
-        deletionRequestedAt: u.deletion_requested_at&.iso8601 }
+        deletionRequestedAt: u.deletion_requested_at&.iso8601,
+        hasHomologation: u.has_homologation?,
+        hasEducation: u.has_education? }
     end
   end
 end

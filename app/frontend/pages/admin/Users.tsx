@@ -350,7 +350,11 @@ function EditUserSheet({
   onGdprDelete: () => void
 }) {
   const { t, i18n } = useTranslation()
-  const { data, setData, patch, processing, errors } = useForm({ name: user.name })
+  const { data, setData, patch, processing, errors } = useForm({
+    name: user.name,
+    has_homologation: user.hasHomologation,
+    has_education: user.hasEducation,
+  })
   const [removingRole, setRemovingRole] = useState<string | null>(null)
   const unassignedRoles = ALL_ROLES.filter((r) => !user.roles.includes(r))
 
@@ -389,7 +393,7 @@ function EditUserSheet({
 
         <div className="flex-1 px-4 py-4 space-y-6">
           {/* Name */}
-          <form onSubmit={handleSubmit} className="space-y-3">
+          <form id="edit-user-form" onSubmit={handleSubmit} className="space-y-3">
             <div className="space-y-1.5">
               <Label htmlFor="sheet-name">{t("common.name")}</Label>
               <Input
@@ -404,6 +408,47 @@ function EditUserSheet({
               {t("common.save")}
             </Button>
           </form>
+
+          <Separator />
+
+          {/* Cabinets */}
+          <div className="space-y-3">
+            <p className="text-sm font-medium">{t("admin.user_management.cabinets")}</p>
+            <div className="space-y-2">
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={data.has_homologation}
+                  onChange={(e) => setData("has_homologation", e.target.checked)}
+                  disabled={user.discarded}
+                  className="size-4 rounded border-input"
+                />
+                <div>
+                  <span className="text-sm font-medium">{t("admin.user_management.cabinet_homologation")}</span>
+                  <p className="text-xs text-muted-foreground">{t("admin.user_management.cabinet_homologation_hint")}</p>
+                </div>
+              </label>
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={data.has_education}
+                  onChange={(e) => setData("has_education", e.target.checked)}
+                  disabled={user.discarded}
+                  className="size-4 rounded border-input"
+                />
+                <div>
+                  <span className="text-sm font-medium">{t("admin.user_management.cabinet_education")}</span>
+                  <p className="text-xs text-muted-foreground">{t("admin.user_management.cabinet_education_hint")}</p>
+                </div>
+              </label>
+            </div>
+            {(errors as Record<string, string>).base && (
+              <p className="text-sm text-destructive">{(errors as Record<string, string>).base}</p>
+            )}
+            <Button type="submit" form="edit-user-form" disabled={processing} size="sm" className="min-h-[44px]">
+              {t("admin.user_management.save_cabinets")}
+            </Button>
+          </div>
 
           <Separator />
 

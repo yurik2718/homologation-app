@@ -314,6 +314,8 @@ export interface AdminUser {
   createdAt: string
   discarded: boolean
   deletionRequestedAt: string | null
+  hasHomologation: boolean
+  hasEducation: boolean
 }
 
 export interface AdminDashboardProps {

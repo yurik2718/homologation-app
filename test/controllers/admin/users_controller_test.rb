@@ -63,5 +63,53 @@ module Admin
       props = inertia.props
       assert props[:users].is_a?(Array)
     end
+
+    # --- Cabinet flags ---
+
+    test "users list includes hasHomologation and hasEducation fields" do
+      sign_in users(:super_admin_boss)
+      get admin_users_path
+      user_data = inertia.props[:users].find { |u| u[:id] == users(:student_ana).id }
+      assert_not_nil user_data
+      assert user_data.key?(:hasHomologation) || user_data.key?("hasHomologation")
+      assert user_data.key?(:hasEducation) || user_data.key?("hasEducation")
+    end
+
+    test "super admin can enable education cabinet for student" do
+      sign_in users(:super_admin_boss)
+      user = users(:student_ana)
+      assert_not user.has_education?
+
+      patch admin_user_path(user), params: {
+        user: { has_homologation: true, has_education: true }
+      }
+
+      assert user.reload.has_education?
+      assert user.reload.has_homologation?
+    end
+
+    test "super admin can switch student to education only" do
+      sign_in users(:super_admin_boss)
+      user = users(:student_ana)
+
+      patch admin_user_path(user), params: {
+        user: { has_homologation: false, has_education: true }
+      }
+
+      assert user.reload.has_education?
+      refute user.reload.has_homologation?
+    end
+
+    test "cannot remove all cabinets from user" do
+      sign_in users(:super_admin_boss)
+      user = users(:student_ana)
+
+      patch admin_user_path(user), params: {
+        user: { has_homologation: false, has_education: false }
+      }
+
+      # User is unchanged — validation prevents saving
+      assert user.reload.has_homologation?
+    end
   end
 end

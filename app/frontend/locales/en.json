@@ -247,7 +247,13 @@
       "no_roles": "No roles",
       "remove_role_confirm": "Remove the {{role}} role from {{name}}?",
       "danger_zone": "Danger zone",
-      "deletion_requested_on": "Request received on {{date}}"
+      "deletion_requested_on": "Request received on {{date}}",
+      "cabinets": "Cabinets",
+      "cabinet_homologation": "Homologation",
+      "cabinet_homologation_hint": "Access to homologation requests, documents and chat",
+      "cabinet_education": "Education",
+      "cabinet_education_hint": "Access to lessons, calendar and teacher chat",
+      "save_cabinets": "Save cabinets"
     },
     "charts": {
       "requests_over_time": "Requests Over Time",
