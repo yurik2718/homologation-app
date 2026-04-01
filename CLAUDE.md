@@ -1,5 +1,9 @@
 # CLAUDE.md — Project Guide
 
+## Rules for Claude
+
+- **Never make git commits.** The user commits manually. Do not run `git commit` under any circumstances.
+
 ## What is this?
 
 Homologation app for managing student document equivalencia requests in Spain.
