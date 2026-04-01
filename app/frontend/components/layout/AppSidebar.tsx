@@ -1,4 +1,4 @@
-import { useMemo, memo } from "react"
+import { useMemo, memo, useState } from "react"
 import { Link, usePage } from "@inertiajs/react"
 import { useTranslation } from "react-i18next"
 import {
@@ -42,9 +42,11 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { routes } from "@/lib/routes"
-import { getInitials } from "@/lib/utils"
+import { getInitials, cn } from "@/lib/utils"
 import type { SharedProps, User } from "@/types"
 import type { LucideIcon } from "lucide-react"
+
+type Cabinet = "homologation" | "education"
 
 interface NavItem {
   show: boolean
@@ -53,6 +55,7 @@ interface NavItem {
   label: string
   badge?: number
   exact?: boolean
+  cabinet?: Cabinet | "both"
 }
 
 interface NavGroup {
@@ -88,6 +91,18 @@ export function AppSidebar() {
 
   // Super admin gets 4 domain-oriented groups; other roles get the flat layout
   const isSuperAdmin = features.canAccessAdmin
+  const hasBothCabinets = features.hasHomologation && features.hasEducation
+  const showSwitcher = !isSuperAdmin && hasBothCabinets
+
+  const [activeCabinet, setActiveCabinet] = useState<Cabinet>(() => {
+    if (!hasBothCabinets) return features.hasHomologation ? "homologation" : "education"
+    return (localStorage.getItem("activeCabinet") as Cabinet) ?? "homologation"
+  })
+
+  function switchCabinet(cabinet: Cabinet) {
+    setActiveCabinet(cabinet)
+    localStorage.setItem("activeCabinet", cabinet)
+  }
 
   const navGroups = useMemo<NavGroup[]>(() => isSuperAdmin
     ? [
@@ -191,6 +206,7 @@ export function AppSidebar() {
               href: routes.dashboard,
               icon: LayoutDashboard,
               label: t("nav.dashboard"),
+              cabinet: "both" as const,
             },
             {
               show: features.canSeeMyRequests && features.hasHomologation,
@@ -198,12 +214,14 @@ export function AppSidebar() {
               icon: FileText,
               label: t("nav.my_requests"),
               exact: true,
+              cabinet: "homologation" as const,
             },
             {
               show: features.canCreateRequest && features.hasHomologation,
               href: routes.newRequest,
               icon: FilePlus,
               label: t("nav.new_request"),
+              cabinet: "homologation" as const,
             },
             {
               show: features.canSeeChat && features.hasEducation,
@@ -211,12 +229,14 @@ export function AppSidebar() {
               icon: MessageCircle,
               label: t("nav.chat"),
               badge: unreadChatsCount > 0 ? unreadChatsCount : undefined,
+              cabinet: "education" as const,
             },
             {
               show: features.canSeeCalendar && features.hasEducation,
               href: routes.lessons,
               icon: BookOpen,
               label: t("nav.my_lessons"),
+              cabinet: "education" as const,
             },
           ],
         },
@@ -228,12 +248,14 @@ export function AppSidebar() {
               href: routes.teachers,
               icon: GraduationCap,
               label: t("nav.teachers"),
+              cabinet: "education" as const,
             },
             {
               show: features.canSeeAllLessons && features.hasEducation,
               href: routes.admin.lessons,
               icon: BookOpen,
               label: t("nav.all_lessons"),
+              cabinet: "education" as const,
             },
           ],
         },
@@ -246,12 +268,14 @@ export function AppSidebar() {
               icon: Bell,
               label: t("nav.notifications"),
               badge: unreadNotificationsCount > 0 ? unreadNotificationsCount : undefined,
+              cabinet: "both" as const,
             },
             {
               show: true,
               href: routes.settings.root,
               icon: Settings,
               label: t("nav.settings"),
+              cabinet: "both" as const,
             },
           ],
         },
@@ -262,10 +286,15 @@ export function AppSidebar() {
     navGroups
       .map((group) => ({
         ...group,
-        items: group.items.filter((item) => item.show),
+        items: group.items.filter((item) => {
+          if (!item.show) return false
+          if (!showSwitcher) return true
+          if (!item.cabinet || item.cabinet === "both") return true
+          return item.cabinet === activeCabinet
+        }),
       }))
       .filter((group) => group.items.length > 0),
-    [navGroups, url])
+    [navGroups, showSwitcher, activeCabinet, url])
 
   const initials = useMemo(() =>
     user?.name ? getInitials(user.name) : "?",
@@ -287,6 +316,37 @@ export function AppSidebar() {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
+
+      {showSwitcher && (
+        <div className="px-3 pb-2 pt-1">
+          <div className="flex rounded-lg bg-sidebar-accent/50 p-0.5 gap-0.5">
+            <button
+              type="button"
+              onClick={() => switchCabinet("homologation")}
+              className={cn(
+                "flex-1 rounded-md px-2 py-1.5 text-xs font-medium transition-colors",
+                activeCabinet === "homologation"
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {t("nav.cabinet_homologation")}
+            </button>
+            <button
+              type="button"
+              onClick={() => switchCabinet("education")}
+              className={cn(
+                "flex-1 rounded-md px-2 py-1.5 text-xs font-medium transition-colors",
+                activeCabinet === "education"
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {t("nav.cabinet_education")}
+            </button>
+          </div>
+        </div>
+      )}
 
       <SidebarContent>
         {visibleGroups.map((group) => (

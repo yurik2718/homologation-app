@@ -370,7 +370,9 @@
     "teaching": "Docencia",
     "administration": "Administración",
     "settings": "Configuración",
-    "pipeline": "Pipeline"
+    "pipeline": "Pipeline",
+    "cabinet_homologation": "Homologación",
+    "cabinet_education": "Educación"
   },
   "settings": {
     "title": "Configuración",

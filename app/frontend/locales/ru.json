@@ -370,7 +370,9 @@
     "teaching": "Обучение",
     "administration": "Администрирование",
     "settings": "Настройки",
-    "pipeline": "Pipeline"
+    "pipeline": "Pipeline",
+    "cabinet_homologation": "Гомологация",
+    "cabinet_education": "Обучение"
   },
   "settings": {
     "title": "Настройки",
