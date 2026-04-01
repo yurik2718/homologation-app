@@ -30,6 +30,8 @@ es:
             privacy_accepted:
               accepted: "debe aceptar la política de privacidad"
         user:
+          base:
+            no_cabinet_selected: "debe tener acceso a al menos un gabinete (homologación o educación)"
           attributes:
             phone:
               invalid: "formato incorrecto (ej: +34 612 345 678)"

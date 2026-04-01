@@ -11,6 +11,8 @@ super_admin_boss:
   whatsapp: "+34600000099"
   birthday: 1980-01-01
   country: ES
+  has_homologation: true
+  has_education: true
 
 coordinator_maria:
   email_address: maria@example.com
@@ -23,6 +25,8 @@ coordinator_maria:
   whatsapp: "+34600000098"
   birthday: 1985-05-10
   country: ES
+  has_homologation: true
+  has_education: false
 
 teacher_ivan:
   email_address: ivan@example.com
@@ -35,6 +39,8 @@ teacher_ivan:
   whatsapp: "+34600000097"
   birthday: 1990-03-15
   country: RU
+  has_homologation: false
+  has_education: true
 
 student_ana:
   email_address: ana@example.com
@@ -47,6 +53,8 @@ student_ana:
   whatsapp: "+34600000001"
   birthday: 2000-01-15
   country: RU
+  has_homologation: true
+  has_education: false
 
 student_pedro:
   email_address: pedro@example.com
@@ -59,3 +67,5 @@ student_pedro:
   whatsapp: "+34600000002"
   birthday: 2001-06-20
   country: CO
+  has_homologation: true
+  has_education: false

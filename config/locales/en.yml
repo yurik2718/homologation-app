@@ -27,6 +27,8 @@ en:
             privacy_accepted:
               accepted: "you must accept the privacy policy"
         user:
+          base:
+            no_cabinet_selected: "must have access to at least one cabinet (homologation or education)"
           attributes:
             phone:
               invalid: "invalid format (e.g. +34 612 345 678)"

@@ -51,6 +51,7 @@ class User < ApplicationRecord
     allow_blank: true
 
   validate :guardian_fields_required_if_minor
+  validate :at_least_one_cabinet
 
   def self.find_or_create_from_oauth(auth)
     user = find_by(provider: auth.provider, uid: auth.uid)
@@ -62,12 +63,13 @@ class User < ApplicationRecord
     end
 
     User.create!(
-      provider:      auth.provider,
-      uid:           auth.uid,
-      email_address: auth.info.email,
-      name:          auth.info.name || auth.info.email,
-      avatar_url:    auth.info.image,
-      password:      SecureRandom.hex(16)
+      provider:         auth.provider,
+      uid:              auth.uid,
+      email_address:    auth.info.email,
+      name:             auth.info.name || auth.info.email,
+      avatar_url:       auth.info.image,
+      password:         SecureRandom.hex(16),
+      has_homologation: true
     ).tap(&:assign_student_role!)
   end
 
@@ -92,7 +94,15 @@ class User < ApplicationRecord
   def teacher?     = has_role?("teacher")
   def student?     = has_role?("student")
 
+  def homologation_cabinet? = has_homologation?
+  def education_cabinet?    = has_education?
+
   private
+
+  def at_least_one_cabinet
+    return if has_homologation? || has_education?
+    errors.add(:base, :no_cabinet_selected)
+  end
 
   def guardian_fields_required_if_minor
     return unless is_minor?

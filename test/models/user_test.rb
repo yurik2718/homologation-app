@@ -103,4 +103,57 @@ class UserTest < ActiveSupport::TestCase
     assert user.student?
     assert_equal "google_oauth2", user.provider
   end
+
+  # --- Dual cabinet ---
+
+  test "homologation_cabinet? returns true when has_homologation is true" do
+    user = users(:student_ana)
+    user.has_homologation = true
+    assert user.homologation_cabinet?
+  end
+
+  test "homologation_cabinet? returns false when has_homologation is false" do
+    user = users(:student_ana)
+    user.has_homologation = false
+    user.has_education = true
+    refute user.homologation_cabinet?
+  end
+
+  test "education_cabinet? returns true when has_education is true" do
+    user = users(:teacher_ivan)
+    user.has_education = true
+    assert user.education_cabinet?
+  end
+
+  test "education_cabinet? returns false when has_education is false" do
+    user = users(:student_ana)
+    user.has_education = false
+    refute user.education_cabinet?
+  end
+
+  test "user with both cabinets is valid" do
+    user = users(:student_ana)
+    user.has_homologation = true
+    user.has_education = true
+    assert user.valid?
+  end
+
+  test "user must have at least one cabinet" do
+    user = users(:student_ana)
+    user.has_homologation = false
+    user.has_education = false
+    refute user.valid?
+    assert user.errors[:base].any?
+  end
+
+  test "new student via OAuth gets has_homologation true by default" do
+    auth = OmniAuth::AuthHash.new(
+      provider: "google_oauth2",
+      uid: "newstudent999",
+      info: { email: "newstudent@example.com", name: "New Student", image: nil }
+    )
+    user = User.find_or_create_from_oauth(auth)
+    assert user.has_homologation?
+    refute user.has_education?
+  end
 end

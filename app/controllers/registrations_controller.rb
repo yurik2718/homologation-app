@@ -8,7 +8,7 @@ class RegistrationsController < ApplicationController
   end
 
   def create
-    user = User.new(registration_params)
+    user = User.new(registration_params.merge(has_homologation: true))
     if user.save
       user.assign_student_role!
       start_new_session_for(user)

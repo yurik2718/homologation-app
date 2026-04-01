@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_21_230737) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_01_174056) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -215,6 +215,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_21_230737) do
     t.string "guardian_phone"
     t.integer "guardian_user_id"
     t.string "guardian_whatsapp"
+    t.boolean "has_education", default: false, null: false
+    t.boolean "has_homologation", default: false, null: false
     t.boolean "is_minor", default: false, null: false
     t.string "locale", default: "es"
     t.string "name", default: "", null: false
