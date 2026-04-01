@@ -59,3 +59,22 @@ To switch accounts: avatar in the sidebar → **Sign out**.
 ```bash
 bin/rails db:reset
 ```
+
+## Архив полной версии
+
+Тег **`v1-full-featured`** содержит полную версию приложения, включая функционал который был удалён в процессе упрощения:
+
+- Учителя и уроки (calendar, lessons, teacher management)
+- Pipeline / Kanban доска (CRM board)
+- Telegram-бот уведомления
+- Чат учитель-студент
+- Публичный сайт
+
+Посмотреть или скопировать удалённый код:
+
+```bash
+git checkout v1-full-featured   # переключиться на полную версию
+git checkout main               # вернуться обратно
+```
+
+Или через GitHub: переключи ветку/тег на `v1-full-featured`.
