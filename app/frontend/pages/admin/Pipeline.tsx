@@ -10,7 +10,7 @@ import { KanbanBoard } from "@/components/pipeline/KanbanBoard"
 import { HorizontalGroup } from "@/components/pipeline/HorizontalGroup"
 import { CardEditDialog } from "@/components/pipeline/CardEditDialog"
 import { PipelineCard as PipelineCardComponent } from "@/components/pipeline/PipelineCard"
-import { ALL_STAGES, HORIZONTAL_STAGES } from "@/components/pipeline/constants"
+import { usePipeline } from "@/components/pipeline/constants"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { routes } from "@/lib/routes"
@@ -20,6 +20,7 @@ import type { PipelineIndexProps, PipelineCard } from "@/types/pages"
 export default function Pipeline() {
   const { t } = useTranslation()
   const { stages, stats, filters } = usePage<SharedProps & PipelineIndexProps>().props
+  const { allStages, horizontalStages } = usePipeline()
 
   const [editCard, setEditCard] = useState<PipelineCard | null>(null)
   const [mobileStage, setMobileStage] = useState<string>("pago_recibido")
@@ -61,7 +62,7 @@ export default function Pipeline() {
               {/* Mobile: stage tabs + vertical list */}
               <div className="md:hidden">
                 <div className="flex gap-2 overflow-x-auto pb-2">
-                  {ALL_STAGES.map((stage) => (
+                  {allStages.map((stage) => (
                     <Button
                       key={stage}
                       variant={mobileStage === stage ? "default" : "outline"}
@@ -98,7 +99,7 @@ export default function Pipeline() {
                 <div className="bg-slate-50 -mx-4 px-4 py-4 rounded-lg">
                   <KanbanBoard stages={stages} onEditCard={setEditCard} />
                 </div>
-                {HORIZONTAL_STAGES.map(({ stage, icon }) => (
+                {horizontalStages.map(({ stage, icon }) => (
                   <HorizontalGroup
                     key={stage}
                     stage={stage}

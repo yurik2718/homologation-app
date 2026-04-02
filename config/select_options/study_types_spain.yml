@@ -1,0 +1,8 @@
+# Tipos de estudio en España / Study types in Spain / Типы обучения в Испании
+
+- { key: "bachillerato", label: "Bachillerato" }
+- { key: "fp_medio", label: "FP Grado Medio" }
+- { key: "fp_superior", label: "FP Grado Superior" }
+- { key: "grado", label: "Grado Universitario" }
+- { key: "master", label: "Máster" }
+- { key: "doctorado", label: "Doctorado" }

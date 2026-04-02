@@ -15,30 +15,19 @@ class HomologationRequest < ApplicationRecord
     "in_progress"       => %w[resolved closed]
   }.freeze
 
-  # --- Pipeline ---
+  # --- Pipeline (loaded from config/pipeline.yml) ---
 
-  PIPELINE_STAGES = %w[
-    pago_recibido documentos traduccion tasas_volantes
-    redsara cotejo_ministerio cotejo_delegacion completado
-  ].freeze
+  PIPELINE_CONFIG = Rails.application.config.pipeline
 
-  SPANISH_SPEAKING_COUNTRIES = %w[
-    AR CO MX PE VE CU EC BO CL PY UY HN SV GT NI CR PA DO PR GQ
-  ].freeze
+  PIPELINE_STAGES = PIPELINE_CONFIG["stages"].map { |s| s["key"] }.freeze
 
-  COTEJO_MINISTERIO_COUNTRIES = %w[
-    RU UA CN IN MA TR GB PT PK BD PH NG EG IR IQ SY AF
-    KZ UZ TM GE AM AZ BY MD KG TJ IL JP KR VN TH
-  ].freeze
+  SPANISH_SPEAKING_COUNTRIES   = PIPELINE_CONFIG.dig("country_routing", "spanish_speaking").freeze
+  COTEJO_MINISTERIO_COUNTRIES  = PIPELINE_CONFIG.dig("country_routing", "cotejo_ministerio").freeze
+  COTEJO_DELEGACION_COUNTRIES  = (SPANISH_SPEAKING_COUNTRIES +
+    PIPELINE_CONFIG.dig("country_routing", "cotejo_delegacion_extra")).freeze
 
-  COTEJO_DELEGACION_COUNTRIES = (SPANISH_SPEAKING_COUNTRIES + %w[BR US AE SA IT FR DE]).freeze
-
-  DEFAULT_DOCUMENT_CHECKLIST = {
-    "sol" => false, "vol" => false, "tas" => false, "aut" => false, "pas" => false,
-    "ori" => false, "tra" => false, "reg" => false, "not" => false, "ent" => false
-  }.freeze
-
-  CHECKLIST_KEYS = DEFAULT_DOCUMENT_CHECKLIST.keys.freeze
+  CHECKLIST_KEYS = PIPELINE_CONFIG["document_checklist"].map { |d| d["key"] }.freeze
+  DEFAULT_DOCUMENT_CHECKLIST = CHECKLIST_KEYS.index_with { false }.freeze
 
   belongs_to :user
   belongs_to :coordinator, class_name: "User", optional: true

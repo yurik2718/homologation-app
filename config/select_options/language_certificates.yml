@@ -1,0 +1,6 @@
+# Certificados de idioma / Language certificates / Сертификаты
+
+- { key: "dele", label: "DELE" }
+- { key: "siele", label: "SIELE" }
+- { key: "other", label_es: "Otro", label_en: "Other", label_ru: "Другой" }
+- { key: "none", label_es: "Ninguno", label_en: "None", label_ru: "Нет" }

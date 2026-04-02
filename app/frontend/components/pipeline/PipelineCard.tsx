@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { DocumentTags } from "@/components/pipeline/DocumentTags"
-import { STAGE_COLORS, STAGE_SHORT_LABELS, SERVICE_TYPE_COLORS, YEAR_COLORS } from "@/components/pipeline/constants"
+import { usePipeline, SERVICE_TYPE_COLORS, YEAR_COLORS } from "@/components/pipeline/constants"
 import { routes } from "@/lib/routes"
 import { cn, getOptionLabel } from "@/lib/utils"
 import type { SharedProps } from "@/types"
@@ -20,9 +20,10 @@ interface PipelineCardProps {
 export function PipelineCard({ card, stage, onEdit }: PipelineCardProps) {
   const { t, i18n } = useTranslation()
   const { selectOptions } = usePage<SharedProps>().props
+  const { stageColors, stageShortLabels } = usePipeline()
   const [busy, setBusy] = useState(false)
   const stageKey = stage ?? card.pipelineStage
-  const color = STAGE_COLORS[stageKey]
+  const color = stageColors[stageKey]
 
   const countryLabel = card.country
     ? (selectOptions.countries ?? []).find((o) => o.key === card.country)
@@ -37,7 +38,7 @@ export function PipelineCard({ card, stage, onEdit }: PipelineCardProps) {
   const advanceLabel = card.nextStageName
     ? card.nextStageName === "completado"
       ? "\u2713 Fin"
-      : `\u2192 ${STAGE_SHORT_LABELS[card.nextStageName] ?? t(`pipeline.stages.${card.nextStageName}`)}`
+      : `\u2192 ${stageShortLabels[card.nextStageName] ?? t(`pipeline.stages.${card.nextStageName}`)}`
     : `${t("pipeline.advance")} \u2192`
 
   function moveStage(e: React.MouseEvent, url: string) {

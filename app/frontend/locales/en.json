@@ -105,6 +105,7 @@
       "section_education": "Education",
       "section_additional": "Additional Information",
       "chat_not_available": "Chat will be available after submitting your request",
+      "chat_with_coordinator": "Chat with coordinator",
       "no_documents": "No documents attached yet",
       "file_category_application": "Application",
       "file_category_originals": "Originals",
@@ -131,7 +132,6 @@
     },
     "form": {
       "intro": "Fill out the form below. After submission, a coordinator will contact you via chat to clarify the details. You can also save a draft and come back later.",
-      "section_about": "About You",
       "section_request": "Your Request",
       "section_education": "Education",
       "section_optional": "Additional Information",

@@ -1,0 +1,216 @@
+# Pipeline configuration — stages, document checklist, and country routing.
+#
+# This file is loaded once at boot. Restart the server after changes.
+# The frontend receives this config via inertia_share as `pipelineConfig`.
+
+# ─── Pipeline Stages ─────────────────────────────────────────────────────────
+# Order matters: cards move through stages left-to-right.
+# Each stage has a key, label per language, short label, icon (emoji), and color.
+#
+# display: "kanban" — shown as a vertical column on the board
+# display: "horizontal" — shown as a horizontal row below the board
+
+stages:
+  - key: pago_recibido
+    label_es: "Pago recibido"
+    label_en: "Payment received"
+    label_ru: "Оплата получена"
+    short: "Pago"
+    icon: "💶"
+    color: amber
+    display: kanban
+
+  - key: documentos
+    label_es: "Documentos"
+    label_en: "Documents"
+    label_ru: "Документы"
+    short: "Docs"
+    icon: "📄"
+    color: blue
+    display: kanban
+
+  - key: traduccion
+    label_es: "Traducción"
+    label_en: "Translation"
+    label_ru: "Перевод"
+    short: "Trad."
+    icon: "🌐"
+    color: emerald
+    display: kanban
+
+  - key: tasas_volantes
+    label_es: "Tasas y volantes"
+    label_en: "Fees & forms"
+    label_ru: "Пошлины и бланки"
+    short: "Tasas"
+    icon: "📋"
+    color: orange
+    display: kanban
+
+  - key: redsara
+    label_es: "RedSARA"
+    label_en: "RedSARA"
+    label_ru: "RedSARA"
+    short: "RedSARA"
+    icon: "📡"
+    color: violet
+    display: kanban
+
+  - key: cotejo_ministerio
+    label_es: "Cotejo Ministerio"
+    label_en: "Ministry verification"
+    label_ru: "Сверка Министерство"
+    short: "Min."
+    icon: "🏛"
+    color: pink
+    display: horizontal
+
+  - key: cotejo_delegacion
+    label_es: "Cotejo Delegación"
+    label_en: "Delegation verification"
+    label_ru: "Сверка Делегация"
+    short: "Deleg."
+    icon: "🏢"
+    color: cyan
+    display: horizontal
+
+  - key: completado
+    label_es: "Completado"
+    label_en: "Completed"
+    label_ru: "Завершено"
+    short: "Fin"
+    icon: "✅"
+    color: green
+    display: horizontal
+
+# ─── Document Checklist ──────────────────────────────────────────────────────
+# Documents that need to be collected for each request.
+# key: internal identifier
+# label: display name per language
+
+document_checklist:
+  - key: sol
+    label_es: "Solicitud"
+    label_en: "Application"
+    label_ru: "Заявление"
+
+  - key: vol
+    label_es: "Volante"
+    label_en: "Receipt slip"
+    label_ru: "Квитанция"
+
+  - key: tas
+    label_es: "Tasas"
+    label_en: "Fees"
+    label_ru: "Пошлины"
+
+  - key: aut
+    label_es: "Autorización"
+    label_en: "Authorization"
+    label_ru: "Доверенность"
+
+  - key: pas
+    label_es: "Pasaporte / NIE"
+    label_en: "Passport / NIE"
+    label_ru: "Паспорт / NIE"
+
+  - key: ori
+    label_es: "Originales"
+    label_en: "Originals"
+    label_ru: "Оригиналы"
+
+  - key: tra
+    label_es: "Traducción"
+    label_en: "Translation"
+    label_ru: "Перевод"
+
+  - key: reg
+    label_es: "Registro"
+    label_en: "Registry"
+    label_ru: "Реестр"
+
+  - key: not
+    label_es: "Notarización"
+    label_en: "Notarization"
+    label_ru: "Нотариальное заверение"
+
+  - key: ent
+    label_es: "Entrega"
+    label_en: "Delivery"
+    label_ru: "Выдача"
+
+# ─── Country Routing ─────────────────────────────────────────────────────────
+# After RedSARA, requests are routed to cotejo_ministerio or cotejo_delegacion
+# based on the student's country.
+#
+# spanish_speaking: skip translation stage + route to cotejo_delegacion
+# cotejo_ministerio: non-Spanish-speaking countries routed to ministry
+# cotejo_delegacion_extra: additional non-Spanish countries routed to delegation
+#
+# Countries not in any list cannot advance past RedSARA (admin must set country first).
+
+country_routing:
+  spanish_speaking:
+    - AR  # Argentina
+    - BO  # Bolivia
+    - CL  # Chile
+    - CO  # Colombia
+    - CR  # Costa Rica
+    - CU  # Cuba
+    - DO  # Dominican Republic
+    - EC  # Ecuador
+    - GQ  # Equatorial Guinea
+    - GT  # Guatemala
+    - HN  # Honduras
+    - MX  # Mexico
+    - NI  # Nicaragua
+    - PA  # Panama
+    - PE  # Peru
+    - PR  # Puerto Rico
+    - PY  # Paraguay
+    - SV  # El Salvador
+    - UY  # Uruguay
+    - VE  # Venezuela
+
+  cotejo_ministerio:
+    - AF  # Afghanistan
+    - AM  # Armenia
+    - AZ  # Azerbaijan
+    - BD  # Bangladesh
+    - BY  # Belarus
+    - CN  # China
+    - EG  # Egypt
+    - GE  # Georgia
+    - IL  # Israel
+    - IN  # India
+    - IQ  # Iraq
+    - IR  # Iran
+    - JP  # Japan
+    - KG  # Kyrgyzstan
+    - KR  # South Korea
+    - KZ  # Kazakhstan
+    - MA  # Morocco
+    - MD  # Moldova
+    - NG  # Nigeria
+    - PH  # Philippines
+    - PK  # Pakistan
+    - PT  # Portugal
+    - RU  # Russia
+    - SY  # Syria
+    - TH  # Thailand
+    - TJ  # Tajikistan
+    - TM  # Turkmenistan
+    - TR  # Turkey
+    - UA  # Ukraine
+    - UZ  # Uzbekistan
+    - VN  # Vietnam
+    - GB  # United Kingdom
+
+  cotejo_delegacion_extra:
+    - AE  # UAE
+    - BR  # Brazil
+    - DE  # Germany
+    - FR  # France
+    - IT  # Italy
+    - SA  # Saudi Arabia
+    - US  # United States

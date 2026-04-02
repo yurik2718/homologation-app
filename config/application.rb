@@ -29,9 +29,16 @@ module HomologationApp
     config.i18n.default_locale = :es
     config.i18n.fallbacks = true
 
-    # Select options loaded once at boot — shared via inertia_share on every request
-    config.select_options = YAML.safe_load_file(
-      Rails.root.join("config/select_options.yml")
-    ).freeze
+    # Select options loaded once at boot — shared via inertia_share on every request.
+    # Each file in config/select_options/*.yml becomes a key (filename → key).
+    # To add a new dropdown: create config/select_options/my_list.yml and restart.
+    config.select_options = Dir[Rails.root.join("config/select_options/*.yml")].each_with_object({}) do |path, hash|
+      key = File.basename(path, ".yml")
+      hash[key] = YAML.safe_load_file(path)
+    end.freeze
+
+    # Pipeline config: stages, document checklist, country routing.
+    # Single source of truth for both backend (model) and frontend (inertia_share).
+    config.pipeline = YAML.safe_load_file(Rails.root.join("config/pipeline.yml")).freeze
   end
 end

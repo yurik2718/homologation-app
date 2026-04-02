@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next"
 import { Badge } from "@/components/ui/badge"
 import { PipelineCard } from "@/components/pipeline/PipelineCard"
-import { STAGE_COLORS } from "@/components/pipeline/constants"
+import { usePipeline } from "@/components/pipeline/constants"
 import { cn } from "@/lib/utils"
 import type { PipelineCard as PipelineCardType } from "@/types/pages"
 
@@ -13,7 +13,8 @@ interface KanbanColumnProps {
 
 export function KanbanColumn({ stage, cards, onEditCard }: KanbanColumnProps) {
   const { t } = useTranslation()
-  const color = STAGE_COLORS[stage]
+  const { stageColors } = usePipeline()
+  const color = stageColors[stage]
 
   return (
     <div className="w-72 flex-shrink-0">

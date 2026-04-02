@@ -1,0 +1,5 @@
+# Estudios terminados / Studies finished / Учёба завершена
+
+- { key: "yes", label_es: "Sí", label_en: "Yes", label_ru: "Да" }
+- { key: "no", label_es: "No", label_en: "No", label_ru: "Нет" }
+- { key: "in_progress", label_es: "En curso", label_en: "In Progress", label_ru: "В процессе" }

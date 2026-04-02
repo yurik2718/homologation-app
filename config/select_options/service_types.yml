@@ -1,0 +1,26 @@
+# Tipos de servicio / Service types / Типы услуг
+#
+# key:      internal identifier (do not change after requests exist)
+# label_es: Spanish label shown in UI
+# label_en: English label shown in UI
+# label_ru: Russian label shown in UI
+
+- key: "homologacion"
+  label_es: "Homologación de título"
+  label_en: "Degree Homologation"
+  label_ru: "Гомологация диплома"
+
+- key: "equivalencia"
+  label_es: "Equivalencia de título"
+  label_en: "Degree Equivalence"
+  label_ru: "Эквивалентность диплома"
+
+- key: "legalizacion"
+  label_es: "Legalización de documentos"
+  label_en: "Document Legalization"
+  label_ru: "Легализация документов"
+
+- key: "consulta"
+  label_es: "Consulta"
+  label_en: "Consultation"
+  label_ru: "Консультация"

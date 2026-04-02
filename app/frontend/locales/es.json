@@ -105,6 +105,7 @@
       "section_education": "Educación",
       "section_additional": "Información adicional",
       "chat_not_available": "El chat estará disponible después de enviar la solicitud",
+      "chat_with_coordinator": "Chat con coordinador",
       "no_documents": "Documentos aún no adjuntados",
       "file_category_application": "Solicitud",
       "file_category_originals": "Originales",
@@ -131,7 +132,6 @@
     },
     "form": {
       "intro": "Rellena el formulario a continuación. Tras el envío, un coordinador se pondrá en contacto contigo a través del chat para aclarar los detalles. También puedes guardar un borrador y volver más tarde.",
-      "section_about": "Sobre ti",
       "section_request": "Tu solicitud",
       "section_education": "Educación",
       "section_optional": "Información adicional",

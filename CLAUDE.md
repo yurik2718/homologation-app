@@ -62,7 +62,8 @@ app/
 │   ├── locales/     # es.json, en.json, ru.json
 │   └── types/       # index.ts (SharedProps), pages.ts (page props), models.d.ts
 config/
-├── select_options.yml   # All dropdown options (single source of truth)
+├── select_options/      # Dropdown options — one YML file per list (see README inside)
+├── pipeline.yml         # Pipeline stages, document checklist, country routing
 ├── locales/             # Rails I18n (es.yml, en.yml, ru.yml)
 ```
 
@@ -74,7 +75,7 @@ config/
 4. **Files** — Active Storage direct upload via `FileDropZone`. Three categories: `:application` (one), `:originals` (many), `:documents` (many).
 5. **Chat** — Send via `router.post()` (Inertia), receive via `useChannel()` hook (Action Cable).
 6. **AmoCRM sync** — ONLY on payment confirmation. No data to CRM before `payment_confirmed`.
-7. **Select options** — `config/select_options.yml` → `inertia_share` → `selectOptions` in every page. Never hardcode — always `opt[label_${locale}] || opt.label`.
+7. **Select options** — `config/select_options/*.yml` (one file per dropdown) → `inertia_share` → `selectOptions` in every page. Never hardcode — always `opt[label_${locale}] || opt.label`.
 8. **Security** — `encrypts` on PII fields, `rate_limit` on auth, files served through controller (Pundit), PII filtered from logs. Soft delete (`discarded_at`) on `users` and `homologation_requests` — use `.kept` scope, never hard delete without GDPR request.
 9. **Mobile-first** — Every page works at 360px+. See `docs/15_MOBILE_PATTERNS.md`.
 10. **Keep it simple** — `<textarea>` not rich text, light mode only, no command menu/audit log/dark mode.

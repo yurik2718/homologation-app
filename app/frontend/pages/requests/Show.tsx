@@ -12,7 +12,6 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
 import {
   Select,
   SelectContent,
@@ -28,7 +27,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
+import { Card, CardContent } from "@/components/ui/card"
 import { cn, formatBytes, getOptionLabel } from "@/lib/utils"
 import { routes } from "@/lib/routes"
 import type { SharedProps, SelectOption } from "@/types/index"
@@ -121,15 +126,24 @@ export default function RequestsShow() {
       ]}
     >
       <Main fixed>
-        <div className="flex flex-col lg:grid lg:grid-cols-[1fr_320px] gap-6 min-h-0 flex-1">
-          {/* Left: Chat thread — first on mobile for students, second for coordinators */}
+        <div className="flex flex-col lg:grid lg:grid-cols-[1fr_340px] gap-6 min-h-0 flex-1">
+          {/* Left: Chat thread */}
           <Card className={cn(
             "flex flex-col min-h-[400px] lg:min-h-0",
             isCoordinator ? "order-2 lg:order-1" : "order-1 lg:order-1"
           )}>
-            <CardHeader className="shrink-0 pb-3">
-              <CardTitle className="text-base">{request.subject}</CardTitle>
-            </CardHeader>
+            {/* Chat header — shows participant info */}
+            <div className="flex items-center gap-3 px-4 py-3 border-b shrink-0">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary shrink-0">
+                <MessageSquare className="h-4 w-4" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-medium truncate">
+                  {isCoordinator ? request.user.name : t("requests.detail.chat_with_coordinator")}
+                </p>
+                <p className="text-xs text-muted-foreground">{request.subject}</p>
+              </div>
+            </div>
             <CardContent className="flex-1 p-0 min-h-0">
               {request.conversation ? (
                 <ChatWindow
@@ -150,22 +164,23 @@ export default function RequestsShow() {
             </CardContent>
           </Card>
 
-          {/* Right: Metadata sidebar */}
+          {/* Right: Sidebar */}
           <div className={cn(
             "lg:order-2 space-y-4 overflow-y-auto",
             isCoordinator ? "order-1" : "order-2"
           )}>
-            {/* Status + key info card — combined */}
+            {/* Status card with progress */}
             <Card>
-              <CardContent className="pt-4 space-y-3">
+              <CardContent className="pt-4 space-y-4">
                 <div className="flex items-center justify-between">
                   <StatusBadge status={request.status} />
-                  {request.paymentAmount && (
+                  {request.paymentAmount != null && (
                     <span className="text-lg font-bold tabular-nums">
                       &euro;{request.paymentAmount}
                     </span>
                   )}
                 </div>
+
                 <div className="flex items-center justify-between text-xs text-muted-foreground">
                   <span>{request.user.name}</span>
                   <FormattedDate date={request.updatedAt} mode="relative" />
@@ -174,7 +189,7 @@ export default function RequestsShow() {
             </Card>
 
             {/* Coordinator actions */}
-            {isCoordinator && (
+            {isCoordinator && (availableStatuses.length > 0 || request.status === "awaiting_payment" || request.amoCrmSyncError) && (
               <Card>
                 <CardContent className="pt-4 space-y-3">
                   {availableStatuses.length > 0 && (
@@ -182,9 +197,7 @@ export default function RequestsShow() {
                       <Label>{t("coordinator.change_status")}</Label>
                       <Select onValueChange={(s) => setPendingStatus(s)}>
                         <SelectTrigger>
-                          <SelectValue
-                            placeholder={t("coordinator.change_status")}
-                          />
+                          <SelectValue placeholder={t("coordinator.change_status")} />
                         </SelectTrigger>
                         <SelectContent>
                           {availableStatuses.map((s) => (
@@ -221,16 +234,12 @@ export default function RequestsShow() {
                       </div>
                       {request.amoCrmSyncError && (
                         <div className="space-y-1">
-                          <p className="text-xs text-destructive">
-                            {request.amoCrmSyncError}
-                          </p>
+                          <p className="text-xs text-destructive">{request.amoCrmSyncError}</p>
                           <Button
                             variant="outline"
                             size="sm"
                             className="min-h-[44px]"
-                            onClick={() =>
-                              router.post(routes.retrySync(request.id))
-                            }
+                            onClick={() => router.post(routes.retrySync(request.id))}
                           >
                             {t("coordinator.crm_retry")}
                           </Button>
@@ -242,177 +251,163 @@ export default function RequestsShow() {
               </Card>
             )}
 
-            {/* Request info — single card with sections */}
+            {/* Collapsible details + files */}
             <Card>
-              <CardContent className="pt-4 space-y-4 text-sm">
-                {/* Details section */}
-                <SectionLabel>{t("requests.detail.section_details")}</SectionLabel>
-                <div className="space-y-2.5">
-                  <DetailRow
-                    label={t("requests.detail.requester")}
-                    value={request.user.name}
-                    bold
-                  />
-                  <DetailRow
-                    label={t("requests.form.service_type")}
-                    value={resolveOption(
-                      request.serviceType,
-                      "service_types"
-                    )}
-                    bold
-                  />
-                  {request.description && (
-                    <DetailRow
-                      label={t("requests.form.description")}
-                      value={request.description}
-                    />
-                  )}
-                  {request.identityCard && (
-                    <DetailRow
-                      label={t("requests.form.identity_card")}
-                      value={request.identityCard}
-                      mono
-                    />
-                  )}
-                  <DetailRow
-                    label={t("requests.table.created")}
-                    value={
-                      <FormattedDate
-                        date={request.createdAt}
-                        mode="datetime"
-                      />
-                    }
-                  />
-                </div>
-
-                {/* Education section */}
-                {hasEducation && (
-                  <>
-                    <Separator />
-                    <SectionLabel>{t("requests.detail.section_education")}</SectionLabel>
-                    <div className="space-y-2.5">
-                      {request.educationSystem && (
+              <CardContent className="pt-2 pb-2">
+                <Accordion type="multiple" defaultValue={["details", "files"]}>
+                  {/* Details section */}
+                  <AccordionItem value="details">
+                    <AccordionTrigger className="text-sm font-medium py-3">
+                      {t("requests.detail.section_details")}
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <div className="space-y-2.5 pb-2">
                         <DetailRow
-                          label={t("requests.form.education_system")}
-                          value={resolveOption(
-                            request.educationSystem,
-                            "education_systems"
-                          )}
+                          label={t("requests.detail.requester")}
+                          value={request.user.name}
+                          bold
                         />
-                      )}
-                      {request.studiesFinished && (
                         <DetailRow
-                          label={t("requests.form.studies_finished")}
-                          value={resolveOption(
-                            request.studiesFinished,
-                            "studies_finished"
-                          )}
+                          label={t("requests.form.service_type")}
+                          value={resolveOption(request.serviceType, "service_types")}
+                          bold
                         />
-                      )}
-                      {request.studyTypeSpain && (
+                        {request.description && (
+                          <DetailRow
+                            label={t("requests.form.description")}
+                            value={request.description}
+                          />
+                        )}
+                        {request.identityCard && (
+                          <DetailRow
+                            label={t("requests.form.identity_card")}
+                            value={request.identityCard}
+                            mono
+                          />
+                        )}
                         <DetailRow
-                          label={t("requests.form.study_type_spain")}
-                          value={resolveOption(
-                            request.studyTypeSpain,
-                            "study_types_spain"
-                          )}
+                          label={t("requests.table.created")}
+                          value={<FormattedDate date={request.createdAt} mode="datetime" />}
                         />
-                      )}
-                      {request.studiesSpain && (
-                        <DetailRow
-                          label={t("requests.form.studies_spain")}
-                          value={request.studiesSpain}
-                        />
-                      )}
-                      {request.university && (
-                        <DetailRow
-                          label={t("requests.form.university")}
-                          value={resolveOption(
-                            request.university,
-                            "universities"
-                          )}
-                        />
-                      )}
-                    </div>
-                  </>
-                )}
-
-                {/* Additional info section */}
-                {hasAdditional && (
-                  <>
-                    <Separator />
-                    <SectionLabel>{t("requests.detail.section_additional")}</SectionLabel>
-                    <div className="space-y-2.5">
-                      {request.languageKnowledge && (
-                        <DetailRow
-                          label={t("requests.form.language_level")}
-                          value={resolveOption(
-                            request.languageKnowledge,
-                            "language_levels"
-                          )}
-                        />
-                      )}
-                      {request.languageCertificate && (
-                        <DetailRow
-                          label={t("requests.form.language_certificate")}
-                          value={resolveOption(
-                            request.languageCertificate,
-                            "language_certificates"
-                          )}
-                        />
-                      )}
-                      {request.referralSource && (
-                        <DetailRow
-                          label={t("requests.form.referral_source")}
-                          value={resolveOption(
-                            request.referralSource,
-                            "referral_sources"
-                          )}
-                        />
-                      )}
-                    </div>
-                  </>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Attachments card — always visible, grouped by category */}
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium">
-                  {t("requests.form.section_documents")}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {request.files.length === 0 ? (
-                  <div className="flex flex-col items-center py-6 text-center">
-                    <FileX className="h-6 w-6 text-muted-foreground mb-2" />
-                    <p className="text-xs text-muted-foreground">
-                      {t("requests.detail.no_documents")}
-                    </p>
-                  </div>
-                ) : (
-                  FILE_CATEGORIES.map((cat) => {
-                    const files = filesByCategory[cat]
-                    if (!files || files.length === 0) return null
-                    return (
-                      <div key={cat}>
-                        <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground mb-1.5">
-                          {t(`requests.detail.file_category_${cat}`)}
-                        </p>
-                        <div className="space-y-0.5">
-                          {files.map((file) => (
-                            <FileRow
-                              key={file.id}
-                              file={file}
-                              requestId={request.id}
-                            />
-                          ))}
-                        </div>
                       </div>
-                    )
-                  })
-                )}
+                    </AccordionContent>
+                  </AccordionItem>
+
+                  {/* Education section */}
+                  {hasEducation && (
+                    <AccordionItem value="education">
+                      <AccordionTrigger className="text-sm font-medium py-3">
+                        {t("requests.detail.section_education")}
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <div className="space-y-2.5 pb-2">
+                          {request.educationSystem && (
+                            <DetailRow
+                              label={t("requests.form.education_system")}
+                              value={resolveOption(request.educationSystem, "education_systems")}
+                            />
+                          )}
+                          {request.studiesFinished && (
+                            <DetailRow
+                              label={t("requests.form.studies_finished")}
+                              value={resolveOption(request.studiesFinished, "studies_finished")}
+                            />
+                          )}
+                          {request.studyTypeSpain && (
+                            <DetailRow
+                              label={t("requests.form.study_type_spain")}
+                              value={resolveOption(request.studyTypeSpain, "study_types_spain")}
+                            />
+                          )}
+                          {request.studiesSpain && (
+                            <DetailRow
+                              label={t("requests.form.studies_spain")}
+                              value={request.studiesSpain}
+                            />
+                          )}
+                          {request.university && (
+                            <DetailRow
+                              label={t("requests.form.university")}
+                              value={resolveOption(request.university, "universities")}
+                            />
+                          )}
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  )}
+
+                  {/* Additional info section */}
+                  {hasAdditional && (
+                    <AccordionItem value="additional">
+                      <AccordionTrigger className="text-sm font-medium py-3">
+                        {t("requests.detail.section_additional")}
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <div className="space-y-2.5 pb-2">
+                          {request.languageKnowledge && (
+                            <DetailRow
+                              label={t("requests.form.language_level")}
+                              value={resolveOption(request.languageKnowledge, "language_levels")}
+                            />
+                          )}
+                          {request.languageCertificate && (
+                            <DetailRow
+                              label={t("requests.form.language_certificate")}
+                              value={resolveOption(request.languageCertificate, "language_certificates")}
+                            />
+                          )}
+                          {request.referralSource && (
+                            <DetailRow
+                              label={t("requests.form.referral_source")}
+                              value={resolveOption(request.referralSource, "referral_sources")}
+                            />
+                          )}
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  )}
+
+                  {/* Files section */}
+                  <AccordionItem value="files" className="border-b-0">
+                    <AccordionTrigger className="text-sm font-medium py-3">
+                      {t("requests.form.section_documents")}
+                      {request.files.length > 0 && (
+                        <span className="ml-auto mr-2 text-xs text-muted-foreground font-normal">
+                          {request.files.length}
+                        </span>
+                      )}
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      {request.files.length === 0 ? (
+                        <div className="flex flex-col items-center py-6 text-center">
+                          <FileX className="h-6 w-6 text-muted-foreground mb-2" />
+                          <p className="text-xs text-muted-foreground">
+                            {t("requests.detail.no_documents")}
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="space-y-3 pb-2">
+                          {FILE_CATEGORIES.map((cat) => {
+                            const files = filesByCategory[cat]
+                            if (!files || files.length === 0) return null
+                            return (
+                              <div key={cat}>
+                                <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground mb-1.5">
+                                  {t(`requests.detail.file_category_${cat}`)}
+                                </p>
+                                <div className="space-y-0.5">
+                                  {files.map((file) => (
+                                    <FileRow key={file.id} file={file} requestId={request.id} />
+                                  ))}
+                                </div>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      )}
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
               </CardContent>
             </Card>
           </div>
@@ -434,12 +429,8 @@ export default function RequestsShow() {
       <Dialog open={paymentDialogOpen} onOpenChange={setPaymentDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>
-              {t("coordinator.confirm_dialog_title")}
-            </DialogTitle>
-            <DialogDescription>
-              {t("coordinator.confirm_dialog_description")}
-            </DialogDescription>
+            <DialogTitle>{t("coordinator.confirm_dialog_title")}</DialogTitle>
+            <DialogDescription>{t("coordinator.confirm_dialog_description")}</DialogDescription>
           </DialogHeader>
           <div className="space-y-2">
             <Label>{t("coordinator.payment_amount")}</Label>
@@ -475,13 +466,7 @@ export default function RequestsShow() {
   )
 }
 
-function SectionLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-      {children}
-    </span>
-  )
-}
+/* ─── Helper components ───────────────────────────────────────────────────── */
 
 function DetailRow({
   label,

@@ -22,7 +22,8 @@ class ApplicationController < ActionController::Base
       features: Current.user ? build_features(Current.user) : {},
       unreadNotificationsCount: Current.user ? Current.user.notifications.unread.count : 0,
       unreadChatsCount: Current.user ? ConversationParticipant.unread(Current.user).count : 0,
-      selectOptions: Rails.application.config.select_options
+      selectOptions: Rails.application.config.select_options,
+      pipelineConfig: Current.user&.super_admin? ? Rails.application.config.pipeline : { stages: [], document_checklist: [] }
     }
   end
 

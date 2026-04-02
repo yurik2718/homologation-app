@@ -1,0 +1,9 @@
+# Niveles de idioma / Language levels / Уровни языка
+
+- { key: "a1", label: "A1" }
+- { key: "a2", label: "A2" }
+- { key: "b1", label: "B1" }
+- { key: "b2", label: "B2" }
+- { key: "c1", label: "C1" }
+- { key: "c2", label: "C2" }
+- { key: "none", label_es: "Sin certificado", label_en: "None", label_ru: "Нет" }

@@ -1,0 +1,13 @@
+# Sistemas educativos / Education systems / Системы образования
+#
+# If label is the same in all languages, use a single "label" field.
+# Otherwise use label_es / label_en / label_ru.
+
+- { key: "argentina", label: "Argentina" }
+- { key: "colombia", label: "Colombia" }
+- { key: "mexico", label: "México" }
+- { key: "peru", label: "Perú" }
+- { key: "venezuela", label: "Venezuela" }
+- { key: "russia", label: "Rusia" }
+- { key: "ukraine", label: "Ucrania" }
+- { key: "other", label_es: "Otro", label_en: "Other", label_ru: "Другое" }

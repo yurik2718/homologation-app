@@ -2,7 +2,7 @@ import { useRef, useState } from "react"
 import { router } from "@inertiajs/react"
 import { cn } from "@/lib/utils"
 import { routes } from "@/lib/routes"
-import { DOC_KEYS } from "@/components/pipeline/constants"
+import { usePipeline } from "@/components/pipeline/constants"
 
 interface DocumentTagsProps {
   checklist: Record<string, boolean>
@@ -11,12 +11,13 @@ interface DocumentTagsProps {
 }
 
 export function DocumentTags({ checklist, total, cardId }: DocumentTagsProps) {
+  const { docKeys } = usePipeline()
   // Optimistic local overrides — applied on top of server checklist
   const [optimistic, setOptimistic] = useState<Record<string, boolean>>({})
   const pendingRef = useRef(0)
 
   const merged = { ...checklist, ...optimistic }
-  const optimisticComplete = DOC_KEYS.filter((k) => merged[k]).length
+  const optimisticComplete = docKeys.filter((k) => merged[k]).length
 
   function toggleDoc(e: React.MouseEvent, key: string) {
     e.stopPropagation()
@@ -45,7 +46,7 @@ export function DocumentTags({ checklist, total, cardId }: DocumentTagsProps) {
   return (
     <div className="space-y-1">
       <div className="flex flex-wrap gap-0.5">
-        {DOC_KEYS.map((key) => (
+        {docKeys.map((key) => (
           <button
             key={key}
             type="button"

@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next"
 import { PipelineCard } from "@/components/pipeline/PipelineCard"
-import { STAGE_COLORS } from "@/components/pipeline/constants"
+import { usePipeline } from "@/components/pipeline/constants"
 import type { PipelineCard as PipelineCardType } from "@/types/pages"
 
 interface HorizontalGroupProps {
@@ -12,7 +12,8 @@ interface HorizontalGroupProps {
 
 export function HorizontalGroup({ stage, cards, icon, onEditCard }: HorizontalGroupProps) {
   const { t } = useTranslation()
-  const color = STAGE_COLORS[stage]
+  const { stageColors } = usePipeline()
+  const color = stageColors[stage]
   const subtitle = t(`pipeline.subtitles.${stage}`, { defaultValue: "" })
 
   return (

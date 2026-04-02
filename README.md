@@ -54,6 +54,24 @@ To switch accounts: avatar in the sidebar → **Sign out**.
 3. **`boss@example.com`** — admin: dashboard stats, user management, full pipeline with filters
 4. **`ivan@example.com`** — teacher: lesson calendar, meeting links
 
+## Select Options (Dropdown Lists)
+
+All dropdown lists in the app (service types, countries, universities, etc.) are stored as separate YAML files in `config/select_options/`. Each file is one dropdown — the filename becomes the key on the frontend.
+
+To edit options, open the corresponding `.yml` file, change entries, and restart the server. To add a new dropdown, create a new `.yml` file in the same folder.
+
+See `config/select_options/README.md` for format details and examples.
+
+## Pipeline Configuration
+
+Pipeline stages, document checklist, and country routing are configured in `config/pipeline.yml`. This is the single source of truth for both backend and frontend.
+
+- **Stages** — add/remove/reorder pipeline stages, set display mode (kanban column or horizontal row), colors, icons
+- **Document checklist** — documents to collect per request (shown as toggleable tags on pipeline cards)
+- **Country routing** — which countries route to ministerio vs delegación after RedSARA
+
+Restart the server after changes.
+
 ## Reset Demo Data
 
 ```bash

@@ -105,6 +105,7 @@
       "section_education": "Образование",
       "section_additional": "Дополнительная информация",
       "chat_not_available": "Чат станет доступен после отправки заявки",
+      "chat_with_coordinator": "Чат с координатором",
       "no_documents": "Документы ещё не прикреплены",
       "file_category_application": "Заявление",
       "file_category_originals": "Оригиналы",
@@ -131,7 +132,6 @@
     },
     "form": {
       "intro": "Заполните форму ниже. После отправки координатор свяжется с вами в чате для уточнения деталей. Вы также можете сохранить черновик и вернуться позже.",
-      "section_about": "О вас",
       "section_request": "Ваша заявка",
       "section_education": "Образование",
       "section_optional": "Дополнительная информация",

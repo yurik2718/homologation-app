@@ -1,0 +1,7 @@
+# Universidades / Universities / Университеты
+
+- { key: "ucm", label: "Universidad Complutense de Madrid" }
+- { key: "uam", label: "Universidad Autónoma de Madrid" }
+- { key: "ceu", label: "CEU San Pablo" }
+- { key: "ue", label: "Universidad Europea" }
+- { key: "other", label_es: "Otra", label_en: "Other", label_ru: "Другой" }
