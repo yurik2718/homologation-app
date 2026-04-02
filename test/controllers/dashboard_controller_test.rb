@@ -42,6 +42,14 @@ class DashboardControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to teachers_path
   end
 
+  test "coordinator with both cabinets is redirected to teachers" do
+    user = users(:coordinator_maria)
+    user.update!(has_homologation: true, has_education: true)
+    sign_in user
+    get dashboard_path
+    assert_redirected_to teachers_path
+  end
+
   # --- Smart redirect: teachers & admin ---
 
   test "teacher is redirected to lessons" do

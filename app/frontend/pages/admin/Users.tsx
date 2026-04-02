@@ -27,6 +27,7 @@ import {
   SheetTitle,
   SheetDescription,
 } from "@/components/ui/sheet"
+import { Checkbox } from "@/components/ui/checkbox"
 import { routes } from "@/lib/routes"
 import { ROLE_COLORS } from "@/lib/colors"
 import { ALL_ROLES } from "@/lib/constants"
@@ -38,9 +39,9 @@ type FilterTab = "active" | "gdpr" | "archived"
 
 export default function AdminUsers() {
   const { t, i18n } = useTranslation()
-  const { users } = usePage<SharedProps & AdminUsersProps>().props
+  const { users, editUser } = usePage<SharedProps & AdminUsersProps>().props
   const [showAddUser, setShowAddUser] = useState(false)
-  const [editingUserId, setEditingUserId] = useState<number | null>(null)
+  const [editingUserId, setEditingUserId] = useState<number | null>(editUser?.id ?? null)
   const [deactivatingUser, setDeactivatingUser] = useState<AdminUser | null>(null)
   const [gdprDeletingUser, setGdprDeletingUser] = useState<AdminUser | null>(null)
   const [filter, setFilter] = useState<FilterTab>("active")
@@ -392,8 +393,8 @@ function EditUserSheet({
         </SheetHeader>
 
         <div className="flex-1 px-4 py-4 space-y-6">
-          {/* Name */}
-          <form id="edit-user-form" onSubmit={handleSubmit} className="space-y-3">
+          <form id="edit-user-form" onSubmit={handleSubmit} className="space-y-6">
+            {/* Name */}
             <div className="space-y-1.5">
               <Label htmlFor="sheet-name">{t("common.name")}</Label>
               <Input
@@ -404,51 +405,43 @@ function EditUserSheet({
               />
               {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
             </div>
+
+            {/* Cabinets */}
+            <div className="space-y-3">
+              <p className="text-sm font-medium">{t("admin.user_management.cabinets")}</p>
+              <div className="space-y-2">
+                <label className="flex items-center gap-3 cursor-pointer min-h-[44px]">
+                  <Checkbox
+                    checked={data.has_homologation}
+                    onCheckedChange={(checked) => setData("has_homologation", !!checked)}
+                    disabled={user.discarded}
+                  />
+                  <div>
+                    <span className="text-sm font-medium">{t("admin.user_management.cabinet_homologation")}</span>
+                    <p className="text-xs text-muted-foreground">{t("admin.user_management.cabinet_homologation_hint")}</p>
+                  </div>
+                </label>
+                <label className="flex items-center gap-3 cursor-pointer min-h-[44px]">
+                  <Checkbox
+                    checked={data.has_education}
+                    onCheckedChange={(checked) => setData("has_education", !!checked)}
+                    disabled={user.discarded}
+                  />
+                  <div>
+                    <span className="text-sm font-medium">{t("admin.user_management.cabinet_education")}</span>
+                    <p className="text-xs text-muted-foreground">{t("admin.user_management.cabinet_education_hint")}</p>
+                  </div>
+                </label>
+              </div>
+              {(errors as Record<string, string>).base && (
+                <p className="text-sm text-destructive">{(errors as Record<string, string>).base}</p>
+              )}
+            </div>
+
             <Button type="submit" disabled={processing} className="min-h-[44px]">
               {t("common.save")}
             </Button>
           </form>
-
-          <Separator />
-
-          {/* Cabinets */}
-          <div className="space-y-3">
-            <p className="text-sm font-medium">{t("admin.user_management.cabinets")}</p>
-            <div className="space-y-2">
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={data.has_homologation}
-                  onChange={(e) => setData("has_homologation", e.target.checked)}
-                  disabled={user.discarded}
-                  className="size-4 rounded border-input"
-                />
-                <div>
-                  <span className="text-sm font-medium">{t("admin.user_management.cabinet_homologation")}</span>
-                  <p className="text-xs text-muted-foreground">{t("admin.user_management.cabinet_homologation_hint")}</p>
-                </div>
-              </label>
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={data.has_education}
-                  onChange={(e) => setData("has_education", e.target.checked)}
-                  disabled={user.discarded}
-                  className="size-4 rounded border-input"
-                />
-                <div>
-                  <span className="text-sm font-medium">{t("admin.user_management.cabinet_education")}</span>
-                  <p className="text-xs text-muted-foreground">{t("admin.user_management.cabinet_education_hint")}</p>
-                </div>
-              </label>
-            </div>
-            {(errors as Record<string, string>).base && (
-              <p className="text-sm text-destructive">{(errors as Record<string, string>).base}</p>
-            )}
-            <Button type="submit" form="edit-user-form" disabled={processing} size="sm" className="min-h-[44px]">
-              {t("admin.user_management.save_cabinets")}
-            </Button>
-          </div>
 
           <Separator />
 

@@ -40,7 +40,7 @@ module Admin
       if @user.update(user_params)
         redirect_to admin_users_path, notice: t("flash.user_updated")
       else
-        redirect_to edit_admin_user_path(@user), inertia: { errors: @user.errors }
+        redirect_to admin_users_path, inertia: { errors: @user.errors.to_hash(true) }
       end
     end
 

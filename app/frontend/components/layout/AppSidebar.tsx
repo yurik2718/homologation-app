@@ -96,7 +96,9 @@ export function AppSidebar() {
 
   const [activeCabinet, setActiveCabinet] = useState<Cabinet>(() => {
     if (!hasBothCabinets) return features.hasHomologation ? "homologation" : "education"
-    return (localStorage.getItem("activeCabinet") as Cabinet) ?? "homologation"
+    return (typeof window !== "undefined"
+      ? localStorage.getItem("activeCabinet") as Cabinet
+      : null) ?? "homologation"
   })
 
   function switchCabinet(cabinet: Cabinet) {
@@ -294,7 +296,7 @@ export function AppSidebar() {
         }),
       }))
       .filter((group) => group.items.length > 0),
-    [navGroups, showSwitcher, activeCabinet, url])
+    [navGroups, showSwitcher, activeCabinet])
 
   const initials = useMemo(() =>
     user?.name ? getInitials(user.name) : "?",
@@ -324,7 +326,7 @@ export function AppSidebar() {
               type="button"
               onClick={() => switchCabinet("homologation")}
               className={cn(
-                "flex-1 rounded-md px-2 py-1.5 text-xs font-medium transition-colors",
+                "flex-1 rounded-md px-2 py-2.5 text-xs font-medium transition-colors min-h-[44px]",
                 activeCabinet === "homologation"
                   ? "bg-background text-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
@@ -336,7 +338,7 @@ export function AppSidebar() {
               type="button"
               onClick={() => switchCabinet("education")}
               className={cn(
-                "flex-1 rounded-md px-2 py-1.5 text-xs font-medium transition-colors",
+                "flex-1 rounded-md px-2 py-2.5 text-xs font-medium transition-colors min-h-[44px]",
                 activeCabinet === "education"
                   ? "bg-background text-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground"

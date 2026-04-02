@@ -108,8 +108,18 @@ module Admin
         user: { has_homologation: false, has_education: false }
       }
 
-      # User is unchanged — validation prevents saving
+      assert_redirected_to admin_users_path
       assert user.reload.has_homologation?
+    end
+
+    test "newly created user has homologation cabinet by default" do
+      sign_in users(:super_admin_boss)
+      post admin_users_path, params: {
+        user: { name: "Cabinet Test", email_address: "cabinet@test.com", password: "password123" }
+      }
+      new_user = User.find_by(email_address: "cabinet@test.com")
+      assert new_user.has_homologation?
+      refute new_user.has_education?
     end
   end
 end
