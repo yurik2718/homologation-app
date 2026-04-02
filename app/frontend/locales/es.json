@@ -194,7 +194,13 @@
     "new_request": "Nueva solicitud recibida",
     "new_message": "Nuevo mensaje de {{name}}",
     "status_changed": "Estado actualizado a {{status}}",
-    "payment_confirmed": "Pago confirmado: €{{amount}}"
+    "payment_confirmed": "Pago confirmado: €{{amount}}",
+    "unread": "No leídas",
+    "all": "Todas",
+    "no_unread": "¡Todo al día!",
+    "no_unread_hint": "No tienes notificaciones sin leer.",
+    "no_notifications_hint": "Las notificaciones aparecerán aquí cuando ocurra algo.",
+    "view_all": "Ver todas las notificaciones"
   },
   "coordinator": {
     "confirm_payment": "Confirmar pago",

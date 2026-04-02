@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Link, usePage } from "@inertiajs/react"
 import { Bell } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -17,6 +17,11 @@ interface NotificationPayload {
 export function NotificationBell() {
   const { unreadNotificationsCount, auth } = usePage<SharedProps>().props
   const [unreadCount, setUnreadCount] = useState(unreadNotificationsCount)
+
+  // Sync with server props on Inertia navigation (e.g. after mark_all_read)
+  useEffect(() => {
+    setUnreadCount(unreadNotificationsCount)
+  }, [unreadNotificationsCount])
 
   useChannel<NotificationPayload>(
     "NotificationChannel",

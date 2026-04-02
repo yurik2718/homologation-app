@@ -194,7 +194,13 @@
     "new_request": "New request received",
     "new_message": "New message from {{name}}",
     "status_changed": "Status updated to {{status}}",
-    "payment_confirmed": "Payment confirmed: €{{amount}}"
+    "payment_confirmed": "Payment confirmed: €{{amount}}",
+    "unread": "Unread",
+    "all": "All",
+    "no_unread": "All caught up!",
+    "no_unread_hint": "You have no unread notifications.",
+    "no_notifications_hint": "Notifications will appear here when something happens.",
+    "view_all": "View all notifications"
   },
   "coordinator": {
     "confirm_payment": "Confirm Payment",

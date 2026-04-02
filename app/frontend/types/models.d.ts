@@ -29,5 +29,6 @@ export interface ConversationFull {
   id: number
   type: "request" | "teacher_student"
   title: string
+  otherUser: { id: number; name: string; avatarUrl: string | null } | null
   messages: ChatMessage[]
 }

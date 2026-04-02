@@ -54,10 +54,13 @@ class ConversationsController < InertiaController
   end
 
   def conversation_detail_json(c)
+    other = c.participants.reject { |p| p.id == current_user.id }.first
+
     {
       id: c.id,
       type: c.homologation_request_id.present? ? "request" : "teacher_student",
       title: c.title,
+      otherUser: other ? { id: other.id, name: other.name, avatarUrl: other.avatar_url } : nil,
       messages: c.messages.sort_by(&:created_at).map(&:as_json_for_cable)
     }
   end

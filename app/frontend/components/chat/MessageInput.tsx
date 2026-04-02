@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { Send } from "lucide-react"
@@ -11,6 +11,15 @@ interface MessageInputProps {
 export function MessageInput({ onSend, disabled }: MessageInputProps) {
   const { t } = useTranslation()
   const [body, setBody] = useState("")
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+  // Auto-resize textarea
+  useEffect(() => {
+    const el = textareaRef.current
+    if (!el) return
+    el.style.height = "auto"
+    el.style.height = `${Math.min(el.scrollHeight, 120)}px`
+  }, [body])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -20,7 +29,7 @@ export function MessageInput({ onSend, disabled }: MessageInputProps) {
     setBody("")
   }
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault()
       handleSubmit(e)
@@ -29,13 +38,14 @@ export function MessageInput({ onSend, disabled }: MessageInputProps) {
 
   return (
     <form onSubmit={handleSubmit} className="flex w-full flex-none gap-2">
-      <div className="flex flex-1 items-center gap-2 rounded-md border border-input bg-card px-2 py-1 focus-within:ring-1 focus-within:ring-ring focus-within:outline-hidden lg:gap-4">
+      <div className="flex flex-1 items-end gap-2 rounded-md border border-input bg-card px-3 py-2 focus-within:ring-1 focus-within:ring-ring focus-within:outline-hidden">
         <label className="flex-1">
           <span className="sr-only">{t("chat.type_message")}</span>
-          <input
-            type="text"
+          <textarea
+            ref={textareaRef}
             placeholder={t("chat.type_message")}
-            className="h-8 w-full bg-inherit text-sm focus-visible:outline-hidden"
+            className="w-full resize-none bg-inherit text-sm leading-snug focus-visible:outline-hidden"
+            rows={1}
             value={body}
             onChange={(e) => setBody(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -47,14 +57,11 @@ export function MessageInput({ onSend, disabled }: MessageInputProps) {
           size="icon"
           type="submit"
           disabled={disabled || !body.trim()}
-          className="hidden sm:inline-flex"
+          className="size-9 shrink-0"
         >
-          <Send size={20} />
+          <Send size={18} />
         </Button>
       </div>
-      <Button type="submit" disabled={disabled || !body.trim()} className="h-full sm:hidden">
-        <Send size={18} /> {t("chat.send")}
-      </Button>
     </form>
   )
 }

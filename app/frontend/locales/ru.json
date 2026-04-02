@@ -194,7 +194,13 @@
     "new_request": "Получена новая заявка",
     "new_message": "Новое сообщение от {{name}}",
     "status_changed": "Статус обновлён: {{status}}",
-    "payment_confirmed": "Оплата подтверждена: €{{amount}}"
+    "payment_confirmed": "Оплата подтверждена: €{{amount}}",
+    "unread": "Непрочитанные",
+    "all": "Все",
+    "no_unread": "Всё прочитано!",
+    "no_unread_hint": "У вас нет непрочитанных уведомлений.",
+    "no_notifications_hint": "Уведомления появятся здесь, когда что-то произойдёт.",
+    "view_all": "Показать все уведомления"
   },
   "coordinator": {
     "confirm_payment": "Подтвердить оплату",
