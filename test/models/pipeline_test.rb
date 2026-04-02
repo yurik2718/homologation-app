@@ -61,6 +61,7 @@ class PipelineTest < ActiveSupport::TestCase
     request.update_columns(
       status: "payment_confirmed",
       user_id: users(:student_pedro).id,
+      payment_amount: 500,
       payment_confirmed_at: Time.current
     )
     request.enter_pipeline!
@@ -80,6 +81,7 @@ class PipelineTest < ActiveSupport::TestCase
     request.update_columns(
       status: "payment_confirmed",
       user_id: users(:student_pedro).id,
+      payment_amount: 500,
       payment_confirmed_at: Time.current
     )
     request.enter_pipeline!
@@ -108,6 +110,7 @@ class PipelineTest < ActiveSupport::TestCase
     request.update_columns(
       status: "payment_confirmed",
       user_id: users(:student_pedro).id,
+      payment_amount: 500,
       payment_confirmed_at: Time.current
     )
     request.enter_pipeline!
@@ -128,6 +131,7 @@ class PipelineTest < ActiveSupport::TestCase
     request.update_columns(
       status: "payment_confirmed",
       user_id: users(:student_pedro).id,
+      payment_amount: 500,
       payment_confirmed_at: Time.current
     )
     request.enter_pipeline!

@@ -46,7 +46,11 @@ class HomologationRequestsController < InertiaController
     authorize @request
 
     if params[:status].present?
-      @request.transition_to!(params[:status], changed_by: current_user)
+      begin
+        @request.transition_to!(params[:status], changed_by: current_user)
+      rescue HomologationRequest::InvalidTransition => e
+        return redirect_to homologation_request_path(@request), alert: e.message
+      end
       notify_student_status_changed(@request)
       redirect_to homologation_request_path(@request), notice: t("flash.status_updated")
     else
@@ -70,6 +74,8 @@ class HomologationRequestsController < InertiaController
     AmoCrmSyncJob.perform_later(@request.id)
     notify_student_payment_confirmed(@request)
     redirect_to homologation_request_path(@request), notice: t("flash.payment_confirmed")
+  rescue ActiveRecord::RecordInvalid => e
+    redirect_to homologation_request_path(@request), alert: e.record.errors.full_messages.join(", ")
   end
 
   def retry_sync

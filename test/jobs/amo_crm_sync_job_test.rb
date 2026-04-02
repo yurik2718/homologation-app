@@ -35,7 +35,7 @@ class AmoCrmSyncJobTest < ActiveJob::TestCase
 
   test "saves amo_crm_lead_id and contact_id on success" do
     request = homologation_requests(:ana_equivalencia)
-    request.update!(status: "payment_confirmed", payment_confirmed_at: Time.current)
+    request.update!(status: "payment_confirmed", payment_amount: 100, payment_confirmed_at: Time.current)
 
     AmoCrmSyncJob.perform_now(request.id)
 
@@ -52,7 +52,7 @@ class AmoCrmSyncJobTest < ActiveJob::TestCase
       .to_return(status: 500, body: "Server Error")
 
     request = homologation_requests(:ana_equivalencia)
-    request.update!(status: "payment_confirmed", payment_confirmed_at: Time.current)
+    request.update!(status: "payment_confirmed", payment_amount: 100, payment_confirmed_at: Time.current)
 
     # Job retries on failure, so perform_now won't raise — but error is saved
     perform_enqueued_jobs do

@@ -5,6 +5,7 @@ class HomologationRequestTest < ActiveSupport::TestCase
 
   test "valid transition from draft to submitted" do
     request = homologation_requests(:ana_draft)
+    request.update!(privacy_accepted: true)
     request.transition_to!("submitted", changed_by: users(:student_ana))
     assert_equal "submitted", request.reload.status
   end
@@ -21,9 +22,11 @@ class HomologationRequestTest < ActiveSupport::TestCase
     coordinator = users(:coordinator_maria)
     student = users(:student_ana)
 
+    request.update!(privacy_accepted: true)
     request.transition_to!("submitted", changed_by: student)
     request.transition_to!("in_review", changed_by: coordinator)
     request.transition_to!("awaiting_payment", changed_by: coordinator)
+    request.update!(payment_amount: 100)
     request.transition_to!("payment_confirmed", changed_by: coordinator)
     request.transition_to!("in_progress", changed_by: coordinator)
     request.transition_to!("resolved", changed_by: coordinator)
@@ -32,7 +35,7 @@ class HomologationRequestTest < ActiveSupport::TestCase
 
   test "payment_confirmed_at is set when transitioning to payment_confirmed" do
     request = homologation_requests(:ana_equivalencia)
-    request.update_columns(status: "awaiting_payment")
+    request.update_columns(status: "awaiting_payment", payment_amount: 100)
     request.transition_to!("payment_confirmed", changed_by: users(:coordinator_maria))
     assert_not_nil request.payment_confirmed_at
   end
@@ -67,6 +70,7 @@ class HomologationRequestTest < ActiveSupport::TestCase
 
   test "transition to submitted creates a conversation" do
     request = homologation_requests(:ana_draft)
+    request.update!(privacy_accepted: true)
     assert_difference "Conversation.count", 1 do
       request.transition_to!("submitted", changed_by: users(:student_ana))
     end
@@ -75,6 +79,7 @@ class HomologationRequestTest < ActiveSupport::TestCase
 
   test "conversation participant created for student on submission" do
     request = homologation_requests(:ana_draft)
+    request.update!(privacy_accepted: true)
     assert_difference "ConversationParticipant.count", 1 do
       request.transition_to!("submitted", changed_by: users(:student_ana))
     end
@@ -147,4 +152,34 @@ class HomologationRequestTest < ActiveSupport::TestCase
       request.transition_to!("in_review", changed_by: users(:coordinator_maria))
     end
   end
+
+  # === Privacy accepted validation ===
+
+  test "submitted request requires privacy_accepted" do
+    request = HomologationRequest.new(
+      user: users(:student_ana), subject: "Test", service_type: "equivalencia",
+      status: "submitted", privacy_accepted: false
+    )
+    refute request.valid?
+    assert request.errors[:privacy_accepted].any?
+  end
+
+  test "draft request does not require privacy_accepted" do
+    request = HomologationRequest.new(
+      user: users(:student_ana), subject: "Test", service_type: "equivalencia",
+      status: "draft", privacy_accepted: false
+    )
+    assert request.valid?, "Expected draft to be valid without privacy_accepted: #{request.errors.full_messages}"
+  end
+
+  test "submitted request with privacy_accepted true is valid" do
+    request = HomologationRequest.new(
+      user: users(:student_ana), subject: "Test", service_type: "equivalencia",
+      status: "submitted", privacy_accepted: true
+    )
+    assert request.valid?, "Expected submitted request with privacy_accepted to be valid: #{request.errors.full_messages}"
+  end
+
+  # NOTE: Pipeline tests (enter_pipeline!, advance_pipeline!, retreat_pipeline!,
+  # toggle_checklist_item!, sync_status_from_pipeline!) live in test/models/pipeline_test.rb
 end

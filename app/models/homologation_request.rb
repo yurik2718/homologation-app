@@ -40,9 +40,13 @@ class HomologationRequest < ApplicationRecord
 
   encrypts :identity_card, :passport
 
+  VALID_SERVICE_TYPES = Rails.application.config.select_options["service_types"].map { |o| o["key"] }.freeze
+
   validates :subject, presence: true
-  validates :service_type, presence: true
+  validates :service_type, presence: true, inclusion: { in: VALID_SERVICE_TYPES }
   validates :pipeline_stage, inclusion: { in: PIPELINE_STAGES }, allow_nil: true
+  validates :privacy_accepted, acceptance: { accept: true }, if: -> { status == "submitted" }
+  validates :payment_amount, presence: true, numericality: { greater_than: 0 }, if: -> { status == "payment_confirmed" }
 
   after_save :create_request_conversation!, if: -> { saved_change_to_status? && status == "submitted" }
 

@@ -9,7 +9,7 @@ ana_equivalencia:
 
 ana_draft:
   user_id: <%= ActiveRecord::FixtureSet.identify(:student_ana) %>
-  service_type: informe
+  service_type: equivalencia
   subject: Draft request
   status: draft
   privacy_accepted: false

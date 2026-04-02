@@ -8,6 +8,7 @@ en:
         subject: "Subject"
         service_type: "Service Type"
         status: "Status"
+        payment_amount: "Payment amount"
       user:
         name: "Name"
         email_address: "Email"
@@ -26,6 +27,11 @@ en:
           attributes:
             privacy_accepted:
               accepted: "you must accept the privacy policy"
+            service_type:
+              inclusion: "is not a valid service type"
+            payment_amount:
+              blank: "is required when confirming payment"
+              greater_than: "must be greater than 0"
         user:
           base:
             no_cabinet_selected: "must have access to at least one cabinet (homologation or education)"

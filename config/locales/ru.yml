@@ -8,6 +8,7 @@ ru:
         subject: "Тема"
         service_type: "Тип услуги"
         status: "Статус"
+        payment_amount: "Сумма оплаты"
       user:
         name: "Имя"
         email_address: "Электронная почта"
@@ -26,6 +27,11 @@ ru:
           attributes:
             privacy_accepted:
               accepted: "необходимо принять политику конфиденциальности"
+            service_type:
+              inclusion: "недопустимый тип услуги"
+            payment_amount:
+              blank: "обязательна при подтверждении оплаты"
+              greater_than: "должна быть больше 0"
         user:
           base:
             no_cabinet_selected: "необходимо выбрать хотя бы один кабинет (гомологация или обучение)"
