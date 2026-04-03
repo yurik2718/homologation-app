@@ -31,41 +31,11 @@ Super admin manages everything including Stripe billing.
 
 ## Commands
 
-```bash
-bin/rails server              # Start Rails + Vite
-bin/rails test                # Minitest    |  bin/rails test:system  # System tests
-npm run check                 # TS types    |  bundle exec brakeman   # Security scan
-bin/rails db:migrate          # Migrations  |  bin/rails db:seed      # Seed 4 roles
-bin/rails generate model Foo  # New model   |  bin/rails generate channel Foo  # Action Cable
-```
+`bin/rails test` · `npm run check` · `bundle exec brakeman` — run all three before committing.
 
 ## Current State
 
 See `docs/07_IMPLEMENTATION_PLAN.md` for the full step-by-step checklist (Steps 0–10).
-
-## Project Structure
-
-> Full directory tree in `docs/01_ARCHITECTURE.md`.
-
-```
-app/
-├── controllers/     # Inertia responses (NOT JSON API). Pattern: authorize → build → render
-├── models/          # ActiveRecord + Pundit policies in app/policies/
-├── channels/        # ConversationChannel, NotificationChannel (Action Cable)
-├── jobs/            # AmoCrmSyncJob, NotificationJob (Solid Queue)
-├── services/        # AmoCrmClient (Faraday)
-├── frontend/
-│   ├── components/  # layout/, ui/ (shadcn), common/, chat/, documents/, chats/, teachers/, lessons/
-│   ├── pages/       # auth/, profile/, dashboard/, requests/, chats/, teachers/, calendar/, chat/, admin/
-│   ├── hooks/       # useActionCable, useFileUpload
-│   ├── lib/         # routes.ts, utils.ts, i18n.ts
-│   ├── locales/     # es.json, en.json, ru.json
-│   └── types/       # index.ts (SharedProps), pages.ts (page props), models.d.ts
-config/
-├── select_options/      # Dropdown options — one YML file per list (see README inside)
-├── pipeline.yml         # Pipeline stages, document checklist, country routing
-├── locales/             # Rails I18n (es.yml, en.yml, ru.yml)
-```
 
 ## Core Rules
 
@@ -137,21 +107,69 @@ Exception: Action Cable WebSocket receives are not Inertia — that's fine.
 `policy_scope(HomologationRequest).includes(:user, :conversation).order(updated_at: :desc)`
 For lookups: `User.where(id: ids).index_by(&:id)` — one query, O(1) access.
 
-## Testing (Minitest)
+## Testing (Minitest + FactoryBot + Faker)
 
-- **Fixtures only** — no FactoryBot, no mocks for ActiveRecord. Fixtures in `test/fixtures/*.yml`.
+- **FactoryBot + Faker** — factories in `test/factories/*.rb`. No fixtures, no mocks for ActiveRecord.
 - **Every new controller action gets a test before merge.** No exceptions.
 - Run `bin/rails test && npm run check` before committing.
 - Full patterns, test matrix: `docs/16_TESTING.md`.
+- **Parallel tests** — `parallelize(workers: :number_of_processors)` in `test_helper.rb`. All factories must be parallel-safe.
 
-```ruby
-test "student sees own requests" do
-  sign_in users(:student_ana)
-  get homologation_requests_path
-  assert_response :ok
-  assert_inertia component: "Requests/Index"
-end
-```
+### Factory rules
+
+1. **Emails — `sequence` + `Process.pid`, never `Faker::Internet.unique.email`.**
+   `Faker.unique` tracks uniqueness per-process only — collides across parallel workers.
+   ```ruby
+   # ✅
+   sequence(:email_address) { |n| "user#{n}_#{Process.pid}@test.example.com" }
+   # ❌ Faker::Internet.unique.email
+   ```
+
+2. **Multilingual names — Faker `:ru` / `:es` + `.truncate(100)`.**
+   App serves Russian- and Spanish-speaking users. Names must exercise both Cyrillic and Latin. Always truncate to model max length.
+   ```ruby
+   name {
+     locale = %i[ru es].sample
+     prev = Faker::Config.locale
+     Faker::Config.locale = locale
+     n = Faker::Name.name.truncate(100, omission: "")
+     Faker::Config.locale = prev
+     n
+   }
+   ```
+
+3. **Decimal money — `rand().round(2)`, never `Faker::Commerce.price`.**
+   `Faker::Commerce.price` returns Float. DB column is `decimal(10,2)`.
+   ```ruby
+   # ✅ payment_amount { rand(50.0..500.0).round(2) }
+   # ❌ payment_amount { Faker::Commerce.price(range: 50..500.0) }
+   ```
+
+4. **HomologationRequest default is `draft`.** Always use explicit trait: `:submitted`, `:awaiting_payment`, `:payment_confirmed`, `:in_pipeline`. Never rely on bare `create(:homologation_request)`.
+
+5. **`:with_conversation` trait does `request.reload`** before checking association — prevents double-creation when combined with `:submitted` (model callback also creates conversation).
+
+6. **Lesson tests — always create `teacher_student` in setup before `create(:lesson)`.** The lesson factory has `after(:build)` that auto-creates a coordinator + teacher_student if missing. This breaks `User.count` / `assert_difference` assertions.
+   ```ruby
+   # ✅ Explicit setup
+   @coordinator = create(:user, :coordinator)
+   create(:teacher_student, teacher: @teacher, student: @student, assigned_by: @coordinator.id)
+   @lesson = create(:lesson, teacher: @teacher, student: @student)
+   # ❌ create(:lesson) without pre-existing teacher_student
+   ```
+
+7. **Time-sensitive tests — always wrap in `freeze_time`.** Never rely on `X.minutes.from_now` without freezing — causes flaky tests on slow CI.
+   ```ruby
+   # ✅
+   freeze_time do
+     @lesson.update!(scheduled_at: 60.minutes.from_now, status: "scheduled")
+     LessonReminderJob.perform_now
+     assert_equal 1, Notification.count
+   end
+   ```
+
+8. **Action Cable in tests** — `config/cable.yml` uses `adapter: test`. Broadcasts go to in-memory adapter, not SQLite. No need to stub.
+
 
 ## Status Flow
 
@@ -161,199 +179,22 @@ end
 - AmoCRM Lead created at `payment_confirmed`. Pre-payment statuses exist only in our app.
 - Full state machine table: `docs/03_FEATURES.md`.
 
-## Documentation — When to Read What
+## Documentation
 
-| Situation | Read |
-|---|---|
-| Adding/changing a DB table or field | `docs/02_DATABASE_SCHEMA.md` + `.dbml` |
-| Adding a user story or feature | `docs/03_FEATURES.md` |
-| Roles, permissions, workflows, scenarios | `docs/04_ROLES_AND_AUTHORIZATION.md` |
-| Setting up or debugging OAuth | `docs/05_AUTH_OAUTH.md` |
-| Touching AmoCRM sync or field mapping | `docs/06_AMOCRM_INTEGRATION.md` |
-| What step to build next | `docs/07_IMPLEMENTATION_PLAN.md` |
-| Adding a route, controller, or Action Cable channel | `docs/08_API_ROUTES.md` |
-| Building a new page or component | `docs/09_UI_COMPONENTS.md` |
-| Working with select options, file uploads, or WebSocket | `docs/10_TECHNICAL_DETAILS.md` |
-| Missing i18n keys or adding translations | `docs/11_I18N_MULTILANGUAGE.md` |
-| Security, encryption, GDPR, rate limiting | `docs/12_SECURITY_GDPR.md` |
-| Teachers, lessons, or calendar | `docs/13_LESSONS_CALENDAR.md` |
-| Minors, guardians, or guardian invoicing | `docs/02_DATABASE_SCHEMA.md` (Minor/Guardian section) |
-| Building chats or teacher management | `docs/14_COORDINATOR_WORKSPACE.md` |
-| Mobile/responsive patterns and examples | `docs/15_MOBILE_PATTERNS.md` |
-| Writing tests or test conventions | `docs/16_TESTING.md` |
-| Building the CRM pipeline board (kanban, stages, document checklist) | `docs/17_CRM_PIPELINE_BOARD.md` |
-| Questioning a design decision | `docs/00_PRINCIPLES.md` + `docs/01_ARCHITECTURE.md` |
+Before touching a feature area, read the relevant `docs/XX_*.md` file. Key docs: `02_DATABASE_SCHEMA`, `03_FEATURES`, `04_ROLES_AND_AUTHORIZATION`, `07_IMPLEMENTATION_PLAN`, `16_TESTING`.
 
 ## UI Standards
 
-Every page must follow these patterns exactly. No exceptions. Reference: `shadcn-admin` by satnaing.
+Reference: `shadcn-admin` by satnaing. Read existing pages before building new ones — follow the same patterns.
 
-### Page structure template
-
-```tsx
-// ✅ Standard page (list, dashboard, form)
-export default function PageName() {
-  return (
-    <AuthenticatedLayout breadcrumbs={[{ label: t("nav.page_name") }]}>
-      <Main>
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold tracking-tight">{t("page.title")}</h1>
-          {/* Optional: primary action button */}
-        </div>
-        {/* Page content */}
-      </Main>
-    </AuthenticatedLayout>
-  )
-}
-
-// ✅ Fixed layout page (chat, split-pane — content fills available height)
-export default function FixedPage() {
-  return (
-    <AuthenticatedLayout breadcrumbs={[...]}>
-      <Main fixed>
-        {/* Content with flex-1 and overflow */}
-      </Main>
-    </AuthenticatedLayout>
-  )
-}
-```
-
-### Typography
-
-| Element | Classes | When |
-|---------|---------|------|
-| Page title | `text-2xl font-bold tracking-tight` | Top of every page |
-| Section title | `text-lg font-semibold` | Inside cards/sections |
-| Card title | `<CardTitle className="text-base">` | shadcn Card headers |
-| Body text | `text-sm` | Default content |
-| Helper/hint | `text-xs text-muted-foreground` | Under form fields |
-| Error | `text-sm text-destructive` | Validation errors |
-
-### Spacing
-
-| Context | Class | Notes |
-|---------|-------|-------|
-| Page title → content gap | `mb-6` on title row | Always 24px |
-| Between page sections | `space-y-6` | Cards, sections |
-| Inside Card content | `space-y-4` | Between items |
-| Form fields | `space-y-4` | Between field groups |
-| Field label → input | `space-y-1.5` | Label to control |
-
-### Buttons
-
-```tsx
-// ✅ Primary action (submit, confirm, create)
-<Button className="min-h-[44px]">Action</Button>
-
-// ✅ Secondary action (cancel, save draft)
-<Button variant="outline" className="min-h-[44px]">Cancel</Button>
-
-// ✅ Destructive (delete, remove)
-<Button variant="destructive" className="min-h-[44px]">Delete</Button>
-
-// ✅ Small inline action (inside cards, tables) — still 44px on mobile
-<Button variant="outline" size="sm" className="min-h-[44px]">Edit</Button>
-
-// ✅ Icon button
-<Button variant="ghost" size="icon" className="size-9">
-  <Icon className="h-4 w-4" />
-</Button>
-```
-
-**Rule: ALL interactive elements must have min 44px touch target on mobile.**
-
-### Form fields
-
-```tsx
-// ✅ Standard field pattern
-<div className="space-y-1.5">
-  <Label>Field Name <span className="text-destructive">*</span></Label>
-  <Input value={data.field} onChange={...} />
-  <p className="text-xs text-muted-foreground">Helper text</p>
-  {errors.field && <p className="text-sm text-destructive">{errors.field}</p>}
-</div>
-```
-
-### Cards
-
-```tsx
-// ✅ Content card
-<Card>
-  <CardHeader>
-    <CardTitle className="text-base">Section</CardTitle>
-  </CardHeader>
-  <CardContent className="space-y-4">...</CardContent>
-</Card>
-
-// ✅ Clickable card (mobile list items)
-<Card className="cursor-pointer hover:bg-muted/50 transition-colors">
-  <CardContent className="p-4">...</CardContent>
-</Card>
-```
-
-**Never create card-like divs manually. Always use `<Card>`.**
-
-### Responsive layout
-
-```tsx
-// ✅ Title + action bar
-<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
-  <h1 className="text-2xl font-bold tracking-tight">Title</h1>
-  <Button className="w-full sm:w-auto min-h-[44px]">Action</Button>
-</div>
-
-// ✅ Two-column layout (sidebar + main)
-<div className="flex flex-col lg:grid lg:grid-cols-[1fr_320px] gap-6">
-  <div className="order-2 lg:order-1">Main</div>
-  <div className="order-1 lg:order-2">Sidebar</div>
-</div>
-
-// ✅ Grid cards
-<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-```
-
-### Empty states
-
-```tsx
-// ✅ Empty state pattern
-<div className="flex flex-col items-center justify-center py-16 text-center">
-  <div className="rounded-full bg-muted p-4 mb-4">
-    <Icon className="h-8 w-8 text-muted-foreground" />
-  </div>
-  <h2 className="text-lg font-semibold mb-1">{t("page.no_items")}</h2>
-  <p className="text-sm text-muted-foreground mb-6">{t("page.empty_hint")}</p>
-  <Button>Create First Item</Button>
-</div>
-```
-
-### Breadcrumbs
-
-```tsx
-// ✅ Top-level page
-<AuthenticatedLayout breadcrumbs={[{ label: t("nav.requests") }]}>
-
-// ✅ Detail page
-<AuthenticatedLayout breadcrumbs={[
-  { label: t("nav.my_requests"), href: routes.requests },
-  { label: request.subject },
-]}>
-```
-
-**Every page must have breadcrumbs.** Top-level = 1 item. Detail = parent + current.
-
-### Imports order
-
-1. React hooks (`useState`, `useEffect`)
-2. Inertia (`router`, `usePage`, `Link`)
-3. i18n (`useTranslation`)
-4. Libraries (`@tanstack/react-table`, `lucide-react`, `date-fns`)
-5. Layout (`AuthenticatedLayout`, `Main`)
-6. UI components (`Button`, `Card`, `Input`)
-7. Common components (`StatusBadge`, `FormattedDate`, `LongText`)
-8. Feature components (`ChatWindow`, `FileDropZone`)
-9. Lib (`routes`, `utils`, `colors`)
-10. Types (`SharedProps`, page props)
+- **Every page:** `<AuthenticatedLayout breadcrumbs={[...]}>` → `<Main>` (or `<Main fixed>` for chat/split-pane)
+- **Page title:** `text-2xl font-bold tracking-tight` + `mb-6`
+- **Spacing:** `space-y-6` between sections, `space-y-4` inside cards/forms, `space-y-1.5` label→input
+- **Touch targets:** ALL buttons/interactive elements: `min-h-[44px]` on mobile
+- **Cards:** Always `<Card>`, never card-like `<div>`
+- **Mobile-first:** Every page works at 360px+. Title+action: `flex-col` → `sm:flex-row`
+- **Empty states:** Centered icon + title + hint + CTA button
 
 ## Banned Patterns
 
-`.as_json` · `react-hook-form` · `zod` · `<a href>` · `fetch()`/`axios` · `window.location` · hardcoded URL paths · role checks in React · Tiptap · zustand · dark mode · AmoCRM sync before `payment_confirmed` · skipping `authorize` · skipping tests · custom card-like `<div>` instead of `<Card>` · buttons without `min-h-[44px]` · pages without breadcrumbs · pages without `<Main>` wrapper
+`.as_json` · `react-hook-form` · `zod` · `<a href>` · `fetch()`/`axios` · `window.location` · hardcoded URL paths · role checks in React · Tiptap · zustand · dark mode · AmoCRM sync before `payment_confirmed` · skipping `authorize` · skipping tests · custom card-like `<div>` instead of `<Card>` · buttons without `min-h-[44px]` · pages without breadcrumbs · pages without `<Main>` wrapper · `Faker::Internet.unique.email` (use sequence) · `Faker::Commerce.price` (use rand().round(2)) · `X.minutes.from_now` in assertions without `freeze_time` · `create(:lesson)` without pre-existing `teacher_student` · `create(:homologation_request)` without explicit status trait · fixtures (`test/fixtures/`)
