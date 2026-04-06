@@ -83,7 +83,7 @@
     "guardian_phone": "Guardian Phone",
     "guardian_whatsapp": "Guardian WhatsApp",
     "save_continue": "Save & Continue",
-    "delete_account": "To delete your account, please contact us at support@spaceforedu.com",
+    "delete_account": "To delete your account, please contact us at {{email}}",
     "notifications_section": "Notification preferences",
     "email_notifications": "Email notifications",
     "telegram_notifications": "Telegram notifications",
@@ -534,8 +534,6 @@
       "contact": "Contact",
       "privacy": "Privacy Policy",
       "rights": "All rights reserved.",
-      "email": "center@spaceforedu.com",
-      "phone": "+34 600 000 000",
       "address": "Madrid, Spain"
     },
     "home": {
@@ -612,7 +610,7 @@
       "dash_notifications_desc": "Email and push notifications — you won't miss a single update.",
 
       "process_title": "How It Works",
-      "process_1_title": "Free Consultation",
+      "process_1_title": "Expert Consultation",
       "process_1_desc": "We review your degree and define the optimal homologation path.",
       "process_2_title": "Document Collection & Preparation",
       "process_2_desc": "We help with apostille, sworn translation and all required certificates.",
@@ -653,9 +651,33 @@
       "faq_5_q": "What's the difference between homologation and equivalence?",
       "faq_5_a": "Homologation recognizes your degree as equivalent to a specific Spanish one. Equivalence recognizes a general academic level without a specific title.",
 
+      "consultation_dialog_title": "Expert Homologation Consultation",
+      "consultation_dialog_desc": "A 60-minute personal consultation with an expert who will analyze your case and create an action plan.",
+      "consultation_dialog_item_1": "Analysis of your degree and homologation type determination",
+      "consultation_dialog_item_2": "Complete list of required documents for your specific case",
+      "consultation_dialog_item_3": "Timeline and cost estimate for the entire process",
+      "consultation_dialog_item_4": "Step-by-step action plan with specific recommendations",
+      "consultation_dialog_price": "100 €",
+      "consultation_dialog_duration": "60 min",
+      "consultation_dialog_pay": "Pay & Book",
+      "consultation_dialog_secure": "Secure payment via Stripe",
+
       "cta_title": "Ready to Start Your Homologation?",
-      "cta_subtitle": "First consultation is free. We'll tell you what documents you need and how long the process takes.",
+      "cta_subtitle": "Book an expert consultation — we'll analyze your case, define the path and timelines.",
       "cta_button": "Book a Consultation"
+    },
+    "consultation_thank_you": {
+      "title": "Thank You for Your Payment!",
+      "subtitle": "Your consultation is confirmed. Our expert will contact you within 24 hours to schedule the session.",
+      "next_steps_title": "What's Next?",
+      "step_1": "Our expert will reach out via WhatsApp or email",
+      "step_2": "You'll agree on a convenient time for the consultation",
+      "step_3": "You'll receive a personalized analysis of your case",
+      "contact_title": "Our Contacts",
+      "contact_subtitle": "If you have urgent questions — reach out to us directly:",
+      "whatsapp": "WhatsApp",
+      "email": "Email",
+      "back_home": "Back to Home"
     },
     "universidad": {
       "hero_title_1": "Access",
@@ -821,8 +843,12 @@
       "description": "Spanish classes for foreigners: levels A1-C2, individual and group."
     },
     "consultation": {
-      "title": "Free Consultation — Space for Edu",
-      "description": "Book a free consultation about homologation, university, or Spanish classes."
+      "title": "Expert Consultation — Space for Edu",
+      "description": "Book an expert consultation about homologation, university, or Spanish classes."
+    },
+    "consultation_thank_you": {
+      "title": "Payment Successful — Space for Edu",
+      "description": "Thank you for your payment. We will contact you shortly."
     },
     "pricing": {
       "title": "Pricing — Space for Edu",

@@ -41,6 +41,7 @@ Rails.application.routes.draw do
     get  "consultation",  to: "pages#consultation",  as: :localized_consultation
     post "consultation",  to: "pages#create_consultation"
     get "pricing",       to: "pages#pricing",       as: :localized_pricing
+    get "consultation-thank-you", to: "pages#consultation_thank_you", as: :localized_consultation_thank_you
   end
 
   # Authenticated app — logged-in users

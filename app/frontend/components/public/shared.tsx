@@ -26,29 +26,32 @@ export function Container({
 }
 
 // ─── GradientButton — primary CTA with brand gradient ───────────────────────────
+// When `href` is provided, wraps in an Inertia Link. Without `href`, renders a
+// plain button (useful as a Dialog trigger, form submit, etc.).
 export function GradientButton({
   children,
   href,
   className,
+  ...rest
 }: {
   children: React.ReactNode
-  href: string
+  href?: string
   className?: string
-}) {
-  return (
-    <Link href={href}>
-      <Button
-        size="lg"
-        className={cn(
-          "group min-h-[44px] text-base bg-gradient-to-r from-[#E8453C] to-[#2D7FF9] hover:opacity-90 border-0 shadow-lg shadow-[#2D7FF9]/20 hover:shadow-xl hover:shadow-[#2D7FF9]/30 transition-all duration-300",
-          className,
-        )}
-      >
-        {children}
-        <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-      </Button>
-    </Link>
+} & Omit<React.ComponentProps<typeof Button>, "size">) {
+  const btn = (
+    <Button
+      size="lg"
+      className={cn(
+        "group min-h-[44px] text-base bg-gradient-to-r from-[#E8453C] to-[#2D7FF9] hover:opacity-90 border-0 shadow-lg shadow-[#2D7FF9]/20 hover:shadow-xl hover:shadow-[#2D7FF9]/30 transition-all duration-300",
+        className,
+      )}
+      {...rest}
+    >
+      {children}
+      <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+    </Button>
   )
+  return href ? <Link href={href}>{btn}</Link> : btn
 }
 
 // ─── PublicHero — shared hero section ────────────────────────────────────────────

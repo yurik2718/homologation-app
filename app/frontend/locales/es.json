@@ -83,7 +83,7 @@
     "guardian_phone": "Teléfono del tutor",
     "guardian_whatsapp": "WhatsApp del tutor",
     "save_continue": "Guardar y continuar",
-    "delete_account": "Para eliminar tu cuenta, por favor contáctanos en support@spaceforedu.com",
+    "delete_account": "Para eliminar tu cuenta, por favor contáctanos en {{email}}",
     "notifications_section": "Preferencias de notificaciones",
     "email_notifications": "Notificaciones por email",
     "telegram_notifications": "Notificaciones por Telegram",
@@ -534,8 +534,6 @@
       "contact": "Contacto",
       "privacy": "Política de privacidad",
       "rights": "Todos los derechos reservados.",
-      "email": "center@spaceforedu.com",
-      "phone": "+34 600 000 000",
       "address": "Madrid, España"
     },
     "home": {
@@ -612,7 +610,7 @@
       "dash_notifications_desc": "Email y notificaciones push — no te perderás ninguna actualización.",
 
       "process_title": "Cómo funciona",
-      "process_1_title": "Consulta gratuita",
+      "process_1_title": "Consulta con un experto",
       "process_1_desc": "Analizamos tu título y definimos la ruta óptima de homologación.",
       "process_2_title": "Recopilación y preparación de documentos",
       "process_2_desc": "Te ayudamos con la apostilla, traducción jurada y todos los certificados necesarios.",
@@ -653,9 +651,33 @@
       "faq_5_q": "¿Cuál es la diferencia entre homologación y equivalencia?",
       "faq_5_a": "La homologación reconoce tu título como equivalente a uno específico español. La equivalencia reconoce un nivel académico general sin título específico.",
 
+      "consultation_dialog_title": "Consulta con un experto en homologación",
+      "consultation_dialog_desc": "Consulta personalizada de 60 minutos con un experto que analizará tu caso y elaborará un plan de acción.",
+      "consultation_dialog_item_1": "Análisis de tu título y determinación del tipo de homologación",
+      "consultation_dialog_item_2": "Lista completa de documentos necesarios para tu caso",
+      "consultation_dialog_item_3": "Estimación de plazos y costes de todo el proceso",
+      "consultation_dialog_item_4": "Plan de acción paso a paso con recomendaciones concretas",
+      "consultation_dialog_price": "100 €",
+      "consultation_dialog_duration": "60 min",
+      "consultation_dialog_pay": "Pagar y reservar",
+      "consultation_dialog_secure": "Pago seguro a través de Stripe",
+
       "cta_title": "¿Listo para empezar la homologación?",
-      "cta_subtitle": "La primera consulta es gratuita. Te contamos qué documentos necesitas y cuánto tardará el proceso.",
+      "cta_subtitle": "Reserva una consulta con un experto — analizamos tu caso, definimos la ruta y los plazos.",
       "cta_button": "Reservar consulta"
+    },
+    "consultation_thank_you": {
+      "title": "Gracias por tu pago!",
+      "subtitle": "Tu consulta está confirmada. Nuestro experto se pondrá en contacto contigo en las próximas 24 horas para acordar el horario.",
+      "next_steps_title": "¿Qué sigue?",
+      "step_1": "Nuestro experto te contactará por WhatsApp o email",
+      "step_2": "Acordaréis un horario conveniente para la consulta",
+      "step_3": "Recibirás un análisis personalizado de tu caso",
+      "contact_title": "Nuestros contactos",
+      "contact_subtitle": "Si tienes preguntas urgentes — escríbenos directamente:",
+      "whatsapp": "WhatsApp",
+      "email": "Email",
+      "back_home": "Volver al inicio"
     },
     "universidad": {
       "hero_title_1": "Accede a",
@@ -821,8 +843,12 @@
       "description": "Clases de español para extranjeros: niveles A1-C2, individual y en grupo."
     },
     "consultation": {
-      "title": "Consulta gratuita — Space for Edu",
-      "description": "Reserva una consulta gratuita sobre homologación, universidad o clases de español."
+      "title": "Consulta con experto — Space for Edu",
+      "description": "Reserva una consulta con un experto sobre homologación, universidad o clases de español."
+    },
+    "consultation_thank_you": {
+      "title": "Pago completado — Space for Edu",
+      "description": "Gracias por tu pago. Nos pondremos en contacto contigo pronto."
     },
     "pricing": {
       "title": "Tarifas y precios — Space for Edu",

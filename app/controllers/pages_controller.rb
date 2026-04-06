@@ -36,6 +36,10 @@ class PagesController < ApplicationController
     render inertia: "public/Precios", props: { seo: seo_props }
   end
 
+  def consultation_thank_you
+    render inertia: "public/ConsultationThankYou", props: { seo: seo_props }
+  end
+
   def privacy_policy
     render inertia: "PrivacyPolicy"
   end

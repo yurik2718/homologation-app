@@ -33,7 +33,7 @@ import {
   PublicSection,
   SectionHeading,
 } from "@/components/public/shared"
-import { publicRoute, publicPages, routes } from "@/lib/routes"
+import { ConsultationDialog } from "@/components/public/ConsultationDialog"
 import type { SharedProps } from "@/types"
 import type { PublicPageProps } from "@/types/pages"
 
@@ -65,9 +65,11 @@ export default function Homologacion() {
         titleAccent={t("public.homologacion.hero_title_accent")}
         subtitle={t("public.homologacion.hero_subtitle")}
         actions={
-          <GradientButton href={routes.register} className="w-full sm:w-auto">
-            {t("public.homologacion.cta_start")}
-          </GradientButton>
+          <ConsultationDialog>
+            <GradientButton className="w-full sm:w-auto">
+              {t("public.homologacion.cta_start")}
+            </GradientButton>
+          </ConsultationDialog>
         }
       />
 
@@ -254,9 +256,11 @@ export default function Homologacion() {
         title={t("public.homologacion.cta_title")}
         subtitle={t("public.homologacion.cta_subtitle")}
       >
-        <GradientButton href={publicRoute(publicPages.precios, seo.locale)}>
-          {t("public.homologacion.cta_button")}
-        </GradientButton>
+        <ConsultationDialog>
+          <GradientButton className="w-full sm:w-auto">
+            {t("public.homologacion.cta_button")}
+          </GradientButton>
+        </ConsultationDialog>
       </PublicCta>
     </PublicLayout>
   )

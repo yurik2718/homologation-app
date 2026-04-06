@@ -10,6 +10,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
 import { routes } from "@/lib/routes"
+import { SUPPORT_EMAIL } from "@/lib/constants"
 import { GUARDIAN_FIELDS } from "@/lib/guardian-fields"
 import type { SharedProps } from "@/types"
 import type { ProfileEditProps } from "@/types/pages"
@@ -278,7 +279,7 @@ export default function Edit() {
 
               {/* Delete account */}
               <p className="text-center text-sm text-muted-foreground">
-                {t("profile.delete_account")}
+                {t("profile.delete_account", { email: SUPPORT_EMAIL })}
               </p>
             </form>
           </CardContent>

@@ -20,6 +20,7 @@ import {
   SectionHeading,
 } from "@/components/public/shared"
 import { publicRoute, publicPages } from "@/lib/routes"
+import { CONTACT_WHATSAPP, CONTACT_TELEGRAM } from "@/lib/constants"
 import type { SharedProps } from "@/types"
 import type { PublicPageProps } from "@/types/pages"
 
@@ -115,13 +116,13 @@ export default function Consulta() {
                   <h3 className="font-semibold mb-3">{t("public.consulta.contact_title")}</h3>
                   <div className="flex flex-col sm:flex-row gap-3">
                     <Button variant="outline" className="min-h-[44px] gap-2 hover:border-green-500/30 hover:bg-green-50 transition-all duration-300" asChild>
-                      <a href="https://wa.me/34600000000" target="_blank" rel="noopener noreferrer">
+                      <a href={`https://wa.me/${CONTACT_WHATSAPP}`} target="_blank" rel="noopener noreferrer">
                         <Phone className="h-4 w-4" />
                         WhatsApp
                       </a>
                     </Button>
                     <Button variant="outline" className="min-h-[44px] gap-2 hover:border-[#2D7FF9]/30 hover:bg-blue-50 transition-all duration-300" asChild>
-                      <a href="https://t.me/+34663689393" target="_blank" rel="noopener noreferrer">
+                      <a href={`https://t.me/${CONTACT_TELEGRAM}`} target="_blank" rel="noopener noreferrer">
                         <MessageCircle className="h-4 w-4" />
                         Telegram
                       </a>

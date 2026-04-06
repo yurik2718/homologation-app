@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button"
 import { Sheet, SheetClose, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet"
 import { PublicLanguageSwitcher } from "@/components/public/PublicLanguageSwitcher"
 import { publicRoute, publicPages, routes } from "@/lib/routes"
+import { CONTACT_EMAIL, CONTACT_WHATSAPP, formatPhone } from "@/lib/constants"
 import type { PublicPageProps } from "@/types/pages"
 
 interface PublicLayoutProps {
@@ -254,8 +255,16 @@ function Footer({ t, locale }: { t: (key: string) => string; locale: string }) {
               {t("public.footer.contact")}
             </h3>
             <ul className="space-y-2 text-sm">
-              <li>{t("public.footer.email")}</li>
-              <li>{t("public.footer.phone")}</li>
+              <li>
+                <a href={`mailto:${CONTACT_EMAIL}`} className="hover:text-white transition-colors">
+                  {CONTACT_EMAIL}
+                </a>
+              </li>
+              <li>
+                <a href={`https://wa.me/${CONTACT_WHATSAPP}`} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                  {formatPhone(CONTACT_WHATSAPP)}
+                </a>
+              </li>
               <li>{t("public.footer.address")}</li>
             </ul>
           </div>
