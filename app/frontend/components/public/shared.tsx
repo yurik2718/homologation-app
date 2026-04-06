@@ -42,13 +42,19 @@ export function GradientButton({
     <Button
       size="lg"
       className={cn(
-        "group min-h-[44px] text-base bg-gradient-to-r from-[#E8453C] to-[#2D7FF9] hover:opacity-90 border-0 shadow-lg shadow-[#2D7FF9]/20 hover:shadow-xl hover:shadow-[#2D7FF9]/30 transition-all duration-300",
+        "group relative overflow-hidden min-h-[44px] text-base bg-gradient-to-r from-[#E8453C] to-[#2D7FF9] hover:opacity-90 border-0 shadow-lg shadow-[#2D7FF9]/20 hover:shadow-xl hover:shadow-[#2D7FF9]/30 transition-all duration-300",
         className,
       )}
       {...rest}
     >
-      {children}
-      <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+      <span
+        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none"
+        style={{ backgroundSize: "200% 100%", animation: "shimmer 3s ease-in-out infinite" }}
+      />
+      <span className="relative flex items-center">
+        {children}
+        <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+      </span>
     </Button>
   )
   return href ? <Link href={href}>{btn}</Link> : btn

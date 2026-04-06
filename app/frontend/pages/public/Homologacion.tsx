@@ -15,6 +15,8 @@ import {
   MessageSquare,
   Bell,
   Shield,
+  Quote,
+  Star,
 } from "lucide-react"
 import { PublicLayout } from "@/components/layout/PublicLayout"
 import { Card, CardContent } from "@/components/ui/card"
@@ -91,6 +93,16 @@ export default function Homologacion() {
                 </span>
               </div>
             ))}
+          </div>
+        }
+        illustration={
+          <div className="relative">
+            <div className="absolute -inset-4 rounded-2xl bg-gradient-to-br from-[#E8453C]/20 to-[#2D7FF9]/20 blur-2xl" />
+            <img
+              src="/images/hero_team.webp"
+              alt={t("public.homologacion.hero_photo_alt")}
+              className="relative rounded-2xl shadow-2xl shadow-[#2D7FF9]/10 w-full object-cover"
+            />
           </div>
         }
       />
@@ -207,8 +219,44 @@ export default function Homologacion() {
         </div>
       </PublicSection>
 
-      {/* Social proof */}
+      {/* Testimonials */}
       <PublicSection className="bg-slate-50" dots>
+        <SectionHeading
+          title={t("public.homologacion.testimonials_title")}
+          subtitle={t("public.homologacion.testimonials_subtitle")}
+        />
+        <div className="grid gap-6 sm:grid-cols-3 max-w-5xl mx-auto">
+          {[1, 2, 3].map((i) => (
+            <Reveal key={i} direction="up" delay={i * 120}>
+              <Card className="h-full border bg-white transition-all duration-300 hover:shadow-lg hover:shadow-[#2D7FF9]/5">
+                <CardContent className="p-6 flex flex-col h-full">
+                  <Quote className="h-6 w-6 text-[#2D7FF9]/20 mb-3 shrink-0" />
+                  <p className="text-sm text-muted-foreground leading-relaxed flex-1">
+                    {t(`public.homologacion.testimonial_${i}_text`)}
+                  </p>
+                  <div className="mt-4 pt-4 border-t flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#E8453C]/20 to-[#2D7FF9]/20 flex items-center justify-center text-sm font-bold text-[#2D7FF9]">
+                      {t(`public.homologacion.testimonial_${i}_name`).charAt(0)}
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold">{t(`public.homologacion.testimonial_${i}_name`)}</p>
+                      <p className="text-xs text-muted-foreground">{t(`public.homologacion.testimonial_${i}_role`)}</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-0.5 mt-3">
+                    {Array.from({ length: 5 }, (_, j) => (
+                      <Star key={j} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </Reveal>
+          ))}
+        </div>
+      </PublicSection>
+
+      {/* Social proof */}
+      <PublicSection className="bg-white">
         <SectionHeading
           title={t("public.homologacion.proof_title")}
           subtitle={t("public.homologacion.proof_subtitle")}
@@ -232,7 +280,7 @@ export default function Homologacion() {
       </PublicSection>
 
       {/* Costs & timelines */}
-      <PublicSection className="bg-white">
+      <PublicSection className="bg-slate-50" dots>
         <SectionHeading title={t("public.homologacion.costs_title")} />
         <div className="grid gap-6 sm:grid-cols-2 max-w-2xl mx-auto">
           {[
@@ -253,7 +301,7 @@ export default function Homologacion() {
       </PublicSection>
 
       {/* FAQ */}
-      <PublicSection className="bg-slate-50" dots>
+      <PublicSection className="bg-white">
         <SectionHeading title={t("public.homologacion.faq_title")} />
         <Reveal direction="up" delay={100}>
           <div className="max-w-2xl mx-auto">

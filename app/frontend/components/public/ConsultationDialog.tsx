@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next"
-import { CheckCircle2, Clock, Shield, CreditCard } from "lucide-react"
+import { CheckCircle2, Clock, Shield, CreditCard, Flame } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -18,6 +18,9 @@ const CONSULTATION_ITEMS = [
   "consultation_dialog_item_3",
   "consultation_dialog_item_4",
 ] as const
+
+// Number of spots shown — update manually or connect to backend later
+const SPOTS_THIS_WEEK = 3
 
 export function ConsultationDialog({
   children,
@@ -58,6 +61,14 @@ export function ConsultationDialog({
               <span className="text-sm">{t(`public.homologacion.${key}`)}</span>
             </div>
           ))}
+        </div>
+
+        {/* Urgency */}
+        <div className="flex items-center gap-2 rounded-lg bg-amber-50 border border-amber-200 px-3 py-2">
+          <Flame className="h-4 w-4 text-amber-500 shrink-0" />
+          <span className="text-sm font-medium text-amber-800">
+            {t("public.homologacion.consultation_dialog_spots", { count: SPOTS_THIS_WEEK })}
+          </span>
         </div>
 
         {/* Pay button */}
