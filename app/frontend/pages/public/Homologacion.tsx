@@ -7,6 +7,14 @@ import {
   FileText,
   Building2,
   Scale,
+  UserCheck,
+  Award,
+  Monitor,
+  Handshake,
+  Globe,
+  MessageSquare,
+  Bell,
+  Shield,
 } from "lucide-react"
 import { PublicLayout } from "@/components/layout/PublicLayout"
 import { Card, CardContent } from "@/components/ui/card"
@@ -17,7 +25,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { SeoHead } from "@/components/public/SeoHead"
-import { Reveal, TiltCard } from "@/components/public/animations"
+import { Reveal, TiltCard, AnimatedCounter } from "@/components/public/animations"
 import {
   GradientButton,
   PublicHero,
@@ -28,6 +36,20 @@ import {
 import { publicRoute, publicPages, routes } from "@/lib/routes"
 import type { SharedProps } from "@/types"
 import type { PublicPageProps } from "@/types/pages"
+
+const ADVANTAGES = [
+  { icon: UserCheck, key: "advisor" },
+  { icon: Award, key: "expertise" },
+  { icon: Monitor, key: "transparency" },
+  { icon: Handshake, key: "partners" },
+] as const
+
+const DASHBOARD_FEATURES = [
+  { icon: Globe, key: "realtime" },
+  { icon: Shield, key: "secure" },
+  { icon: MessageSquare, key: "chat" },
+  { icon: Bell, key: "notifications" },
+] as const
 
 export default function Homologacion() {
   const { seo } = usePage<SharedProps & PublicPageProps>().props
@@ -49,8 +71,33 @@ export default function Homologacion() {
         }
       />
 
-      {/* What is homologation */}
+      {/* Advantages */}
       <PublicSection className="bg-white">
+        <SectionHeading
+          title={t("public.homologacion.adv_title")}
+          subtitle={t("public.homologacion.adv_subtitle")}
+        />
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {ADVANTAGES.map(({ icon: Icon, key }, i) => (
+            <Reveal key={key} direction="up" delay={i * 120}>
+              <TiltCard className="h-full">
+                <Card className="h-full border bg-white transition-all duration-300 hover:shadow-xl hover:shadow-[#2D7FF9]/5 group">
+                  <CardContent className="p-6 text-center">
+                    <div className="mx-auto mb-4 inline-flex rounded-lg bg-gradient-to-br from-[#E8453C]/10 to-[#2D7FF9]/10 p-3 transition-transform duration-300 group-hover:scale-110">
+                      <Icon className="h-6 w-6 text-[#2D7FF9]" />
+                    </div>
+                    <h3 className="font-semibold mb-2">{t(`public.homologacion.adv_${key}_title`)}</h3>
+                    <p className="text-sm text-muted-foreground">{t(`public.homologacion.adv_${key}_desc`)}</p>
+                  </CardContent>
+                </Card>
+              </TiltCard>
+            </Reveal>
+          ))}
+        </div>
+      </PublicSection>
+
+      {/* What is homologation */}
+      <PublicSection className="bg-slate-50" dots>
         <SectionHeading
           title={t("public.homologacion.what_title")}
           subtitle={t("public.homologacion.what_desc")}
@@ -78,15 +125,23 @@ export default function Homologacion() {
         </div>
       </PublicSection>
 
-      {/* Documents needed */}
-      <PublicSection className="bg-slate-50" dots>
-        <SectionHeading title={t("public.homologacion.docs_title")} />
-        <div className="max-w-2xl mx-auto space-y-4">
-          {Array.from({ length: 6 }, (_, i) => (
-            <Reveal key={i} direction="left" delay={i * 80}>
-              <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-white/80 transition-colors">
-                <CheckCircle2 className="h-5 w-5 text-[#2D7FF9] mt-0.5 shrink-0" />
-                <span className="text-sm">{t(`public.homologacion.doc_${i + 1}`)}</span>
+      {/* Personal Dashboard */}
+      <PublicSection className="bg-white">
+        <SectionHeading
+          title={t("public.homologacion.dashboard_title")}
+          subtitle={t("public.homologacion.dashboard_subtitle")}
+        />
+        <div className="grid gap-6 sm:grid-cols-2 max-w-3xl mx-auto">
+          {DASHBOARD_FEATURES.map(({ icon: Icon, key }, i) => (
+            <Reveal key={key} direction="up" delay={i * 100}>
+              <div className="flex items-start gap-4 p-4 rounded-xl border bg-slate-50/50 transition-all duration-300 hover:bg-white hover:shadow-md group">
+                <div className="shrink-0 rounded-lg bg-gradient-to-br from-[#E8453C]/10 to-[#2D7FF9]/10 p-2.5 transition-transform duration-300 group-hover:scale-110">
+                  <Icon className="h-5 w-5 text-[#2D7FF9]" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-sm mb-1">{t(`public.homologacion.dash_${key}_title`)}</h3>
+                  <p className="text-sm text-muted-foreground">{t(`public.homologacion.dash_${key}_desc`)}</p>
+                </div>
               </div>
             </Reveal>
           ))}
@@ -94,7 +149,7 @@ export default function Homologacion() {
       </PublicSection>
 
       {/* Process timeline */}
-      <PublicSection className="bg-white">
+      <PublicSection className="bg-slate-50" dots>
         <SectionHeading title={t("public.homologacion.process_title")} />
         <div className="max-w-3xl mx-auto space-y-8">
           {Array.from({ length: 4 }, (_, i) => (
@@ -113,8 +168,47 @@ export default function Homologacion() {
         </div>
       </PublicSection>
 
-      {/* Costs & timelines */}
+      {/* Documents needed */}
+      <PublicSection className="bg-white">
+        <SectionHeading title={t("public.homologacion.docs_title")} />
+        <div className="max-w-2xl mx-auto space-y-4">
+          {Array.from({ length: 6 }, (_, i) => (
+            <Reveal key={i} direction="left" delay={i * 80}>
+              <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-slate-50 transition-colors">
+                <CheckCircle2 className="h-5 w-5 text-[#2D7FF9] mt-0.5 shrink-0" />
+                <span className="text-sm">{t(`public.homologacion.doc_${i + 1}`)}</span>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </PublicSection>
+
+      {/* Social proof */}
       <PublicSection className="bg-slate-50" dots>
+        <SectionHeading
+          title={t("public.homologacion.proof_title")}
+          subtitle={t("public.homologacion.proof_subtitle")}
+        />
+        <div className="grid gap-8 sm:grid-cols-3 max-w-3xl mx-auto text-center">
+          {[
+            { value: 1000, suffix: "+", key: "clients" },
+            { value: 20, suffix: "+", key: "countries" },
+            { value: 10, suffix: "+", key: "years" },
+          ].map(({ value, suffix, key }, i) => (
+            <Reveal key={key} direction="up" delay={i * 150}>
+              <div className="p-6">
+                <div className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-[#E8453C] to-[#2D7FF9] bg-clip-text text-transparent">
+                  <AnimatedCounter value={value} suffix={suffix} />
+                </div>
+                <p className="mt-2 text-sm text-muted-foreground font-medium">{t(`public.homologacion.proof_${key}`)}</p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </PublicSection>
+
+      {/* Costs & timelines */}
+      <PublicSection className="bg-white">
         <SectionHeading title={t("public.homologacion.costs_title")} />
         <div className="grid gap-6 sm:grid-cols-2 max-w-2xl mx-auto">
           {[
@@ -135,7 +229,7 @@ export default function Homologacion() {
       </PublicSection>
 
       {/* FAQ */}
-      <PublicSection className="bg-white">
+      <PublicSection className="bg-slate-50" dots>
         <SectionHeading title={t("public.homologacion.faq_title")} />
         <Reveal direction="up" delay={100}>
           <div className="max-w-2xl mx-auto">
@@ -161,7 +255,7 @@ export default function Homologacion() {
         subtitle={t("public.homologacion.cta_subtitle")}
       >
         <GradientButton href={publicRoute(publicPages.precios, seo.locale)}>
-          {t("public.homologacion.cta_start")}
+          {t("public.homologacion.cta_button")}
         </GradientButton>
       </PublicCta>
     </PublicLayout>
