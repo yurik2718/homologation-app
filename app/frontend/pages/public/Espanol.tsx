@@ -1,27 +1,74 @@
-import { usePage } from "@inertiajs/react"
-import { useTranslation } from "react-i18next"
-import { Languages, Users, Monitor, User, Star } from "lucide-react"
+import { Link, usePage } from "@inertiajs/react"
+import { Trans, useTranslation } from "react-i18next"
+import {
+  Languages,
+  Users,
+  User,
+  GraduationCap,
+  Target,
+  CalendarCheck,
+  Brain,
+  BookOpen,
+  Briefcase,
+  Home,
+  Award,
+  TrendingUp,
+  Rocket,
+} from "lucide-react"
+import { SpainIllustration } from "@/components/public/SpainIllustration"
 import { PublicLayout } from "@/components/layout/PublicLayout"
+import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 import { SeoHead } from "@/components/public/SeoHead"
-import { Reveal, TiltCard } from "@/components/public/animations"
+import {
+  Reveal,
+  TiltCard,
+  AnimatedCounter,
+} from "@/components/public/animations"
 import {
   GradientButton,
+  OutlineCtaButton,
   PublicHero,
   PublicCta,
   PublicSection,
   SectionHeading,
 } from "@/components/public/shared"
+import { ConsultationDialog } from "@/components/public/ConsultationDialog"
 import { publicRoute, publicPages } from "@/lib/routes"
 import type { SharedProps } from "@/types"
 import type { PublicPageProps } from "@/types/pages"
+
+const FORMATS = [
+  { icon: User, key: "individual" },
+  { icon: Users, key: "group" },
+  { icon: TrendingUp, key: "intensive" },
+] as const
+
+const LEVELS = [
+  { level: "A1–A2", icon: BookOpen, key: "beginner", color: "from-emerald-500 to-emerald-600" },
+  { level: "B1–B2", icon: Briefcase, key: "intermediate", color: "from-[#2D7FF9] to-blue-600" },
+  { level: "C1–C2", icon: Award, key: "advanced", color: "from-[#E8453C] to-red-600" },
+] as const
+
+const ADVANTAGES = [
+  { icon: Languages, key: "native" },
+  { icon: GraduationCap, key: "dele" },
+  { icon: Brain, key: "method" },
+  { icon: CalendarCheck, key: "flexible" },
+] as const
 
 export default function Espanol() {
   const { seo } = usePage<SharedProps & PublicPageProps>().props
   const { t } = useTranslation()
   const locale = seo.locale
 
-  const consultaHref = publicRoute(publicPages.consulta, locale)
+  const preciosHref = publicRoute(publicPages.precios, locale)
 
   return (
     <PublicLayout>
@@ -31,26 +78,61 @@ export default function Espanol() {
       <PublicHero
         title1={t("public.espanol.hero_title_1")}
         titleAccent={t("public.espanol.hero_title_accent")}
-        subtitle={t("public.espanol.hero_subtitle")}
-        actions={
-          <GradientButton href={consultaHref}>
-            {t("public.espanol.cta_trial")}
-          </GradientButton>
+        subtitle={
+          <Trans
+            i18nKey="public.espanol.hero_subtitle"
+            components={{ strong: <strong className="text-foreground" /> }}
+          />
         }
+        actions={
+          <div className="flex flex-col sm:flex-row gap-3">
+            <ConsultationDialog>
+              <GradientButton className="w-full sm:w-auto">
+                {t("public.espanol.cta_trial")}
+              </GradientButton>
+            </ConsultationDialog>
+            <Link href={preciosHref}>
+              <Button
+                variant="outline"
+                size="lg"
+                className="w-full sm:w-auto min-h-[44px] text-base transition-all duration-300"
+              >
+                {t("public.espanol.cta_pricing")}
+              </Button>
+            </Link>
+          </div>
+        }
+        footer={
+          <div className="flex flex-wrap items-center gap-x-2 sm:gap-x-6 gap-y-1 text-sm text-muted-foreground">
+            {[
+              { value: "100+", key: "students" },
+              { value: "A1–C2", key: "levels" },
+              { value: "3", key: "formats" },
+            ].map(({ value, key }, i) => (
+              <div key={key} className="flex items-center gap-x-2 sm:gap-x-6">
+                {i > 0 && <span className="text-border">·</span>}
+                <span>
+                  <span className="font-semibold text-foreground">{value}</span>{" "}
+                  {t(`public.espanol.hero_stat_${key}`)}
+                </span>
+              </div>
+            ))}
+          </div>
+        }
+        illustration={<SpainIllustration />}
       />
 
       {/* Formats */}
       <PublicSection className="bg-white">
-        <SectionHeading title={t("public.espanol.formats_title")} />
+        <SectionHeading
+          title={t("public.espanol.formats_title")}
+          subtitle={t("public.espanol.formats_subtitle")}
+        />
         <div className="grid gap-6 sm:grid-cols-3">
-          {[
-            { icon: User, key: "individual" },
-            { icon: Users, key: "group" },
-            { icon: Monitor, key: "online" },
-          ].map(({ icon: Icon, key }, i) => (
+          {FORMATS.map(({ icon: Icon, key }, i) => (
             <Reveal key={key} direction="up" delay={i * 120}>
-              <TiltCard>
-                <Card className="border bg-white transition-all duration-300 hover:shadow-xl hover:shadow-[#2D7FF9]/5 group">
+              <TiltCard className="h-full">
+                <Card className="h-full border bg-white transition-all duration-300 hover:shadow-xl hover:shadow-[#2D7FF9]/5 group">
                   <CardContent className="p-8 text-center">
                     <div className="mx-auto mb-4 inline-flex rounded-lg bg-gradient-to-br from-[#E8453C]/10 to-[#2D7FF9]/10 p-3 transition-transform duration-300 group-hover:scale-110">
                       <Icon className="h-6 w-6 text-[#2D7FF9]" />
@@ -61,6 +143,9 @@ export default function Espanol() {
                     <p className="text-sm text-muted-foreground">
                       {t(`public.espanol.format_${key}_desc`)}
                     </p>
+                    <p className="text-xs text-[#2D7FF9] font-medium mt-3">
+                      {t(`public.espanol.format_${key}_note`)}
+                    </p>
                   </CardContent>
                 </Card>
               </TiltCard>
@@ -69,57 +154,187 @@ export default function Espanol() {
         </div>
       </PublicSection>
 
-      {/* Levels */}
+      {/* Your Spanish journey — levels reimagined */}
       <PublicSection className="bg-slate-50" dots>
-        <SectionHeading title={t("public.espanol.levels_title")} />
-        <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 max-w-4xl mx-auto">
-          {["A1", "A2", "B1", "B2", "C1", "C2"].map((level, i) => (
-            <Reveal key={level} direction="up" delay={i * 60}>
-              <Card className="border bg-white transition-all duration-300 hover:shadow-md hover:border-[#2D7FF9]/20 hover:-translate-y-1 group">
-                <CardContent className="p-6 text-center">
-                  <div className="text-2xl font-bold bg-gradient-to-r from-[#E8453C] to-[#2D7FF9] bg-clip-text text-transparent mb-2 transition-transform duration-300 group-hover:scale-110">
-                    {level}
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    {t(`public.espanol.level_${level.toLowerCase()}`)}
-                  </p>
-                </CardContent>
-              </Card>
+        <SectionHeading
+          title={t("public.espanol.journey_title")}
+          subtitle={t("public.espanol.journey_subtitle")}
+        />
+        <div className="grid gap-6 sm:grid-cols-3 max-w-5xl mx-auto">
+          {LEVELS.map(({ level, icon: Icon, key, color }, i) => (
+            <Reveal key={key} direction="up" delay={i * 150}>
+              <TiltCard className="h-full">
+                <Card className="h-full border bg-white transition-all duration-300 hover:shadow-xl hover:shadow-[#2D7FF9]/5 group overflow-hidden">
+                  <CardContent className="p-0">
+                    <div className={`bg-gradient-to-r ${color} px-6 py-4 text-white`}>
+                      <div className="flex items-center justify-between">
+                        <span className="text-2xl font-bold">{level}</span>
+                        <Icon className="h-6 w-6 opacity-80" />
+                      </div>
+                      <p className="text-sm opacity-90 font-medium mt-1">
+                        {t(`public.espanol.journey_${key}_label`)}
+                      </p>
+                    </div>
+                    <div className="p-6 space-y-3">
+                      {[1, 2, 3].map((j) => (
+                        <div key={j} className="flex items-start gap-2.5">
+                          <Target className="h-4 w-4 text-[#2D7FF9] mt-0.5 shrink-0" />
+                          <span className="text-sm text-muted-foreground">
+                            {t(`public.espanol.journey_${key}_${j}`)}
+                          </span>
+                        </div>
+                      ))}
+                      <p className="text-xs font-medium text-foreground pt-2 border-t">
+                        {t(`public.espanol.journey_${key}_time`)}
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TiltCard>
             </Reveal>
           ))}
         </div>
       </PublicSection>
 
-      {/* Teachers */}
+      {/* How it works */}
       <PublicSection className="bg-white">
-        <SectionHeading title={t("public.espanol.teachers_title")} />
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 max-w-4xl mx-auto">
-          {Array.from({ length: 3 }, (_, i) => (
-            <Reveal key={i} direction="up" delay={i * 120}>
-              <Card className="border bg-white transition-all duration-300 hover:shadow-lg group">
-                <CardContent className="p-6 text-center">
-                  <div className="mx-auto w-20 h-20 rounded-full bg-gradient-to-br from-[#E8453C]/10 to-[#2D7FF9]/10 flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-105 ring-4 ring-white shadow-md">
-                    <Languages className="h-8 w-8 text-[#2D7FF9]/50" />
-                  </div>
-                  <h3 className="font-semibold">
-                    {t(`public.espanol.teacher_${i + 1}_name`)}
-                  </h3>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {t(`public.espanol.teacher_${i + 1}_desc`)}
-                  </p>
-                  <div className="flex justify-center gap-0.5 mt-3">
-                    {Array.from({ length: 5 }, (_, j) => (
-                      <Star
-                        key={j}
-                        className="h-4 w-4 fill-amber-400 text-amber-400"
-                      />
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+        <SectionHeading
+          title={t("public.espanol.steps_title")}
+          subtitle={t("public.espanol.steps_subtitle")}
+        />
+        <div className="max-w-3xl mx-auto space-y-8">
+          {Array.from({ length: 4 }, (_, i) => (
+            <Reveal key={i} direction="left" delay={i * 150}>
+              <div className="flex gap-6 items-start group">
+                <div className="shrink-0 w-10 h-10 rounded-full bg-gradient-to-r from-[#E8453C] to-[#2D7FF9] text-white flex items-center justify-center font-bold text-sm shadow-md transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-[#2D7FF9]/20">
+                  {i + 1}
+                </div>
+                <div>
+                  <h3 className="font-semibold">{t(`public.espanol.step_${i + 1}_title`)}</h3>
+                  <p className="text-sm text-muted-foreground mt-1">{t(`public.espanol.step_${i + 1}_desc`)}</p>
+                </div>
+              </div>
             </Reveal>
           ))}
         </div>
+      </PublicSection>
+
+      {/* Why us */}
+      <PublicSection className="bg-slate-50" dots>
+        <SectionHeading
+          title={t("public.espanol.adv_title")}
+          subtitle={t("public.espanol.adv_subtitle")}
+        />
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {ADVANTAGES.map(({ icon: Icon, key }, i) => (
+            <Reveal key={key} direction="up" delay={i * 120}>
+              <TiltCard className="h-full">
+                <Card className="h-full border bg-white transition-all duration-300 hover:shadow-xl hover:shadow-[#2D7FF9]/5 group">
+                  <CardContent className="p-6 text-center">
+                    <div className="mx-auto mb-4 inline-flex rounded-lg bg-gradient-to-br from-[#E8453C]/10 to-[#2D7FF9]/10 p-3 transition-transform duration-300 group-hover:scale-110">
+                      <Icon className="h-6 w-6 text-[#2D7FF9]" />
+                    </div>
+                    <h3 className="font-semibold mb-2">{t(`public.espanol.adv_${key}_title`)}</h3>
+                    <p className="text-sm text-muted-foreground">{t(`public.espanol.adv_${key}_desc`)}</p>
+                  </CardContent>
+                </Card>
+              </TiltCard>
+            </Reveal>
+          ))}
+        </div>
+      </PublicSection>
+
+      {/* Results in numbers */}
+      <PublicSection className="bg-white">
+        <SectionHeading
+          title={t("public.espanol.proof_title")}
+          subtitle={t("public.espanol.proof_subtitle")}
+        />
+        <div className="grid gap-4 sm:gap-8 sm:grid-cols-4 max-w-4xl mx-auto text-center">
+          {[
+            { value: 100, suffix: "+", key: "students" },
+            { value: 85, suffix: "%", key: "dele" },
+            { value: 4, suffix: "", key: "months" },
+            { value: 10, suffix: "+", key: "years" },
+          ].map(({ value, suffix, key }, i) => (
+            <Reveal key={key} direction="up" delay={i * 150}>
+              <div className="p-4 sm:p-6">
+                <div className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-[#E8453C] to-[#2D7FF9] bg-clip-text text-transparent">
+                  <AnimatedCounter value={value} suffix={suffix} />
+                </div>
+                <p className="mt-2 text-sm text-muted-foreground font-medium">
+                  {t(`public.espanol.proof_${key}`)}
+                </p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </PublicSection>
+
+      {/* Cross-sell: homologation + university */}
+      <PublicSection className="bg-slate-50" dots>
+        <Reveal direction="up">
+          <Card className="max-w-4xl mx-auto border bg-white overflow-hidden">
+            <CardContent className="p-0">
+              <div className="grid sm:grid-cols-[1fr,auto] items-center">
+                <div className="p-8 sm:p-10">
+                  <div className="inline-flex rounded-lg bg-gradient-to-br from-[#E8453C]/10 to-[#2D7FF9]/10 p-2.5 mb-4">
+                    <Rocket className="h-5 w-5 text-[#2D7FF9]" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">
+                    {t("public.espanol.crosssell_title")}
+                  </h3>
+                  <p className="text-sm text-muted-foreground mb-4 max-w-lg">
+                    {t("public.espanol.crosssell_desc")}
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <Link
+                      href={publicRoute(publicPages.homologacion, locale)}
+                      className="text-sm font-medium text-[#2D7FF9] hover:underline"
+                    >
+                      {t("public.espanol.crosssell_homologacion")} &rarr;
+                    </Link>
+                    <Link
+                      href={publicRoute(publicPages.universidad, locale)}
+                      className="text-sm font-medium text-[#2D7FF9] hover:underline"
+                    >
+                      {t("public.espanol.crosssell_universidad")} &rarr;
+                    </Link>
+                  </div>
+                </div>
+                <div className="hidden sm:flex bg-gradient-to-br from-[#E8453C]/5 to-[#2D7FF9]/5 items-center justify-center p-10 self-stretch">
+                  <div className="text-center space-y-2">
+                    <Home className="h-10 w-10 text-[#2D7FF9]/40 mx-auto" />
+                    <p className="text-xs text-muted-foreground font-medium max-w-[140px]">
+                      {t("public.espanol.crosssell_badge")}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </Reveal>
+      </PublicSection>
+
+      {/* FAQ */}
+      <PublicSection className="bg-white">
+        <SectionHeading title={t("public.espanol.faq_title")} />
+        <Reveal direction="up" delay={100}>
+          <div className="max-w-2xl mx-auto">
+            <Accordion type="single" collapsible className="w-full">
+              {Array.from({ length: 5 }, (_, i) => (
+                <AccordionItem key={i} value={`item-${i}`}>
+                  <AccordionTrigger className="text-left">
+                    {t(`public.espanol.faq_${i + 1}_q`)}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground">
+                    {t(`public.espanol.faq_${i + 1}_a`)}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+        </Reveal>
       </PublicSection>
 
       {/* CTA */}
@@ -127,9 +342,16 @@ export default function Espanol() {
         title={t("public.espanol.cta_title")}
         subtitle={t("public.espanol.cta_subtitle")}
       >
-        <GradientButton href={consultaHref}>
-          {t("public.espanol.cta_trial")}
-        </GradientButton>
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <ConsultationDialog>
+            <GradientButton className="w-full sm:w-auto">
+              {t("public.espanol.cta_trial")}
+            </GradientButton>
+          </ConsultationDialog>
+          <OutlineCtaButton href={preciosHref}>
+            {t("public.espanol.cta_pricing")}
+          </OutlineCtaButton>
+        </div>
       </PublicCta>
     </PublicLayout>
   )
