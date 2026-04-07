@@ -26,7 +26,7 @@ export function SpainIllustration() {
   const { t } = useTranslation()
 
   return (
-    <div className="relative w-full max-w-lg mx-auto select-none">
+    <div className="relative w-full mx-auto lg:-mr-8 lg:scale-110 origin-center select-none">
       {/* Background glow orbs */}
       <div className="absolute inset-0 pointer-events-none">
         <div
@@ -46,14 +46,13 @@ export function SpainIllustration() {
         className="relative w-full h-auto pointer-events-none"
         aria-label="World map highlighting Spanish-speaking countries"
       >
-        {/* Fallback for screen readers / no SVG support */}
         <img src="/images/world.svg" alt="World map" className="w-full h-auto" />
       </object>
 
       {/* Pulsing ring on Spain's approximate position */}
       <div
         className="absolute pointer-events-none"
-        style={{ left: "49%", top: "27%", width: 0, height: 0 }}
+        style={{ left: "48%", top: "30%", width: 0, height: 0 }}
       >
         <div
           className="absolute -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full border-2 border-[#E8453C]/40"

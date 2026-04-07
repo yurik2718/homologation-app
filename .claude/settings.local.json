@@ -18,7 +18,8 @@
       "Bash(bundle list:*)",
       "Bash(find:*)",
       "Bash(grep:*)",
-      "Bash(ruby -e \"puts Gem.paths.path.first\")"
+      "Bash(ruby -e \"puts Gem.paths.path.first\")",
+      "Bash(python3 /tmp/svg-inject.py)"
     ]
   }
 }

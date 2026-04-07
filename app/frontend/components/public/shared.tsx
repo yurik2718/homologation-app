@@ -100,26 +100,26 @@ export function PublicHero({
                 </span>
               </h1>
             </Reveal>
-            <Reveal direction="up" delay={150}>
+            <Reveal direction="up" delay={100}>
               <p className="mt-6 text-lg text-muted-foreground leading-relaxed max-w-xl">
                 {subtitle}
               </p>
             </Reveal>
             {actions && (
-              <Reveal direction="up" delay={300}>
+              <Reveal direction="up" delay={200}>
                 <div className="mt-10 flex flex-col sm:flex-row gap-4">
                   {actions}
                 </div>
               </Reveal>
             )}
             {footer && (
-              <Reveal direction="up" delay={450}>
+              <Reveal direction="up" delay={300}>
                 <div className="mt-10">{footer}</div>
               </Reveal>
             )}
           </div>
           {illustration && (
-            <Reveal direction="right" delay={200}>
+            <Reveal direction="right" delay={100}>
               {illustration}
             </Reveal>
           )}

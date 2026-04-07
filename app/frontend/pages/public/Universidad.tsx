@@ -1,9 +1,9 @@
-import { usePage } from "@inertiajs/react"
+import { Link, usePage } from "@inertiajs/react"
 import { useTranslation } from "react-i18next"
 import {
-  GraduationCap,
   BookOpen,
   Award,
+  GraduationCap,
   CheckCircle2,
   Building2,
   Search,
@@ -14,7 +14,9 @@ import {
   Star,
   Link2,
 } from "lucide-react"
+import { UniversityIllustration } from "@/components/public/UniversityIllustration"
 import { PublicLayout } from "@/components/layout/PublicLayout"
+import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import {
   Accordion,
@@ -32,6 +34,7 @@ import {
 } from "@/components/public/shared"
 import { ConsultationDialog } from "@/components/public/ConsultationDialog"
 import { Reveal, TiltCard } from "@/components/public/animations"
+import { publicRoute, publicPages } from "@/lib/routes"
 import type { SharedProps } from "@/types"
 import type { PublicPageProps } from "@/types/pages"
 
@@ -53,6 +56,9 @@ const PROCESS_STEPS = [
 export default function Universidad() {
   const { seo } = usePage<SharedProps & PublicPageProps>().props
   const { t } = useTranslation()
+  const locale = seo.locale
+
+  const preciosHref = publicRoute(publicPages.precios, locale)
 
   return (
     <PublicLayout>
@@ -64,25 +70,41 @@ export default function Universidad() {
         titleAccent={t("public.universidad.hero_title_accent")}
         subtitle={t("public.universidad.hero_subtitle")}
         actions={
-          <ConsultationDialog>
-            <GradientButton className="w-full sm:w-auto">
-              {t("public.universidad.cta_consult")}
-            </GradientButton>
-          </ConsultationDialog>
-        }
-        illustration={
-          <div className="relative">
-            <div className="absolute -inset-4 rounded-2xl bg-gradient-to-br from-[#E8453C]/20 to-[#2D7FF9]/20 blur-2xl" />
-            <div className="relative rounded-2xl shadow-2xl shadow-[#2D7FF9]/10 w-full aspect-[4/3] bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center overflow-hidden">
-              <div className="text-center p-8">
-                <GraduationCap className="h-16 w-16 text-[#2D7FF9]/40 mx-auto mb-4" />
-                <p className="text-sm text-muted-foreground font-medium">
-                  {t("public.universidad.hero_photo_placeholder")}
-                </p>
-              </div>
-            </div>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <ConsultationDialog>
+              <GradientButton className="w-full sm:w-auto">
+                {t("public.universidad.cta_consult")}
+              </GradientButton>
+            </ConsultationDialog>
+            <Link href={preciosHref}>
+              <Button
+                variant="outline"
+                size="lg"
+                className="w-full sm:w-auto min-h-[44px] text-base transition-all duration-300"
+              >
+                {t("public.universidad.cta_pricing")}
+              </Button>
+            </Link>
           </div>
         }
+        footer={
+          <div className="flex flex-wrap items-center gap-x-2 sm:gap-x-6 gap-y-1 text-sm text-muted-foreground">
+            {[
+              { value: "80+", key: "universities" },
+              { value: "1 000+", key: "programs" },
+              { value: "500+", key: "success" },
+            ].map(({ value, key }, i) => (
+              <div key={key} className="flex items-center gap-x-2 sm:gap-x-6">
+                {i > 0 && <span className="text-border">·</span>}
+                <span>
+                  <span className="font-semibold text-foreground">{value}</span>{" "}
+                  {t(`public.universidad.hero_stat_${key}`)}
+                </span>
+              </div>
+            ))}
+          </div>
+        }
+        illustration={<UniversityIllustration />}
       />
 
       {/* Advantages */}

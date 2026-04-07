@@ -85,7 +85,6 @@ export function PipelineCard({ card, onEdit }: PipelineCardProps) {
             <Tooltip>
               <TooltipTrigger asChild>
                 <span className="inline-flex items-center gap-1 text-[11px] font-medium cursor-default">
-                  <span className={`fi fi-${card.country.toLowerCase()} rounded-sm`} />
                   {card.country}
                   {card.requiresTranslation && <span title="Traducción jurada">🌐</span>}
                 </span>

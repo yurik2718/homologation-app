@@ -8,6 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
+import { FlagIcon } from "@/components/common/FlagIcon"
 import type { PublicPageProps } from "@/types/pages"
 
 const LANGUAGES = [
@@ -15,15 +16,6 @@ const LANGUAGES = [
   { code: "en", label: "English",  countryCode: "gb" },
   { code: "ru", label: "Русский",  countryCode: "ru" },
 ]
-
-function Flag({ countryCode, className = "" }: { countryCode: string; className?: string }) {
-  return (
-    <span
-      className={`fi fi-${countryCode} rounded-sm shrink-0 ${className}`}
-      style={{ width: "1.25em", height: "1em", display: "inline-block", backgroundSize: "cover" }}
-    />
-  )
-}
 
 export function PublicLanguageSwitcher() {
   const { i18n } = useTranslation()
@@ -59,7 +51,7 @@ export function PublicLanguageSwitcher() {
           size="sm"
           className="h-9 gap-2 px-3 font-normal"
         >
-          <Flag countryCode={current.countryCode} />
+          <FlagIcon code={current.countryCode} />
           <span className="text-sm">{current.code.toUpperCase()}</span>
           <ChevronDown className="h-3.5 w-3.5 opacity-50" />
         </Button>
@@ -74,7 +66,7 @@ export function PublicLanguageSwitcher() {
               onClick={() => changeLanguage(lang.code)}
               className="gap-3 cursor-pointer"
             >
-              <Flag countryCode={lang.countryCode} className="shadow-sm" />
+              <FlagIcon code={lang.countryCode} className="shadow-sm" />
               <span className="flex-1">{lang.label}</span>
               {isActive && <Check className="h-3.5 w-3.5 text-primary" />}
             </DropdownMenuItem>

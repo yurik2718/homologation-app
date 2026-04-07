@@ -121,7 +121,6 @@ export function CardEditDialog({ card, open, onClose }: CardEditDialogProps) {
             <div className="flex items-center gap-1.5 flex-wrap">
               {card.country ? (
                 <span className="inline-flex items-center gap-1 text-[11px] font-bold px-1.5 py-0.5 rounded bg-emerald-600 text-white">
-                  <span className={`fi fi-${card.country.toLowerCase()} rounded-sm`} />
                   {countryName ?? card.country}
                 </span>
               ) : null}
