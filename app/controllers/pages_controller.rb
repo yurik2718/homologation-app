@@ -23,21 +23,8 @@ class PagesController < ApplicationController
     render inertia: "public/Espanol", props: { seo: seo_props }
   end
 
-  def consultation
-    render inertia: "public/Consulta", props: { seo: seo_props }
-  end
-
-  def create_consultation
-    # TODO: send notification email to admin
-    redirect_to localized_consultation_path(locale: params[:locale]), notice: t("flash.consultation_sent")
-  end
-
   def pricing
     render inertia: "public/Precios", props: { seo: seo_props }
-  end
-
-  def consultation_thank_you
-    render inertia: "public/ConsultationThankYou", props: { seo: seo_props }
   end
 
   def privacy_policy

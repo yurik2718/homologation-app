@@ -454,7 +454,6 @@
       "homologacion": "Homologation",
       "universidad": "University",
       "espanol": "Spanish",
-      "consulta": "Consultation",
       "precios": "Pricing",
       "start": "Get Started"
     },
@@ -614,19 +613,6 @@
       "cta_subtitle": "Book an expert consultation — we'll analyze your case, define the path and timelines.",
       "cta_button": "Book a Consultation"
     },
-    "consultation_thank_you": {
-      "title": "Thank You for Your Payment!",
-      "subtitle": "Your consultation is confirmed. Our expert will contact you within 24 hours to schedule the session.",
-      "next_steps_title": "What's Next?",
-      "step_1": "Our expert will reach out via WhatsApp or email",
-      "step_2": "You'll agree on a convenient time for the consultation",
-      "step_3": "You'll receive a personalized analysis of your case",
-      "contact_title": "Our Contacts",
-      "contact_subtitle": "If you have urgent questions — reach out to us directly:",
-      "whatsapp": "WhatsApp",
-      "email": "Email",
-      "back_home": "Back to Home"
-    },
     "universidad": {
       "hero_title_1": "Get into a",
       "hero_title_accent": "Spanish university",
@@ -700,8 +686,8 @@
       "faq_5_q": "Do you help with visas?",
       "faq_5_a": "We guide you on student visa requirements and help prepare the necessary documentation for your application.",
       "cta_title": "Ready to enroll?",
-      "cta_subtitle": "Book a free consultation — we'll assess your case in 30 minutes.",
-      "cta_button": "Book for free"
+      "cta_subtitle": "Book an expert consultation — we'll assess your case in 30 minutes.",
+      "cta_button": "Book a consultation"
     },
     "espanol": {
       "hero_title_1": "Learn",
@@ -799,34 +785,6 @@
       "cta_title": "Start speaking Spanish",
       "cta_subtitle": "Free trial lesson. Your teacher will assess your level and create a study plan."
     },
-    "consulta": {
-      "hero_title_1": "Expert",
-      "hero_title_accent": "consultation",
-      "hero_subtitle": "Personalized advice on homologation, university admission, and Spanish courses from experienced professionals.",
-      "includes_title": "What you get",
-      "includes_1": "Analysis of your particular case and documentation",
-      "includes_2": "Available options based on your profile",
-      "includes_3": "Timeline and cost estimation",
-      "includes_4": "Personalized action plan",
-      "includes_5": "Answers to all your questions",
-      "pricing_title": "Consultation options",
-      "plan_30_title": "Express consultation",
-      "plan_30_price": "€19",
-      "plan_30_desc": "30 minutes by video call. Quick answers and next steps for your case.",
-      "plan_60_title": "Full consultation",
-      "plan_60_price": "€39",
-      "plan_60_desc": "60 minutes with in-depth case analysis, document review, and a personalized action plan.",
-      "contact_title": "Prefer to contact us directly?",
-      "form_title": "Request consultation",
-      "field_name": "Name",
-      "field_email": "Email",
-      "field_phone": "Phone",
-      "field_topic": "Consultation topic",
-      "field_message": "Message (optional)",
-      "form_submit": "Send request",
-      "form_success_title": "Request sent!",
-      "form_success_desc": "We'll contact you within 24 hours to schedule your consultation."
-    },
     "precios": {
       "hero_title_1": "Plans for every",
       "hero_title_accent": "goal",
@@ -834,7 +792,7 @@
       "popular": "Most popular",
 
       "hero_action_plans": "See plans",
-      "hero_action_consult": "Free consultation",
+      "hero_action_consult": "Expert consultation",
       "hero_stat_clients": "satisfied clients",
       "hero_stat_success": "success rate",
       "hero_stat_years": "years of experience",

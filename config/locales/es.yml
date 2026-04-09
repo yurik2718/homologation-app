@@ -95,7 +95,6 @@ es:
     pipeline_advanced: "Solicitud avanzada a la siguiente etapa"
     pipeline_retreated: "Solicitud devuelta a la etapa anterior"
     pipeline_updated: "Datos del pipeline actualizados"
-    consultation_sent: "Tu solicitud de consulta ha sido enviada. Te contactaremos pronto."
   mailers:
     request_mailer:
       new_request:
@@ -126,9 +125,6 @@ es:
     spanish:
       title: "Clases de español — Space for Edu"
       description: "Clases de español para extranjeros: niveles A1-C2, individual y en grupo."
-    consultation:
-      title: "Consulta profesional — Space for Edu"
-      description: "Reserva una consulta profesional sobre homologación, acceso universitario o cursos de español."
     pricing:
       title: "Tarifas y precios — Space for Edu"
       description: "Consulta nuestros precios para homologación, acceso a universidades y clases de español."

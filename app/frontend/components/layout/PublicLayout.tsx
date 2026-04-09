@@ -3,7 +3,7 @@ import { Link, usePage } from "@inertiajs/react"
 import { useTranslation } from "react-i18next"
 import {
   Rocket, Menu, X,
-  GraduationCap, Building2, BookOpen, MessageSquare, CreditCard,
+  GraduationCap, Building2, BookOpen, CreditCard,
   LogIn,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -40,7 +40,6 @@ const NAV_ICONS: Record<string, React.ElementType> = {
   homologacion: GraduationCap,
   universidad: Building2,
   espanol: BookOpen,
-  consulta: MessageSquare,
   precios: CreditCard,
 }
 
@@ -61,7 +60,6 @@ function Navbar({
     { key: "homologacion", href: publicRoute(publicPages.homologacion, locale) },
     { key: "universidad", href: publicRoute(publicPages.universidad, locale) },
     { key: "espanol", href: publicRoute(publicPages.espanol, locale) },
-    { key: "consulta", href: publicRoute(publicPages.consulta, locale) },
     { key: "precios", href: publicRoute(publicPages.precios, locale) },
   ]
 
@@ -234,11 +232,6 @@ function Footer({ t, locale }: { t: (key: string) => string; locale: string }) {
               <li>
                 <Link href={publicRoute(publicPages.precios, locale)} className="hover:text-white transition-colors">
                   {t("public.nav.precios")}
-                </Link>
-              </li>
-              <li>
-                <Link href={publicRoute(publicPages.consulta, locale)} className="hover:text-white transition-colors">
-                  {t("public.nav.consulta")}
                 </Link>
               </li>
               <li>

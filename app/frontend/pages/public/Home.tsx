@@ -27,10 +27,10 @@ import {
   GradientButton,
   PublicHero,
   PublicCta,
-  OutlineCtaButton,
   PublicSection,
   SectionHeading,
 } from "@/components/public/shared"
+import { ConsultationDialog } from "@/components/public/ConsultationDialog"
 import { publicRoute, publicPages, routes } from "@/lib/routes"
 import type { SharedProps } from "@/types"
 import type { PublicPageProps } from "@/types/pages"
@@ -43,17 +43,17 @@ export default function Home() {
   return (
     <PublicLayout>
       <SeoHead {...seo} />
-      <HeroSection t={t} locale={locale} />
+      <HeroSection t={t} />
       <TrustSection t={t} />
       <ServicesSection t={t} locale={locale} />
       <HowItWorksSection t={t} />
       <AdvantagesSection t={t} />
-      <CtaSection t={t} locale={locale} />
+      <CtaSection t={t} />
     </PublicLayout>
   )
 }
 
-function HeroSection({ t, locale }: { t: (key: string) => string; locale: string }) {
+function HeroSection({ t }: { t: (key: string) => string }) {
   const illustration = (
     <div className="hidden lg:flex items-center justify-center">
       <div className="relative w-full max-w-md aspect-square">
@@ -91,7 +91,7 @@ function HeroSection({ t, locale }: { t: (key: string) => string; locale: string
           <GradientButton href={routes.register} className="w-full sm:w-auto">
             {t("public.home.cta_start")}
           </GradientButton>
-          <Link href={publicRoute(publicPages.consulta, locale)}>
+          <ConsultationDialog>
             <Button
               variant="outline"
               size="lg"
@@ -99,7 +99,7 @@ function HeroSection({ t, locale }: { t: (key: string) => string; locale: string
             >
               {t("public.home.cta_consult")}
             </Button>
-          </Link>
+          </ConsultationDialog>
         </>
       }
     />
@@ -253,7 +253,7 @@ function AdvantagesSection({ t }: { t: (key: string) => string }) {
   )
 }
 
-function CtaSection({ t, locale }: { t: (key: string) => string; locale: string }) {
+function CtaSection({ t }: { t: (key: string) => string }) {
   return (
     <PublicCta
       title={t("public.home.cta_title")}
@@ -262,9 +262,15 @@ function CtaSection({ t, locale }: { t: (key: string) => string; locale: string 
       <GradientButton href={routes.register} className="w-full sm:w-auto">
         {t("public.home.cta_start")}
       </GradientButton>
-      <OutlineCtaButton href={publicRoute(publicPages.consulta, locale)}>
-        {t("public.home.cta_consult")}
-      </OutlineCtaButton>
+      <ConsultationDialog>
+        <Button
+          variant="outline"
+          size="lg"
+          className="w-full sm:w-auto min-h-[44px] text-base border-zinc-600 text-zinc-300 hover:bg-zinc-800 hover:text-white transition-all duration-300"
+        >
+          {t("public.home.cta_consult")}
+        </Button>
+      </ConsultationDialog>
     </PublicCta>
   )
 }

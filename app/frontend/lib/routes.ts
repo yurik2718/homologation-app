@@ -7,9 +7,7 @@ export const publicPages = {
   homologacion: "homologation",
   universidad: "university",
   espanol: "spanish",
-  consulta: "consultation",
   precios: "pricing",
-  consultationThankYou: "consultation-thank-you",
 } as const
 
 export const routes = {

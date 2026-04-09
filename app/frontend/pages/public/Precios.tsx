@@ -26,13 +26,12 @@ import {
   GradientButton,
   PublicHero,
   PublicCta,
-  OutlineCtaButton,
   PublicSection,
   SectionHeading,
 } from "@/components/public/shared"
 import { ConsultationDialog } from "@/components/public/ConsultationDialog"
 import { FaqSection } from "@/components/public/FaqSection"
-import { publicRoute, publicPages, routes } from "@/lib/routes"
+import { routes } from "@/lib/routes"
 import type { SharedProps } from "@/types"
 import type { PublicPageProps } from "@/types/pages"
 
@@ -90,7 +89,6 @@ const testimonialAvatarColors = [
 export default function Precios() {
   const { seo } = usePage<SharedProps & PublicPageProps>().props
   const { t } = useTranslation()
-  const locale = seo.locale
 
   const scrollToPlans = () => {
     document.getElementById("plans")?.scrollIntoView({ behavior: "smooth" })
@@ -358,9 +356,15 @@ export default function Precios() {
         <GradientButton href={routes.register}>
           {t("public.precios.cta_start")}
         </GradientButton>
-        <OutlineCtaButton href={publicRoute(publicPages.consulta, locale)}>
-          {t("public.precios.cta_consult")}
-        </OutlineCtaButton>
+        <ConsultationDialog>
+          <Button
+            variant="outline"
+            size="lg"
+            className="w-full sm:w-auto min-h-[44px] text-base border-zinc-600 text-zinc-300 hover:bg-zinc-800 hover:text-white transition-all duration-300"
+          >
+            {t("public.precios.cta_consult")}
+          </Button>
+        </ConsultationDialog>
       </PublicCta>
     </PublicLayout>
   )

@@ -454,7 +454,6 @@
       "homologacion": "Homologación",
       "universidad": "Universidad",
       "espanol": "Español",
-      "consulta": "Consulta",
       "precios": "Precios",
       "start": "Empezar"
     },
@@ -614,19 +613,6 @@
       "cta_subtitle": "Reserva una consulta con un experto — analizamos tu caso, definimos la ruta y los plazos.",
       "cta_button": "Reservar consulta"
     },
-    "consultation_thank_you": {
-      "title": "Gracias por tu pago!",
-      "subtitle": "Tu consulta está confirmada. Nuestro experto se pondrá en contacto contigo en las próximas 24 horas para acordar el horario.",
-      "next_steps_title": "¿Qué sigue?",
-      "step_1": "Nuestro experto te contactará por WhatsApp o email",
-      "step_2": "Acordaréis un horario conveniente para la consulta",
-      "step_3": "Recibirás un análisis personalizado de tu caso",
-      "contact_title": "Nuestros contactos",
-      "contact_subtitle": "Si tienes preguntas urgentes — escríbenos directamente:",
-      "whatsapp": "WhatsApp",
-      "email": "Email",
-      "back_home": "Volver al inicio"
-    },
     "universidad": {
       "hero_title_1": "Ingresa en una",
       "hero_title_accent": "universidad española",
@@ -700,8 +686,8 @@
       "faq_5_q": "¿Ayudáis con el visado?",
       "faq_5_a": "Orientamos sobre los requisitos de visado de estudiante y te ayudamos a preparar la documentación necesaria para la solicitud.",
       "cta_title": "¿Listo para matricularte?",
-      "cta_subtitle": "Reserva una consulta gratuita — analizamos tu caso en 30 minutos.",
-      "cta_button": "Reservar gratis"
+      "cta_subtitle": "Reserva una consulta con experto — analizamos tu caso en 30 minutos.",
+      "cta_button": "Reservar consulta"
     },
     "espanol": {
       "hero_title_1": "Aprende",
@@ -799,34 +785,6 @@
       "cta_title": "Empieza a hablar español",
       "cta_subtitle": "Clase de prueba gratuita. El profesor evaluará tu nivel y elaborará un plan de estudio."
     },
-    "consulta": {
-      "hero_title_1": "Consulta",
-      "hero_title_accent": "profesional",
-      "hero_subtitle": "Asesoramiento personalizado sobre homologación, acceso universitario y cursos de español por profesionales con experiencia.",
-      "includes_title": "Qué obtienes",
-      "includes_1": "Análisis de tu caso particular y documentación",
-      "includes_2": "Opciones disponibles según tu perfil",
-      "includes_3": "Estimación de plazos y costes",
-      "includes_4": "Plan de acción personalizado",
-      "includes_5": "Respuesta a todas tus preguntas",
-      "pricing_title": "Opciones de consulta",
-      "plan_30_title": "Consulta express",
-      "plan_30_price": "€19",
-      "plan_30_desc": "30 minutos por videollamada. Respuestas rápidas y próximos pasos para tu caso.",
-      "plan_60_title": "Consulta completa",
-      "plan_60_price": "€39",
-      "plan_60_desc": "60 minutos con análisis detallado, revisión de documentos y plan de acción personalizado.",
-      "contact_title": "¿Prefieres contactarnos directamente?",
-      "form_title": "Solicitar consulta",
-      "field_name": "Nombre",
-      "field_email": "Email",
-      "field_phone": "Teléfono",
-      "field_topic": "Tema de consulta",
-      "field_message": "Mensaje (opcional)",
-      "form_submit": "Enviar solicitud",
-      "form_success_title": "¡Solicitud enviada!",
-      "form_success_desc": "Te contactaremos en menos de 24 horas para agendar tu consulta."
-    },
     "precios": {
       "hero_title_1": "Planes para cada",
       "hero_title_accent": "objetivo",
@@ -834,7 +792,7 @@
       "popular": "Más popular",
 
       "hero_action_plans": "Ver planes",
-      "hero_action_consult": "Consulta gratuita",
+      "hero_action_consult": "Consulta de experto",
       "hero_stat_clients": "clientes satisfechos",
       "hero_stat_success": "tasa de éxito",
       "hero_stat_years": "años de experiencia",
