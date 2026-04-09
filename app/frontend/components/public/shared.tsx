@@ -191,13 +191,15 @@ export function PublicSection({
   children,
   className,
   dots = false,
+  id,
 }: {
   children: React.ReactNode
   className?: string
   dots?: boolean
+  id?: string
 }) {
   return (
-    <section className={cn("py-20 sm:py-32 relative", className)}>
+    <section id={id} className={cn("py-20 sm:py-32 relative", className)}>
       {dots && <DotGrid className="opacity-[0.2]" />}
       <Container className="relative">{children}</Container>
     </section>
