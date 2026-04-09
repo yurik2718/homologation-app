@@ -10,6 +10,7 @@ import {
   Link2,
 } from "lucide-react"
 import { UniversityIllustration } from "@/components/public/UniversityIllustration"
+import { UniversityLogoBar } from "@/components/public/UniversityLogoBar"
 import { PublicLayout } from "@/components/layout/PublicLayout"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -134,26 +135,7 @@ export default function Universidad() {
       </PublicSection>
 
       {/* Universities — social proof */}
-      <PublicSection className="bg-slate-50" dots>
-        <SectionHeading
-          title={t("public.universidad.universities_title")}
-          subtitle={t("public.universidad.universities_subtitle")}
-        />
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 max-w-4xl mx-auto">
-          {Array.from({ length: 6 }, (_, i) => (
-            <Reveal key={i} direction="up" delay={i * 80}>
-              <Card className="border transition-all duration-300 hover:shadow-md hover:border-[#2D7FF9]/20 group">
-                <CardContent className="flex items-center gap-3 p-4">
-                  <div className="shrink-0 w-10 h-10 rounded-lg bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
-                    <Building2 className="h-5 w-5 text-[#2D7FF9]/50" />
-                  </div>
-                  <span className="text-sm font-medium">{t(`public.universidad.uni_${i + 1}`)}</span>
-                </CardContent>
-              </Card>
-            </Reveal>
-          ))}
-        </div>
-      </PublicSection>
+      <UniversityLogoBar />
 
       {/* Testimonials */}
       <PublicSection className="bg-white">

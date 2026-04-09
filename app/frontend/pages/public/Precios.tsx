@@ -22,7 +22,6 @@ import { Badge } from "@/components/ui/badge"
 import { SeoHead } from "@/components/public/SeoHead"
 import { Reveal, ShimmerBorder, AnimatedCounter } from "@/components/public/animations"
 import {
-  Container,
   GradientButton,
   PublicHero,
   PublicCta,
@@ -30,6 +29,7 @@ import {
   SectionHeading,
 } from "@/components/public/shared"
 import { ConsultationDialog } from "@/components/public/ConsultationDialog"
+import { UniversityLogoBar } from "@/components/public/UniversityLogoBar"
 import { FaqSection } from "@/components/public/FaqSection"
 import { routes } from "@/lib/routes"
 import type { SharedProps } from "@/types"
@@ -66,16 +66,6 @@ const heroStats = [
   { value: 500, suffix: "+", key: "clients" },
   { value: 98, suffix: "%", key: "success" },
   { value: 5, suffix: "+", key: "years" },
-]
-
-// OPTIONAL: Replace with real university logo images
-const universities = [
-  "Universidad Complutense de Madrid",
-  "Universitat de Barcelona",
-  "Universidad de Salamanca",
-  "Universidad de Granada",
-  "Universitat Politècnica de València",
-  "Universidad Autónoma de Madrid",
 ]
 
 const testimonialAvatarColors = [
@@ -148,24 +138,8 @@ export default function Precios() {
         }
       />
 
-      {/* ── 2. University trust bar ── OPTIONAL: replace text with real logos ──── */}
-      <section className="border-y border-slate-100 py-8 sm:py-10 bg-white/80">
-        <Container>
-          <p className="text-center text-xs uppercase tracking-wider text-muted-foreground mb-6">
-            {t("public.precios.trust_bar_title")} <OptionalBadge />
-          </p>
-          <div className="flex flex-wrap justify-center items-center gap-x-8 sm:gap-x-12 gap-y-3">
-            {universities.map((name) => (
-              <span
-                key={name}
-                className="text-xs sm:text-sm font-semibold text-slate-400 hover:text-slate-600 transition-colors whitespace-nowrap"
-              >
-                {name}
-              </span>
-            ))}
-          </div>
-        </Container>
-      </section>
+      {/* ── 2. University trust bar ─────────────────────────────────────────── */}
+      <UniversityLogoBar />
 
       {/* ── 3. Pricing cards ───────────────────────────────────────────────────── */}
       <PublicSection id="plans" className="bg-white">

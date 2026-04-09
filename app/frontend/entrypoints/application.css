@@ -107,3 +107,8 @@
   50% { transform: translateY(-20px) rotate(5deg); }
 }
 
+@keyframes scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
