@@ -8,7 +8,15 @@ class RegistrationsController < ApplicationController
   end
 
   def create
-    user = User.new(registration_params.merge(has_homologation: true))
+    unless ActiveModel::Type::Boolean.new.cast(params[:privacy_accepted])
+      return redirect_to new_registration_path,
+        inertia: { errors: { privacy_accepted: [ t("errors.messages.accepted") ] } }
+    end
+
+    user = User.new(registration_params.merge(
+      has_homologation: true,
+      privacy_accepted_at: Time.current
+    ))
     if user.save
       user.assign_student_role!
       start_new_session_for(user)

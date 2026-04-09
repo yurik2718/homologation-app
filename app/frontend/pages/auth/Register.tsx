@@ -1,4 +1,3 @@
-import { useState } from "react"
 import { useForm, Link } from "@inertiajs/react"
 import { useTranslation } from "react-i18next"
 import { OAuthButtons } from "@/components/auth/OAuthButtons"
@@ -11,13 +10,12 @@ import { routes } from "@/lib/routes"
 
 export default function Register() {
   const { t } = useTranslation()
-  // privacyAccepted is UI-only state: it gates the submit button but is not sent to the server
-  const [privacyAccepted, setPrivacyAccepted] = useState(false)
   const { data, setData, post, processing, errors } = useForm({
     name: "",
     email_address: "",
     password: "",
     password_confirmation: "",
+    privacy_accepted: false,
   })
 
   function handleSubmit(e: React.FormEvent) {
@@ -93,8 +91,8 @@ export default function Register() {
         <div className="flex items-start gap-2">
           <Checkbox
             id="privacy_accepted"
-            checked={privacyAccepted}
-            onCheckedChange={(checked) => setPrivacyAccepted(checked === true)}
+            checked={data.privacy_accepted}
+            onCheckedChange={(checked) => setData("privacy_accepted", checked === true)}
             className="mt-0.5"
           />
           <Label htmlFor="privacy_accepted" className="text-sm font-normal leading-snug">
@@ -107,12 +105,15 @@ export default function Register() {
             </Link>
           </Label>
         </div>
+        {errors.privacy_accepted && (
+          <p className="text-sm text-destructive">{errors.privacy_accepted}</p>
+        )}
 
         <Button
           type="submit"
           className="w-full"
           size="lg"
-          disabled={processing || !privacyAccepted}
+          disabled={processing || !data.privacy_accepted}
         >
           {processing ? t("common.loading") : t("auth.sign_up")}
         </Button>

@@ -183,6 +183,63 @@ class UserTest < ActiveSupport::TestCase
     assert user.errors[:base].any?
   end
 
+  # --- gdpr_anonymize! ---
+
+  test "gdpr_anonymize! clears all PII fields" do
+    user = create(:user, :student)
+    user.gdpr_anonymize!
+    user.reload
+
+    assert_equal "Deleted User ##{user.id}", user.name
+    assert_equal "deleted_#{user.id}@gdpr.invalid", user.email_address
+    assert_nil user.phone
+    assert_nil user.whatsapp
+    assert_nil user.birthday
+    assert_nil user.country
+    assert_nil user.guardian_name
+    assert_nil user.guardian_email
+    assert_nil user.guardian_phone
+    assert_nil user.guardian_whatsapp
+    assert_nil user.avatar_url
+    assert_nil user.provider
+    assert_nil user.uid
+    assert_nil user.telegram_chat_id
+    assert_nil user.telegram_link_token
+    assert_nil user.amo_crm_contact_id
+    assert_nil user.stripe_customer_id
+  end
+
+  test "gdpr_anonymize! discards the user" do
+    user = create(:user, :student)
+    refute user.discarded?
+    user.gdpr_anonymize!
+    assert user.reload.discarded?
+  end
+
+  test "gdpr_anonymize! destroys all sessions" do
+    user = create(:user, :student)
+    user.sessions.create!
+    user.sessions.create!
+    assert_equal 2, user.sessions.count
+    user.gdpr_anonymize!
+    assert_equal 0, user.sessions.count
+  end
+
+  test "gdpr_anonymize! invalidates password" do
+    user = create(:user, :student)
+    original_digest = user.password_digest
+    user.gdpr_anonymize!
+    refute_equal original_digest, user.reload.password_digest
+  end
+
+  test "gdpr_anonymize! makes email unique per user id" do
+    user1 = create(:user, :student)
+    user2 = create(:user, :student)
+    user1.gdpr_anonymize!
+    user2.gdpr_anonymize!
+    refute_equal user1.reload.email_address, user2.reload.email_address
+  end
+
   test "new student via OAuth gets has_homologation true by default" do
     auth = OmniAuth::AuthHash.new(
       provider: "google_oauth2",

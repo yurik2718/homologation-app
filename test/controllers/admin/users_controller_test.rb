@@ -63,6 +63,41 @@ module Admin
       assert @other_student.reload.discarded?
     end
 
+    # --- gdpr_delete ---
+
+    test "super admin can GDPR delete user and anonymizes PII" do
+      sign_in @admin
+      delete gdpr_delete_admin_user_path(@student)
+
+      @student.reload
+      assert @student.discarded?
+      assert_equal "Deleted User ##{@student.id}", @student.name
+      assert_equal "deleted_#{@student.id}@gdpr.invalid", @student.email_address
+      assert_nil @student.phone
+      assert_nil @student.whatsapp
+      assert_nil @student.birthday
+    end
+
+    test "super admin GDPR delete redirects to users list with notice" do
+      sign_in @admin
+      delete gdpr_delete_admin_user_path(@student)
+      assert_redirected_to admin_users_path
+      assert_equal I18n.t("flash.user_gdpr_deleted"), flash[:notice]
+    end
+
+    test "coordinator cannot GDPR delete user" do
+      sign_in @coordinator
+      delete gdpr_delete_admin_user_path(@student)
+      assert_response :forbidden
+    end
+
+    test "GDPR delete destroys user sessions" do
+      @student.sessions.create!
+      sign_in @admin
+      delete gdpr_delete_admin_user_path(@student)
+      assert_equal 0, @student.reload.sessions.count
+    end
+
     test "users list props include users array" do
       sign_in @admin
       get admin_users_path

@@ -4,6 +4,7 @@ class SettingsControllerTest < ActionDispatch::IntegrationTest
   setup do
     @student = create(:user, :student)
     @coordinator = create(:user, :coordinator)
+    @teacher = create(:user, :teacher)
   end
 
   # --- profile ---
@@ -98,5 +99,56 @@ class SettingsControllerTest < ActionDispatch::IntegrationTest
     sign_in @student
     get "/settings"
     assert_redirected_to settings_profile_path
+  end
+
+  # --- data_export ---
+
+  test "student can download data export as JSON attachment" do
+    sign_in @student
+    get settings_data_export_path
+    assert_response :ok
+    assert_includes response.content_type, "application/json"
+    assert_includes response.headers["Content-Disposition"], "attachment"
+  end
+
+  test "data export contains user profile fields" do
+    sign_in @student
+    get settings_data_export_path
+    data = JSON.parse(response.body)
+
+    assert_equal @student.name, data["user"]["name"]
+    assert_equal @student.email_address, data["user"]["email"]
+    assert data.key?("exported_at")
+  end
+
+  test "data export contains requests and lessons arrays" do
+    sign_in @student
+    get settings_data_export_path
+    data = JSON.parse(response.body)
+
+    assert data.key?("homologation_requests")
+    assert data.key?("lessons")
+    assert_kind_of Array, data["homologation_requests"]
+    assert_kind_of Array, data["lessons"]
+  end
+
+  test "data export filename includes today's date" do
+    sign_in @student
+    get settings_data_export_path
+    assert_includes response.headers["Content-Disposition"], Date.current.to_s
+  end
+
+  test "unauthenticated user cannot access data export" do
+    get settings_data_export_path
+    assert_redirected_to new_session_path
+  end
+
+  test "student cannot download another user's data export" do
+    other = create(:user, :student)
+    sign_in @student
+    # data_export always exports Current.user — no way to specify another user
+    get settings_data_export_path
+    data = JSON.parse(response.body)
+    refute_equal other.email_address, data["user"]["email"]
   end
 end

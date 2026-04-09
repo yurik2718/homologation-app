@@ -59,6 +59,35 @@ class SettingsController < InertiaController
     end
   end
 
+  def data_export
+    authorize @user, :show?, policy_class: ProfilePolicy
+    data = {
+      exported_at: Time.current.iso8601,
+      user: {
+        name: @user.name,
+        email: @user.email_address,
+        phone: @user.phone,
+        whatsapp: @user.whatsapp,
+        birthday: @user.birthday&.iso8601,
+        country: @user.country,
+        locale: @user.locale,
+        created_at: @user.created_at.iso8601,
+        privacy_accepted_at: @user.privacy_accepted_at&.iso8601
+      },
+      homologation_requests: @user.homologation_requests.map { |r|
+        { id: r.id, subject: r.subject, status: r.status,
+          service_type: r.service_type, created_at: r.created_at.iso8601 }
+      },
+      lessons: @user.booked_lessons.map { |l|
+        { id: l.id, scheduled_at: l.scheduled_at&.iso8601, status: l.status }
+      }
+    }
+    send_data data.to_json,
+      filename: "my-data-#{Date.current}.json",
+      type: "application/json",
+      disposition: "attachment"
+  end
+
   def request_deletion
     authorize @user, :update?, policy_class: ProfilePolicy
     return redirect_to settings_account_path if @user.deletion_requested_at.present?

@@ -52,7 +52,7 @@ module Admin
 
     def gdpr_delete
       authorize @user, :destroy?
-      @user.discard
+      @user.gdpr_anonymize!
       redirect_to admin_users_path, notice: t("flash.user_gdpr_deleted")
     end
 

@@ -147,6 +147,18 @@ export default function SettingsAccount() {
               </>
             )}
 
+            {/* GDPR Data Export */}
+            <Separator />
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-sm font-medium">{t("settings.account.data_export")}</h3>
+                <p className="text-xs text-muted-foreground mt-1">{t("settings.account.data_export_description")}</p>
+              </div>
+              <Button variant="outline" className="min-h-[44px]" asChild>
+                <a href={routes.settings.dataExport}>{t("settings.account.data_export_download")}</a>
+              </Button>
+            </div>
+
             {/* Danger Zone */}
             <Separator />
             <div className="space-y-4">

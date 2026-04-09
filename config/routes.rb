@@ -16,6 +16,7 @@ Rails.application.routes.draw do
   get "settings/notifications",      to: "settings#notifications",  as: :settings_notifications
   patch "settings/notifications",     to: "settings#update_notifications"
   post "settings/request_deletion",   to: "settings#request_deletion",   as: :settings_request_deletion
+  get  "settings/data-export",        to: "settings#data_export",         as: :settings_data_export
   post "settings/connect_telegram",   to: "settings#connect_telegram",   as: :settings_connect_telegram
   delete "settings/disconnect_telegram", to: "settings#disconnect_telegram", as: :settings_disconnect_telegram
 

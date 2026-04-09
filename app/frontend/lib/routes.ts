@@ -30,6 +30,7 @@ export const routes = {
     account: "/settings/account",
     notifications: "/settings/notifications",
     requestDeletion: "/settings/request_deletion",
+    dataExport: "/settings/data-export",
     connectTelegram: "/settings/connect_telegram",
     disconnectTelegram: "/settings/disconnect_telegram",
   },

@@ -77,6 +77,33 @@ class User < ApplicationRecord
     user_roles.create!(role: Role.find_by!(name: "student"))
   end
 
+  def gdpr_anonymize!
+    transaction do
+      update_columns(
+        name:                "Deleted User ##{id}",
+        email_address:       "deleted_#{id}@gdpr.invalid",
+        phone:               nil,
+        whatsapp:            nil,
+        guardian_name:       nil,
+        guardian_email:      nil,
+        guardian_phone:      nil,
+        guardian_whatsapp:   nil,
+        birthday:            nil,
+        country:             nil,
+        password_digest:     SecureRandom.hex(32),
+        provider:            nil,
+        uid:                 nil,
+        avatar_url:          nil,
+        telegram_chat_id:    nil,
+        telegram_link_token: nil,
+        amo_crm_contact_id:  nil,
+        stripe_customer_id:  nil,
+        discarded_at:        Time.current
+      )
+      sessions.destroy_all
+    end
+  end
+
   def profile_complete?
     birthday.present? && country.present? && whatsapp.present?
   end
