@@ -1,0 +1,157 @@
+{
+  // ─── Editor ──────────────────────────────────────────────────
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.rulers": [120],
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit"
+  },
+  "editor.inlineSuggest.enabled": true,
+  "editor.suggest.preview": true,
+  "editor.wordWrap": "off",
+  "editor.stickyScroll.enabled": true,
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": true,
+
+  // ─── Ruby / Rails ─────────────────────────────────────────────
+  "[ruby]": {
+    "editor.defaultFormatter": "Shopify.ruby-lsp",
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2
+  },
+  "rubyLsp.formatter": "rubocop",
+  "rubyLsp.enabledFeatures": {
+    "diagnostics": true,
+    "formatting": true,
+    "codeActions": true,
+    "inlayHints": true,
+    "hover": true,
+    "completion": true,
+    "definition": true,
+    "references": true,
+    "rename": true,
+    "signatureHelp": true,
+    "documentHighlights": true,
+    "foldingRanges": true
+  },
+  "rubyLsp.rubyVersionManager": {
+    "identifier": "mise"
+  },
+
+  // ─── TypeScript / React ───────────────────────────────────────
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "javascript.preferences.importModuleSpecifier": "non-relative",
+
+  // ─── Tailwind CSS ─────────────────────────────────────────────
+  "tailwindCSS.includeLanguages": {
+    "ruby": "html",
+    "erb": "html"
+  },
+  "tailwindCSS.experimental.classRegex": [
+    ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
+    ["cx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"],
+    ["cn\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
+  ],
+  "tailwindCSS.files.exclude": ["**/.git/**", "**/node_modules/**", "**/.hg/**", "**/storage/**"],
+
+  // ─── Emmet ────────────────────────────────────────────────────
+  "emmet.includeLanguages": {
+    "ruby": "html",
+    "erb": "html",
+    "typescriptreact": "html",
+    "javascriptreact": "html"
+  },
+
+  // ─── File Associations ────────────────────────────────────────
+  "files.associations": {
+    "*.erb": "erb",
+    "Gemfile": "ruby",
+    "Gemfile.lock": "ruby",
+    "Rakefile": "ruby",
+    "Procfile": "shellscript",
+    "Procfile.*": "shellscript",
+    "*.yml.erb": "erb"
+  },
+
+  // ─── File Nesting ─────────────────────────────────────────────
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    "*.ts": "${capture}.test.ts, ${capture}.spec.ts",
+    "*.tsx": "${capture}.test.tsx, ${capture}.spec.tsx",
+    "tsconfig.json": "tsconfig.*.json",
+    "package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml, .npmrc, .nvmrc",
+    "vite.config.*": "vite.config.*.ts, vite.config.*.js",
+    "Gemfile": "Gemfile.lock, .ruby-version"
+  },
+
+  // ─── Search / File Exclusions ─────────────────────────────────
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/storage": true,
+    "**/.git": true,
+    "**/log": true,
+    "**/tmp": true,
+    "**/coverage": true,
+    "**/.bundle": true
+  },
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/storage/**": true,
+    "**/tmp/**": true,
+    "**/log/**": true,
+    "**/.git/**": true
+  },
+  "files.exclude": {
+    "**/.bundle": true,
+    "**/node_modules": false
+  },
+
+  // ─── Git ──────────────────────────────────────────────────────
+  "gitlens.codeLens.enabled": true,
+  "gitlens.currentLine.enabled": true,
+  "git.autofetch": true,
+
+  // ─── Terminal ─────────────────────────────────────────────────
+  "terminal.integrated.env.linux": {
+    "RUBY_DEBUG_OPEN": "true"
+  },
+  "terminal.integrated.defaultProfile.linux": "bash",
+
+  // ─── i18n Ally (translations) ─────────────────────────────────
+  "i18nAlly.localesPaths": ["config/locales", "app/frontend/locales"],
+  "i18nAlly.keystyle": "nested",
+  "i18nAlly.sourceLanguage": "ru",
+  "i18nAlly.displayLanguage": "ru",
+  "i18nAlly.enabledFrameworks": ["react-i18next", "i18next", "rails"],
+
+  // ─── Misc ─────────────────────────────────────────────────────
+  "json.schemas": [],
+  "editor.quickSuggestions": {
+    "strings": true
+  },
+  "i18n-ally.localesPaths": [
+    "config/locales",
+    "app/frontend/locales"
+  ]
+}

@@ -1,8 +1,5 @@
 es:
   activerecord:
-    errors:
-      messages:
-        record_invalid: "La validación falló: %{errors}"
     models:
       homologation_request: "Solicitud de homologación"
       user: "Usuario"
@@ -25,6 +22,8 @@ es:
         guardian_phone: "Teléfono del tutor"
         guardian_whatsapp: "WhatsApp del tutor"
     errors:
+      messages:
+        record_invalid: "La validación falló: %{errors}"
       models:
         homologation_request:
           attributes:

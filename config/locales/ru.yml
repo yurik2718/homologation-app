@@ -22,6 +22,8 @@ ru:
         guardian_phone: "Телефон опекуна"
         guardian_whatsapp: "WhatsApp опекуна"
     errors:
+      messages:
+        record_invalid: "Валидация провалилась: %{errors}"
       models:
         homologation_request:
           attributes:

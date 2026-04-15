@@ -22,6 +22,8 @@ en:
         guardian_phone: "Guardian phone"
         guardian_whatsapp: "Guardian WhatsApp"
     errors:
+      messages:
+        record_invalid: "Validation failed: %{errors}"
       models:
         homologation_request:
           attributes:

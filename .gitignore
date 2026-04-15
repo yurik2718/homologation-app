@@ -43,3 +43,10 @@ node_modules
 *.local
 
 _reference/
+
+# IDE
+.idea/
+.vscode/*.local
+
+# Claude Code local settings (machine-specific, not for repo)
+.claude/settings.local.json

@@ -14,7 +14,8 @@ Rails.application.configure do
     if Rails.env.development?
       vite_host = "http://#{ViteRuby.config.host_with_port}"
       ws_host   = "ws://#{ViteRuby.config.host_with_port}"
-      policy.script_src *policy.script_src, :unsafe_eval, vite_host
+      # :unsafe_inline is required for Vite's React Refresh preamble (inline <script>)
+      policy.script_src *policy.script_src, :unsafe_inline, :unsafe_eval, vite_host
       policy.style_src  *policy.style_src, vite_host
       policy.connect_src *policy.connect_src, vite_host, ws_host
     end

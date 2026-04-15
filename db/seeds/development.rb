@@ -93,7 +93,7 @@ def find_role(name)
   Role.find_by!(name: name)
 end
 
-def seed_user(email:, name:, role_name:, locale: "es", country: "ES")
+def seed_user(email:, name:, role_name:, locale: "es", country: "ES", has_homologation: true, has_education: false)
   role = find_role(role_name)
   user = User.find_or_initialize_by(email_address: email)
   user.assign_attributes(
@@ -104,7 +104,9 @@ def seed_user(email:, name:, role_name:, locale: "es", country: "ES")
     birthday: Faker::Date.birthday(min_age: 20, max_age: 45),
     notification_email: true,
     notification_telegram: false,
-    is_minor: false
+    is_minor: false,
+    has_homologation: has_homologation,
+    has_education: has_education
   )
   user.password = PASSWORD if user.new_record?
   user.save!
