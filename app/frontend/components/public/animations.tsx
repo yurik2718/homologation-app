@@ -226,33 +226,39 @@ export function TiltCard({
 }
 
 // ─── Spotlight — mouse-following spotlight for hero sections ─────────────────
+// Animates via `transform: translate3d` (compositor-only, no layout) instead
+// of `left`/`top` with `transition-all` — the latter forced layout on every
+// tick and caused CLS ≈0.4 on hero-heavy pages. Skipped on coarse-pointer
+// devices where the effect has no value and the initial-mount transform was
+// itself the shift source.
 export function Spotlight({ className = "" }: { className?: string }) {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [position, setPosition] = useState({ x: 50, y: 50 })
+  const blobRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    if (window.matchMedia("(pointer: coarse)").matches) return
     const handleMouseMove = (e: MouseEvent) => {
-      const el = containerRef.current
-      if (!el) return
-      const rect = el.getBoundingClientRect()
-      setPosition({
-        x: ((e.clientX - rect.left) / rect.width) * 100,
-        y: ((e.clientY - rect.top) / rect.height) * 100,
-      })
+      const container = containerRef.current
+      const blob = blobRef.current
+      if (!container || !blob) return
+      const rect = container.getBoundingClientRect()
+      const x = e.clientX - rect.left - 300
+      const y = e.clientY - rect.top - 300
+      blob.style.transform = `translate3d(${x}px, ${y}px, 0)`
     }
-    window.addEventListener("mousemove", handleMouseMove)
+    window.addEventListener("mousemove", handleMouseMove, { passive: true })
     return () => window.removeEventListener("mousemove", handleMouseMove)
   }, [])
 
   return (
     <div ref={containerRef} className={`absolute inset-0 overflow-hidden pointer-events-none ${className}`}>
       <div
-        className="absolute w-[600px] h-[600px] rounded-full transition-all duration-300 ease-out"
+        ref={blobRef}
+        className="absolute top-0 left-0 w-[600px] h-[600px] rounded-full will-change-transform"
         style={{
           background: "radial-gradient(circle, rgba(45,127,249,0.06) 0%, transparent 70%)",
-          left: `${position.x}%`,
-          top: `${position.y}%`,
-          transform: "translate(-50%, -50%)",
+          transition: "transform 300ms ease-out",
+          transform: "translate3d(-100px, -100px, 0)",
         }}
       />
     </div>
