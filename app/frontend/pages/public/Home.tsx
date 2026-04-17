@@ -110,7 +110,7 @@ function HeroSection({ t }: { t: (key: string) => string }) {
   const stats = [
     { value: "500+", label: t("public.home.stat_students") },
     { value: "98%", label: t("public.home.stat_success") },
-    { value: "10+", label: t("public.home.stat_years") },
+    { value: "15+", label: t("public.home.stat_years") },
     { value: "20+", label: t("public.home.stat_countries") },
   ]
 

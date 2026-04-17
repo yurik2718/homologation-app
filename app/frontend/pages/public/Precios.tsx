@@ -65,7 +65,7 @@ const comparisonMatrix: [boolean, boolean, boolean][] = [
 const heroStats = [
   { value: 500, suffix: "+", key: "clients" },
   { value: 98, suffix: "%", key: "success" },
-  { value: 5, suffix: "+", key: "years" },
+  { value: 15, suffix: "+", key: "years" },
 ]
 
 const testimonialAvatarColors = [

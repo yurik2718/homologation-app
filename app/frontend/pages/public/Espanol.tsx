@@ -222,7 +222,7 @@ export default function Espanol() {
             { value: 100, suffix: "+", key: "students" },
             { value: 85, suffix: "%", key: "dele" },
             { value: 4, suffix: "", key: "months" },
-            { value: 10, suffix: "+", key: "years" },
+            { value: 15, suffix: "+", key: "years" },
           ].map(({ value, suffix, key }, i) => (
             <Reveal key={key} direction="up" delay={i * 150}>
               <div className="p-4 sm:p-6">

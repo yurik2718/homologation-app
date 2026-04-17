@@ -75,34 +75,71 @@ export default function Homologacion() {
           </ConsultationDialog>
         }
         footer={
-          <div className="flex flex-wrap items-center gap-x-2 sm:gap-x-6 gap-y-1 text-sm text-muted-foreground">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-xl">
             {[
-              { value: "500+", key: "homologations" },
-              { value: "20+", key: "countries" },
-              { value: "10+", key: "years" },
-            ].map(({ value, key }, i) => (
-              <div key={key} className="flex items-center gap-x-2 sm:gap-x-6">
-                {i > 0 && <span className="text-border">·</span>}
-                <span>
-                  <span className="font-semibold text-foreground">{value}</span>{" "}
-                  {t(`public.homologacion.hero_stat_${key}`)}
-                </span>
+              { icon: Clock, valueKey: "hero_fact_time_value", labelKey: "hero_fact_time_label" },
+              { icon: FileCheck, valueKey: "hero_fact_docs_value", labelKey: "hero_fact_docs_label" },
+              { icon: Award, valueKey: "hero_fact_success_value", labelKey: "hero_fact_success_label" },
+            ].map(({ icon: Icon, valueKey, labelKey }) => (
+              <div
+                key={valueKey}
+                className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white/70 backdrop-blur-sm px-4 py-3 shadow-sm"
+              >
+                <div className="shrink-0 rounded-lg bg-gradient-to-br from-[#E8453C]/10 to-[#2D7FF9]/10 p-2">
+                  <Icon className="h-5 w-5 text-[#2D7FF9]" />
+                </div>
+                <div className="min-w-0">
+                  <div className="text-sm font-bold text-foreground leading-tight">
+                    {t(`public.homologacion.${valueKey}`)}
+                  </div>
+                  <div className="text-xs text-muted-foreground leading-tight mt-0.5">
+                    {t(`public.homologacion.${labelKey}`)}
+                  </div>
+                </div>
               </div>
             ))}
           </div>
         }
         illustration={
-          <div className="relative">
-            <div className="absolute -inset-4 rounded-2xl bg-gradient-to-br from-[#E8453C]/20 to-[#2D7FF9]/20 blur-2xl" />
+          <div className="relative w-full max-w-md mx-auto lg:mx-0 lg:ml-auto">
+            <div className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-[#E8453C]/25 to-[#2D7FF9]/25 blur-3xl" />
             <img
-              src="/images/hero_team.webp"
+              src="/images/hero_homologacion.webp"
               alt={t("public.homologacion.hero_photo_alt")}
-              width={457}
-              height={418}
+              width={914}
+              height={836}
               fetchPriority="high"
               decoding="async"
-              className="relative rounded-2xl shadow-2xl shadow-[#2D7FF9]/10 w-full h-auto object-cover"
+              className="relative rounded-2xl shadow-2xl shadow-[#2D7FF9]/20 w-full h-auto object-cover"
             />
+            <div className="absolute top-3 left-3 z-10 flex items-center gap-1.5 rounded-full bg-black/55 backdrop-blur-sm px-2.5 py-1 text-[11px] font-medium text-white/95 pointer-events-none">
+              <Building2 className="h-3 w-3 shrink-0" />
+              <span>{t("public.homologacion.hero_caption_place")}</span>
+            </div>
+            <div
+              className="absolute -top-4 -right-3 sm:-right-6 z-20 bg-white border border-slate-100 shadow-xl rounded-xl px-3.5 py-2.5 flex items-center gap-2 text-xs font-semibold"
+              style={{ animation: "float 6s ease-in-out infinite" }}
+              aria-hidden="true"
+            >
+              <div className="shrink-0 h-5 w-5 rounded-full bg-emerald-500/15 flex items-center justify-center">
+                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+              </div>
+              <span className="text-slate-800">
+                {t("public.homologacion.hero_badge_result")}
+              </span>
+            </div>
+            <div
+              className="absolute -bottom-4 -left-3 sm:-left-6 z-20 bg-white border border-slate-100 shadow-xl rounded-xl px-3.5 py-2.5 flex items-center gap-2 text-xs font-semibold"
+              style={{ animation: "float 7s ease-in-out infinite", animationDelay: "1.5s" }}
+              aria-hidden="true"
+            >
+              <div className="shrink-0 h-5 w-5 rounded-full bg-[#2D7FF9]/15 flex items-center justify-center">
+                <Award className="h-3.5 w-3.5 text-[#2D7FF9]" />
+              </div>
+              <span className="text-slate-800">
+                {t("public.homologacion.hero_badge_experience")}
+              </span>
+            </div>
           </div>
         }
       />
@@ -208,7 +245,7 @@ export default function Homologacion() {
           {[
             { value: 500, suffix: "+", key: "clients" },
             { value: 20, suffix: "+", key: "countries" },
-            { value: 10, suffix: "+", key: "years" },
+            { value: 15, suffix: "+", key: "years" },
           ].map(({ value, suffix, key }, i) => (
             <Reveal key={key} direction="up" delay={i * 150}>
               <div className="p-4 sm:p-6">
