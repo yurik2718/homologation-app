@@ -500,6 +500,10 @@
       "rights": "Todos los derechos reservados.",
       "address": "Madrid, España"
     },
+    "sticky_cta": {
+      "consultation": "Reserva tu consulta",
+      "whatsapp_aria": "Escríbenos por WhatsApp"
+    },
     "home": {
       "hero_title_1": "Homologación de tu título en España —",
       "hero_title_accent": "sin burocracia ni estrés",
@@ -572,7 +576,18 @@
       "cta_title": "Da el primer paso hoy",
       "cta_subtitle": "El plazo de solicitudes está abierto — empieza ahora para no esperar al siguiente semestre.",
       "cta_final_start": "Reserva tu consulta",
-      "cta_final_register": "Crear cuenta"
+      "cta_final_register": "Crear cuenta",
+      "faq_title": "Preguntas frecuentes",
+      "faq_1_q": "¿Qué es la homologación y para qué sirve?",
+      "faq_1_a": "Es el reconocimiento oficial de tu título extranjero por el Ministerio de Educación de España. Te permite ejercer tu profesión, acceder a másteres, oposiciones o seguir estudiando en una universidad española.",
+      "faq_2_q": "¿Cuánto tiempo tarda el proceso?",
+      "faq_2_a": "Entre 6 meses y 2 años según el tipo de título y la vía. Preparamos la documentación en unas semanas; el resto del plazo depende del Ministerio. Tu tutor te mantiene informado en tu cuenta personal.",
+      "faq_3_q": "¿Cuánto cuesta el servicio?",
+      "faq_3_a": "Tenemos tres planes, desde el básico hasta el acompañamiento completo. El coste del servicio no incluye las tasas oficiales ni la traducción jurada, que se pagan aparte al organismo correspondiente. Consulta la página de tarifas para más detalles.",
+      "faq_4_q": "¿Necesito saber español?",
+      "faq_4_a": "Para la homologación no hace falta. Para estudiar o trabajar en España, casi siempre sí. Ofrecemos clases online con profesores nativos para prepararte a tu ritmo, del A1 al C2.",
+      "faq_5_q": "¿Qué hacen ustedes y qué hago yo?",
+      "faq_5_a": "Nosotros llevamos todos los trámites: análisis del caso, documentación, traducción jurada, apostilla, seguimiento ministerial y comunicaciones oficiales. Tú nos envías los escaneos originales y firmas cuando hace falta. Todo desde tu cuenta personal."
     },
     "homologacion": {
       "hero_title_1": "Homologación de títulos",

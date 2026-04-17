@@ -9,6 +9,8 @@ import {
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetClose, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet"
 import { LanguageSwitcher } from "@/components/common/LanguageSwitcher"
+import { SiteBreadcrumbs } from "@/components/public/SiteBreadcrumbs"
+import { StickyCtaBar } from "@/components/public/StickyCtaBar"
 import { publicRoute, publicPages, routes } from "@/lib/routes"
 import { CONTACT_EMAIL, CONTACT_WHATSAPP, formatPhone } from "@/lib/constants"
 import type { PublicPageProps } from "@/types/pages"
@@ -26,12 +28,18 @@ export function PublicLayout({ children }: PublicLayoutProps) {
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const locale = useLocale()
+  const breadcrumbs = usePage<PublicPageProps>().props.seo?.breadcrumbs ?? []
 
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar t={t} locale={locale} open={open} setOpen={setOpen} />
-      <main className="flex-1">{children}</main>
+      <SiteBreadcrumbs items={breadcrumbs} />
+      {/* Mobile sticky bar adds ~68 px of bottom overlap — pad the main
+          region so the final CTA isn't hidden. Desktop shows only the FAB,
+          which doesn't overlap content. */}
+      <main className="flex-1 pb-[72px] lg:pb-0">{children}</main>
       <Footer t={t} locale={locale} />
+      <StickyCtaBar />
     </div>
   )
 }

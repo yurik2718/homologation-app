@@ -1,4 +1,5 @@
 import { Head } from "@inertiajs/react"
+import type { BreadcrumbItemData } from "@/components/public/SiteBreadcrumbs"
 
 export interface SeoProps {
   title: string
@@ -8,6 +9,7 @@ export interface SeoProps {
   canonicalUrl?: string
   structuredData?: Record<string, unknown>[]
   ogImage?: string
+  breadcrumbs?: BreadcrumbItemData[]
 }
 
 export function SeoHead({

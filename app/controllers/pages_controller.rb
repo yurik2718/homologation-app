@@ -62,8 +62,31 @@ class PagesController < ApplicationController
       canonicalUrl: localized_page_url(locale),
       title: t("seo.#{action_name}.title"),
       description: t("seo.#{action_name}.description"),
-      structuredData: structured_data_for(action_name, request, locale)
+      structuredData: structured_data_for(action_name, request, locale),
+      breadcrumbs: breadcrumb_items_for(action_name, locale)
     }
+  end
+
+  # Visible breadcrumb chain. Mirrors the BreadcrumbList JSON-LD so UI and
+  # structured data stay in lockstep. Home pages return an empty list — no
+  # visible breadcrumbs at the root.
+  def breadcrumb_items_for(action_name, locale)
+    home_label = I18n.t("seo.breadcrumbs.home", locale: locale, default: "Home")
+    case action_name
+    when "homologation", "university", "spanish", "pricing"
+      page_label = I18n.t("seo.#{action_name}.title", locale: locale)
+      [
+        { name: home_label, href: "/#{locale}" },
+        { name: page_label, href: nil }
+      ]
+    when "consultation_thank_you"
+      [
+        { name: home_label, href: "/#{locale}" },
+        { name: I18n.t("seo.consultation_thank_you.title", locale: locale), href: nil }
+      ]
+    else
+      []
+    end
   end
 
   def localized_page_url(locale)

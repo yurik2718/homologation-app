@@ -491,6 +491,10 @@
       "start": "Get Started",
       "start_aria": "Create an account and start your homologation"
     },
+    "sticky_cta": {
+      "consultation": "Book a consultation",
+      "whatsapp_aria": "Message us on WhatsApp"
+    },
     "footer": {
       "tagline": "Your trusted platform for degree homologation and access to education in Spain.",
       "services": "Services",
@@ -572,7 +576,18 @@
       "cta_title": "Take the first step today",
       "cta_subtitle": "Applications are open — start now so you don't have to wait another semester.",
       "cta_final_start": "Book a consultation",
-      "cta_final_register": "Create account"
+      "cta_final_register": "Create account",
+      "faq_title": "Frequently asked questions",
+      "faq_1_q": "What is homologation and why do I need it?",
+      "faq_1_a": "It's the official recognition of your foreign degree by Spain's Ministry of Education. It lets you practise your profession, apply to master's programmes, sit public exams or keep studying at a Spanish university.",
+      "faq_2_q": "How long does the process take?",
+      "faq_2_a": "Between 6 months and 2 years, depending on the degree and pathway. We prepare the paperwork in a few weeks; the rest is the Ministry's timeline. Your advisor keeps you updated in your personal account.",
+      "faq_3_q": "How much does the service cost?",
+      "faq_3_a": "Three plans, from basic to fully managed. The service fee doesn't include official fees or sworn translations, which you pay directly to the relevant body. See our pricing page for the full breakdown.",
+      "faq_4_q": "Do I need to speak Spanish?",
+      "faq_4_a": "Not for homologation itself. To study or work in Spain, you usually do. We offer online classes with native teachers so you can build up to the level you need (A1–C2) at your own pace.",
+      "faq_5_q": "What do you do, and what do I do?",
+      "faq_5_a": "We handle every step: case review, document prep, sworn translation, apostille, ministry follow-up and official communications. You just send us scans of the originals and sign when required. Everything lives in your personal account."
     },
     "homologacion": {
       "hero_title_1": "Degree Homologation",

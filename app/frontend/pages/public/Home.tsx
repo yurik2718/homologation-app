@@ -31,6 +31,7 @@ import { ConsultationDialog } from "@/components/public/ConsultationDialog"
 import { TestimonialsSection } from "@/components/public/TestimonialsSection"
 import { UniversityLogoBar } from "@/components/public/UniversityLogoBar"
 import { TimelineSection } from "@/components/public/TimelineSection"
+import { FaqSection } from "@/components/public/FaqSection"
 import { publicRoute, publicPages, routes } from "@/lib/routes"
 import type { SharedProps } from "@/types"
 import type { PublicPageProps } from "@/types/pages"
@@ -50,6 +51,7 @@ export default function Home() {
       <TestimonialsBlock t={t} />
       <MidPageCta t={t} />
       <AppPlatformSection t={t} />
+      <FaqBlock t={t} />
       <CtaSection t={t} />
     </PublicLayout>
   )
@@ -394,6 +396,17 @@ function AppPlatformSection({ t }: { t: (key: string) => string }) {
           </div>
         </Reveal>
       </div>
+    </PublicSection>
+  )
+}
+
+/* ── FAQ — top-of-funnel objections ─────────────────────────────────────────── */
+
+function FaqBlock({ t }: { t: (key: string) => string }) {
+  return (
+    <PublicSection className="bg-slate-50" dots>
+      <SectionHeading title={t("public.home.faq_title")} />
+      <FaqSection translationPrefix="public.home" count={5} />
     </PublicSection>
   )
 }
