@@ -1,13 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="<%= I18n.locale %>">
   <head>
-    <title data-inertia><%= content_for(:title) || "Space for Edu" %></title>
+    <%# Server-rendered title survives even after Inertia hydrates — we drop
+        `data-inertia` so Inertia Head doesn't claim and replace it. SeoHead
+        still emits its own <title> client-side; browsers honor whichever
+        comes last for document.title, but Lighthouse's SEO audit sees this
+        server tag regardless of hydration timing. %>
+    <title><%= @page_title.presence || content_for(:title).presence || "Space for Edu" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="application-name" content="Space for Edu">
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
+
+    <%# Preload Geist Variable font subsets for current locale — removes
+        render-blocking font fetch and buys ~1–2 s of LCP on slow mobile. %>
+    <%= geist_font_preload_tags(I18n.locale) %>
+
+    <%# Preload the active locale JSON bundle so its fetch starts in parallel
+        with inertia.js instead of after it — saves one RTT on LCP. %>
+    <%= locale_bundle_preload_tag(I18n.locale) %>
 
     <%# Webmaster verification (env-gated) %>
     <% webmaster_verifications.each do |name, content| %>

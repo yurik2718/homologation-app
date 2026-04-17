@@ -97,7 +97,11 @@ export default function Homologacion() {
             <img
               src="/images/hero_team.webp"
               alt={t("public.homologacion.hero_photo_alt")}
-              className="relative rounded-2xl shadow-2xl shadow-[#2D7FF9]/10 w-full object-cover"
+              width={457}
+              height={418}
+              fetchPriority="high"
+              decoding="async"
+              className="relative rounded-2xl shadow-2xl shadow-[#2D7FF9]/10 w-full h-auto object-cover"
             />
           </div>
         }

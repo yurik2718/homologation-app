@@ -95,7 +95,7 @@ function Navbar({
               {t("auth.sign_in")}
             </Button>
           </Link>
-          <Link href={routes.register}>
+          <Link href={routes.register} aria-label={t("public.nav.start_aria")}>
             <Button className="min-h-[44px] bg-gradient-to-r from-[#E8453C] to-[#2D7FF9] hover:opacity-90 border-0">
               {t("public.nav.start")}
             </Button>
@@ -167,7 +167,7 @@ function Navbar({
                     {t("auth.sign_in")}
                   </Button>
                 </Link>
-                <Link href={routes.register} onClick={() => setOpen(false)} className="block">
+                <Link href={routes.register} onClick={() => setOpen(false)} className="block" aria-label={t("public.nav.start_aria")}>
                   <Button className="w-full min-h-[44px] bg-gradient-to-r from-[#E8453C] to-[#2D7FF9] hover:opacity-90 border-0">
                     {t("public.nav.start")}
                   </Button>
@@ -248,22 +248,26 @@ function Footer({ t, locale }: { t: (key: string) => string; locale: string }) {
               {t("public.footer.contact")}
             </h3>
             <ul className="space-y-2 text-sm">
-              <li>
-                <a href={`mailto:${CONTACT_EMAIL}`} className="hover:text-white transition-colors">
-                  {CONTACT_EMAIL}
-                </a>
-              </li>
-              <li>
-                <a href={`https://wa.me/${CONTACT_WHATSAPP}`} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
-                  {formatPhone(CONTACT_WHATSAPP)}
-                </a>
-              </li>
+              {CONTACT_EMAIL && (
+                <li>
+                  <a href={`mailto:${CONTACT_EMAIL}`} className="hover:text-white transition-colors">
+                    {CONTACT_EMAIL}
+                  </a>
+                </li>
+              )}
+              {CONTACT_WHATSAPP && (
+                <li>
+                  <a href={`https://wa.me/${CONTACT_WHATSAPP}`} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                    {formatPhone(CONTACT_WHATSAPP)}
+                  </a>
+                </li>
+              )}
               <li>{t("public.footer.address")}</li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-zinc-800 mt-10 pt-6 text-center text-xs text-zinc-500">
+        <div className="border-t border-zinc-800 mt-10 pt-6 text-center text-xs text-zinc-400">
           © {new Date().getFullYear()} Space for Edu. {t("public.footer.rights")}
         </div>
       </div>

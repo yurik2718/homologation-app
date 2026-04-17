@@ -488,7 +488,8 @@
       "universidad": "Universidad",
       "espanol": "Español",
       "precios": "Precios",
-      "start": "Empezar"
+      "start": "Empezar",
+      "start_aria": "Crear cuenta y empezar la homologación"
     },
     "footer": {
       "tagline": "Tu plataforma de confianza para la homologación de títulos y acceso a la educación en España.",

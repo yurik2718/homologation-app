@@ -1,12 +1,13 @@
-import { initSentry } from "@/lib/sentry"
-import "@/lib/i18n" // Must be imported BEFORE any components
+import i18n, { i18nReady } from "@/lib/i18n" // Must be imported BEFORE any components so useTranslation sees the config
 import { createInertiaApp, type ResolvedComponent } from "@inertiajs/react"
 import { router } from "@inertiajs/react"
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
-import { AuthLayout } from "@/components/layout/AuthLayout"
 import { initCookieConsent, setCookieConsentLanguage } from "@/lib/cookieConsent"
 import { detectLocale } from "@/lib/consent"
+
+// Silence lint: i18n must be imported for the side-effect config above, we never read the default export here.
+void i18n
 
 void createInertiaApp({
   resolve: async (name) => {
@@ -20,12 +21,13 @@ void createInertiaApp({
 
     const page = await loader()
 
-    // Auth pages get AuthLayout as default persistent layout.
-    // Authenticated pages manage their own layout (AuthenticatedLayout)
-    // in the component JSX — this avoids double-rendering.
+    // Auth pages get AuthLayout as their persistent layout. We dynamic-import
+    // here so AuthLayout (and its icon/shadcn deps) never enter the public-page
+    // critical path — ~40 KB min+gz that unauth-exposed users never need.
     if (page?.default) {
       const isAuthPage = name.startsWith("auth/")
       if (isAuthPage && !page.default.layout) {
+        const { AuthLayout } = await import("@/components/layout/AuthLayout")
         page.default.layout = (children: React.ReactNode) => (
           <AuthLayout>{children}</AuthLayout>
         )
@@ -36,16 +38,35 @@ void createInertiaApp({
   },
 
   setup({ el, App, props }) {
-    initSentry()
     initCookieConsent()
     router.on("navigate", () => {
       setCookieConsentLanguage(detectLocale())
     })
-    createRoot(el).render(
-      <StrictMode>
-        <App {...props} />
-      </StrictMode>
-    )
+
+    // Gate first render on the active locale JSON arriving — otherwise the
+    // hero text flashes raw i18n keys for one paint. The bundle is a separate
+    // chunk per locale, so total public-page JS is −120 to −140 KB.
+    void i18nReady.then(() => {
+      createRoot(el).render(
+        <StrictMode>
+          <App {...props} />
+        </StrictMode>
+      )
+
+      // Error tracking is not on the critical path — defer so it can't block
+      // hydration. Runs when the browser is idle (or 2 s later if no idle event).
+      const scheduleSentry = (cb: () => void) => {
+        const w = window as Window & { requestIdleCallback?: (cb: () => void, opts?: { timeout?: number }) => number }
+        if (typeof w.requestIdleCallback === "function") {
+          w.requestIdleCallback(cb, { timeout: 2000 })
+        } else {
+          setTimeout(cb, 2000)
+        }
+      }
+      scheduleSentry(() => {
+        void import("@/lib/sentry").then(({ initSentry }) => initSentry())
+      })
+    })
   },
 
   defaults: {

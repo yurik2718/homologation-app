@@ -488,7 +488,8 @@
       "universidad": "University",
       "espanol": "Spanish",
       "precios": "Pricing",
-      "start": "Get Started"
+      "start": "Get Started",
+      "start_aria": "Create an account and start your homologation"
     },
     "footer": {
       "tagline": "Your trusted platform for degree homologation and access to education in Spain.",

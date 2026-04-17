@@ -3,6 +3,10 @@ class PagesController < ApplicationController
 
   allow_unauthenticated_access
   before_action :resume_session
+  # Server-render the page title into the layout. Inertia Head still manages
+  # it on client navigation, but this closes the hydration gap where Lighthouse
+  # (and non-JS crawlers) saw only the "Space for Edu" fallback.
+  before_action :set_page_title, only: %i[home homologation university spanish pricing consultation_thank_you privacy_policy]
 
   def redirect_to_locale
     locale = current_user&.locale || detect_locale
@@ -38,6 +42,10 @@ class PagesController < ApplicationController
   end
 
   private
+
+  def set_page_title
+    @page_title = I18n.t("seo.#{action_name}.title", default: nil)
+  end
 
   SUPPORTED_LOCALES = I18n.available_locales.map(&:to_s).freeze
   DEFAULT_LOCALE = "en".freeze
