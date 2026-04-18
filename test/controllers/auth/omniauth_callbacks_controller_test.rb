@@ -4,12 +4,14 @@ module Auth
   class OmniauthCallbacksControllerTest < ActionDispatch::IntegrationTest
     setup do
       OmniAuth.config.test_mode = true
+      OmniAuth.config.logger = Logger.new(nil)
       @existing_student = create(:user, :student)
     end
 
     teardown do
       OmniAuth.config.test_mode = false
       OmniAuth.config.mock_auth.clear
+      OmniAuth.config.logger = Rails.logger
     end
 
     # ─── Failure ──────────────────────────────────────────────────────────────
