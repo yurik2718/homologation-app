@@ -53,4 +53,11 @@ Rails.application.configure do
 
   # Allow plain-text (unencrypted) values in fixtures for encrypted fields
   config.active_record.encryption.support_unencrypted_data = true
+
+  # Deterministic Active Record encryption keys for the test environment so
+  # the test suite boots without requiring the master key (CI has no access
+  # to config/master.key). These values are test-only and not secrets.
+  config.active_record.encryption.primary_key = "test_primary_key_32_chars_xxxxxxx"
+  config.active_record.encryption.deterministic_key = "test_deterministic_key_32_chars_x"
+  config.active_record.encryption.key_derivation_salt = "test_key_derivation_salt_32_chars"
 end
