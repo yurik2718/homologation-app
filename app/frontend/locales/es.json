@@ -498,7 +498,12 @@
       "contact": "Contacto",
       "privacy": "Política de privacidad",
       "rights": "Todos los derechos reservados.",
-      "address": "Madrid, España"
+      "address": "Madrid, España",
+      "trust_company": "Registrada en España",
+      "trust_payments": "Pagos seguros",
+      "trust_gdpr": "Cumplimiento GDPR",
+      "trust_languages": "ES · EN · RU",
+      "cookie_preferences": "Preferencias de cookies"
     },
     "sticky_cta": {
       "consultation": "Reserva tu consulta",
@@ -507,10 +512,10 @@
     "home": {
       "hero_eyebrow": "Educación en España, de principio a fin",
       "hero_title_1": "Tu camino completo",
-      "hero_title_accent": "a la educación española",
+      "hero_title_accent": "a la educación y residencia legal en España",
       "hero_subtitle": "Homologación de títulos, admisión universitaria, cursos de español, visados y acompañamiento legal. Más de 15 años trabajando oficialmente con estudiantes de todo el mundo.",
       "cta_start": "Reservar consulta con un experto",
-      "stat_students": "estudiantes acompañados",
+      "stat_students": "historias de éxito",
       "stat_success": "tasa de éxito",
       "stat_years": "años en España",
       "stat_countries": "países de origen",
@@ -543,8 +548,7 @@
       "approach_4_desc": "Colaboraciones con universidades españolas, traductores jurados y notarios colegiados.",
       "cta_title": "¿Listo para empezar?",
       "cta_subtitle": "Reserva una consulta personal con un experto. Revisamos tu caso y construimos un plan a medida.",
-      "cta_final_start": "Reservar consulta",
-      "trust_line": "Empresa registrada en España · Pagos seguros vía Stripe · Cumplimiento GDPR · Atención en español, inglés y ruso"
+      "cta_final_start": "Reservar consulta"
     },
     "homologacion": {
       "hero_title_1": "Homologación de títulos",

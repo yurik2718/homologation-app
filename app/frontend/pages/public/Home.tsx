@@ -19,7 +19,7 @@ import {
 import { PublicLayout } from "@/components/layout/PublicLayout"
 import { Card, CardContent } from "@/components/ui/card"
 import { SeoHead } from "@/components/public/SeoHead"
-import { Reveal } from "@/components/public/animations"
+import { Reveal, AnimatedCounter } from "@/components/public/animations"
 import {
   Container,
   GradientButton,
@@ -241,21 +241,21 @@ function ApproachSection({ t }: { t: (key: string) => string }) {
 
 function NumbersStrip({ t }: { t: (key: string) => string }) {
   const numbers = [
-    { value: "1700+", labelKey: "stat_students" },
-    { value: "20+", labelKey: "stat_countries" },
-    { value: "15+", labelKey: "stat_years" },
-    { value: "98%", labelKey: "stat_success" },
+    { value: 1700, suffix: "+", labelKey: "stat_students" },
+    { value: 20, suffix: "+", labelKey: "stat_countries" },
+    { value: 15, suffix: "+", labelKey: "stat_years" },
+    { value: 98, suffix: "%", labelKey: "stat_success" },
   ] as const
 
   return (
     <section className="py-16 sm:py-20 bg-white">
       <Container>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 max-w-4xl mx-auto">
-          {numbers.map(({ value, labelKey }, i) => (
-            <Reveal key={value} direction="up" delay={i * 100}>
+          {numbers.map(({ value, suffix, labelKey }, i) => (
+            <Reveal key={labelKey} direction="up" delay={i * 100}>
               <div className="text-center">
                 <div className="text-4xl sm:text-5xl font-bold tracking-tighter leading-none bg-gradient-to-br from-[#E8453C] to-[#2D7FF9] bg-clip-text text-transparent">
-                  {value}
+                  <AnimatedCounter value={value} suffix={suffix} />
                 </div>
                 <p className="mt-3 text-sm text-muted-foreground">
                   {t(`public.home.${labelKey}`)}
@@ -269,28 +269,19 @@ function NumbersStrip({ t }: { t: (key: string) => string }) {
   )
 }
 
-/* ── 6. Final CTA + institutional trust markers ───────────────────────────── */
+/* ── 6. Final CTA — trust markers now live in the site-wide Footer ────────── */
 
 function FinalCtaSection({ t }: { t: (key: string) => string }) {
   return (
-    <>
-      <PublicCta
-        title={t("public.home.cta_title")}
-        subtitle={t("public.home.cta_subtitle")}
-      >
-        <ConsultationDialog>
-          <GradientButton className="w-full sm:w-auto">
-            {t("public.home.cta_final_start")}
-          </GradientButton>
-        </ConsultationDialog>
-      </PublicCta>
-      <div className="bg-zinc-900 border-t border-zinc-800 py-6">
-        <Container className="text-center">
-          <p className="text-xs sm:text-sm text-zinc-400 max-w-3xl mx-auto leading-relaxed">
-            {t("public.home.trust_line")}
-          </p>
-        </Container>
-      </div>
-    </>
+    <PublicCta
+      title={t("public.home.cta_title")}
+      subtitle={t("public.home.cta_subtitle")}
+    >
+      <ConsultationDialog>
+        <GradientButton className="w-full sm:w-auto">
+          {t("public.home.cta_final_start")}
+        </GradientButton>
+      </ConsultationDialog>
+    </PublicCta>
   )
 }

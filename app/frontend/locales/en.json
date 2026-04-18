@@ -502,15 +502,20 @@
       "contact": "Contact",
       "privacy": "Privacy Policy",
       "rights": "All rights reserved.",
-      "address": "Madrid, Spain"
+      "address": "Madrid, Spain",
+      "trust_company": "Registered in Spain",
+      "trust_payments": "Secure payments",
+      "trust_gdpr": "GDPR compliant",
+      "trust_languages": "ES · EN · RU",
+      "cookie_preferences": "Cookie preferences"
     },
     "home": {
       "hero_eyebrow": "Spanish education, end to end",
       "hero_title_1": "Your complete path",
-      "hero_title_accent": "to education in Spain",
+      "hero_title_accent": "to education and residency in Spain",
       "hero_subtitle": "Degree recognition, university admissions, Spanish courses, student visas, and legal support. Over 15 years working officially with students from around the world.",
       "cta_start": "Book a consultation with an expert",
-      "stat_students": "students supported",
+      "stat_students": "success stories",
       "stat_success": "success rate",
       "stat_years": "years in Spain",
       "stat_countries": "countries of origin",
@@ -543,8 +548,7 @@
       "approach_4_desc": "Partnerships with Spanish universities, sworn translators, and chartered notaries.",
       "cta_title": "Ready to start?",
       "cta_subtitle": "Book a personal consultation with an expert. We'll review your case and build a plan tailored to you.",
-      "cta_final_start": "Book a consultation",
-      "trust_line": "Spain-registered company · Secure payments via Stripe · GDPR compliant · Support in Spanish, English, and Russian"
+      "cta_final_start": "Book a consultation"
     },
     "homologacion": {
       "hero_title_1": "Degree Homologation",
