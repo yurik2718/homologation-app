@@ -23,7 +23,7 @@ class Admin::PipelineController < InertiaController
       active: active,
       revenue: scope.sum(:payment_amount).to_f,
       byYear: scope.group(:year).count,
-      noPago: scope.where(payment_amount: [nil, 0]).count,
+      noPago: scope.where(payment_amount: [ nil, 0 ]).count,
       cotejo: cotejo_min + cotejo_del,
       cotejoMinisterio: cotejo_min,
       cotejoDelegacion: cotejo_del

@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :teacher_student do
-    association :teacher, factory: [:user, :teacher]
-    association :student, factory: [:user, :student]
+    association :teacher, factory: [ :user, :teacher ]
+    association :student, factory: [ :user, :student ]
 
     transient do
       assigned_by_user { nil }

@@ -85,7 +85,7 @@ module StructuredDataHelper
     case action_name
     when "home"
       [
-        breadcrumb_schema(request, locale, [[home_label, "/"]]),
+        breadcrumb_schema(request, locale, [ [ home_label, "/" ] ]),
         service_schema(request, locale, "homologation"),
         service_schema(request, locale, "university"),
         service_schema(request, locale, "spanish")
@@ -93,12 +93,12 @@ module StructuredDataHelper
     when "homologation", "university", "spanish"
       label = I18n.t("seo.#{action_name}.title", locale: locale)
       [
-        breadcrumb_schema(request, locale, [[home_label, "/"], [label, SERVICE_DEFS[action_name][:path]]]),
+        breadcrumb_schema(request, locale, [ [ home_label, "/" ], [ label, SERVICE_DEFS[action_name][:path] ] ]),
         service_schema(request, locale, action_name)
       ]
     when "pricing"
       label = I18n.t("seo.pricing.title", locale: locale)
-      [ breadcrumb_schema(request, locale, [[home_label, "/"], [label, "/pricing"]]) ]
+      [ breadcrumb_schema(request, locale, [ [ home_label, "/" ], [ label, "/pricing" ] ]) ]
     else
       []
     end

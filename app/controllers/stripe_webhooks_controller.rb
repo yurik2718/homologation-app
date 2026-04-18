@@ -1,5 +1,4 @@
 class StripeWebhooksController < ActionController::API
-
   def create
     payload = request.body.read
     sig_header = request.env["HTTP_STRIPE_SIGNATURE"]

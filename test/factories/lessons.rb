@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :lesson do
-    association :teacher, factory: [:user, :teacher]
-    association :student, factory: [:user, :student]
+    association :teacher, factory: [ :user, :teacher ]
+    association :student, factory: [ :user, :student ]
     scheduled_at { 1.day.from_now.change(hour: 10) }
     duration_minutes { 60 }
     status { "scheduled" }

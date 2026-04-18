@@ -1,189 +1,216 @@
-# Подготовка к запуску / Pre-Deploy Guide
+# Деплой / Deploy Guide
+
+Инструкция для production-запуска. Состоит из двух частей:
+**Часть 1** — что должен собрать заказчик.
+**Часть 2** — что делает разработчик.
 
 ---
 
 ## Часть 1. Для заказчика
 
-Чтобы запустить сайт, мне нужны от вас следующие данные.
-Заполните таблицу и отправьте разработчику.
+Заполните таблицу и отправьте разработчику. Заведение аккаунтов Stripe/OAuth занимает время (особенно верификация Stripe: 1–3 рабочих дня) — начинайте заранее.
 
-### Обязательное
+### 🔴 Обязательное для запуска
 
 | # | Что нужно | Пример | Где взять | Готово? |
 |---|-----------|--------|-----------|---------|
-| 1 | Домен `spaceforedu.com` | Уже куплен | См. инструкцию «Миграция домена» ниже | ☐ |
-| 3 | Номер WhatsApp (с кодом страны) | `34663689393` | Ваш телефон | ☐ |
-| 4 | Email для контактов на сайте | `info@spaceforedu.com` | Ваша почта | ☐ |
-| 5 | Email для поддержки клиентов | `support@spaceforedu.com` | Ваша почта | ☐ |
-| 6 | Telegram (без @) | `spaceforedu` | Ваш профиль | ☐ |
-| 7 | Stripe-аккаунт | — | См. инструкцию ниже | ☐ |
-| 8 | Google OAuth ключи | — | См. инструкцию ниже | ☐ |
-| 9 | SMTP для отправки email | — | Gmail App Password или Postmark | ☐ |
+| 1 | Домен + доступ к DNS-панели | `spaceforedu.com` | Namecheap / GoDaddy / Reg.ru | ☐ |
+| 2 | VPS-сервер (Ubuntu 22.04+, 2 GB RAM) | `123.45.67.89` | Hetzner / DigitalOcean / Timeweb | ☐ |
+| 3 | WhatsApp номер (с кодом страны, без `+`) | `34663689393` | — | ☐ |
+| 4 | Контактный email | `info@spaceforedu.com` | Ваша почта | ☐ |
+| 5 | Email поддержки | `support@spaceforedu.com` | Ваша почта | ☐ |
+| 6 | Telegram-хэндл (без `@`) | `spaceforedu` | Ваш профиль | ☐ |
+| 7 | Stripe-аккаунт (верифицированный) | — | См. инструкцию ниже | ☐ |
+| 8 | Google OAuth (Sign in with Google) | — | См. инструкцию ниже | ☐ |
+| 9 | SMTP для отправки email | — | Gmail App Password / Postmark | ☐ |
 
-### Опционально (можно добавить позже)
+### 🟡 Опционально (можно добавить после запуска)
 
-| # | Что нужно | Зачем |
-|---|-----------|-------|
-| 10 | Facebook App (бесплатно) | Кнопка "Войти через Facebook" — см. инструкцию ниже |
+| # | Что | Зачем |
+|---|-----|-------|
+| 10 | Facebook OAuth | Кнопка "Войти через Facebook" |
 | 11 | Telegram Bot | Уведомления клиентам в Telegram |
-| 12 | AmoCRM интеграция | Синхронизация заявок с CRM |
-| 13 | Фото команды | Для страницы с тарифами |
-| 14 | Реальные отзывы клиентов (3 шт.) | Для страницы с тарифами |
-| 15 | Логотипы университетов-партнёров | Для блока доверия на странице тарифов |
+| 12 | AmoCRM | Автосинхронизация заявок после оплаты |
+| 13 | Google Analytics / Яндекс.Метрика | Через единый GTM (см. `docs/20_SEO_ANALYTICS.md`) |
+| 14 | Sentry | Трекинг ошибок (бесплатный план покрывает старт) |
+| 15 | Реальные отзывы (3 шт.) + фото команды | **Важно** до запуска рекламы — см. комментарии в аудите |
 
 ---
 
-### Инструкция: Миграция домена spaceforedu.com (15–30 минут)
+### Инструкция: Миграция домена (15–30 минут)
 
-Домен уже куплен и используется для старого приложения. Есть 3 варианта перехода:
+Домен уже куплен и, возможно, используется для старого приложения. 3 варианта:
 
-**Вариант А — Мгновенная замена (если старое приложение больше не нужно)**
+**Вариант А — Мгновенная замена** (старое приложение больше не нужно)
 
-1. Заведите новый VPS-сервер и задеплойте новое приложение (см. Часть 2)
-2. Убедитесь, что новое приложение работает по IP-адресу сервера
-3. Зайдите в панель управления DNS вашего регистратора (Namecheap, GoDaddy и т.д.)
-4. Измените A-запись `spaceforedu.com` → IP нового сервера
-5. Подождите 5–30 минут (обновление DNS)
-6. Готово — `spaceforedu.com` теперь ведёт на новое приложение
+1. Задеплойте новое приложение (Часть 2), убедитесь что работает по IP.
+2. DNS-панель регистратора → A-запись `@` (или `spaceforedu.com`) → IP нового сервера.
+3. Подождите 5–30 мин (в редких случаях до 24 ч), зависит от TTL.
 
-**Вариант Б — Плавный переход (старое приложение остаётся на поддомене)**
+**Вариант Б — Плавный переход** (старое остаётся на поддомене)
 
-1. Задеплойте новое приложение на новый сервер
-2. В DNS создайте поддомен для старого приложения:
-   - `old.spaceforedu.com` → A-запись → IP **старого** сервера
-3. Перенастройте старое приложение на `old.spaceforedu.com`
-4. Измените основную A-запись `spaceforedu.com` → IP **нового** сервера
-5. Итог: `spaceforedu.com` = новое приложение, `old.spaceforedu.com` = старое
+1. Задеплойте новое.
+2. Создайте `old.spaceforedu.com` → IP старого сервера.
+3. Перенастройте старое приложение на `old.spaceforedu.com`.
+4. Смените основную A-запись на IP нового.
 
-**Вариант В — Новое приложение на поддомене (тестирование перед переходом)**
+**Вариант В — Тестирование на поддомене перед переключением** (безопаснее всего)
 
-1. Задеплойте новое приложение на новый сервер
-2. В DNS создайте поддомен: `app.spaceforedu.com` → A-запись → IP нового сервера
-3. Тестируйте на `app.spaceforedu.com`
-4. Когда всё готово — поменяйте A-записи местами (Вариант А или Б)
+1. Создайте `app.spaceforedu.com` → IP нового сервера.
+2. Протестируйте всё на `app.spaceforedu.com`.
+3. Когда готово — переключите основную A-запись.
 
-> **Совет:** Вариант В самый безопасный — старое приложение продолжает работать,
-> а вы спокойно тестируете новое. Когда всё проверено — переключаете за 5 минут.
+> **Рекомендация:** Вариант В. Старый сайт продолжает работать, вы спокойно тестируете новый.
 
----
+### Инструкция: Stripe (10–15 минут активной работы + 1–3 дня верификации)
 
-### Инструкция: Stripe (10–15 минут)
+Приложение использует Stripe **двумя способами**:
 
-1. Зарегистрируйтесь на [stripe.com](https://stripe.com)
-2. Пройдите верификацию бизнеса (имя, адрес, банковский счёт) — **может занять 1–3 дня**
-3. Создайте Payment Link для консультации:
-   - Stripe Dashboard → **Payment Links** → **+ New**
-   - Продукт: "Expert Consultation", цена **100 €**, разовый платёж
+**(a)** — Payment Link для платной консультации на публичных страницах (без регистрации).
+**(b)** — Stripe Checkout для оплаты услуг из личного кабинета (после регистрации заявки).
+
+Оба требуют одного Stripe-аккаунта.
+
+#### Шаги
+
+1. Зарегистрируйтесь на [stripe.com](https://stripe.com), пройдите верификацию бизнеса (имя, адрес, банковский счёт) — **1–3 рабочих дня**.
+2. **Создайте Payment Link для консультации:**
+   - Dashboard → **Payment Links** → **+ New**
+   - Продукт: "Expert Consultation", цена **100 €** (или ваша), разовый платёж.
    - **After payment** → Redirect → `https://ваш-домен.com/es/consultation-thank-you`
-   - Включите сбор email и телефона
-4. Отправьте разработчику:
-   - Payment Link URL (начинается с `https://buy.stripe.com/...`)
-   - Secret key (Dashboard → Developers → API keys)
-5. Включите автоматические чеки: **Settings** → **Emails** → **Successful payments**
+   - Включите сбор email и телефона.
+3. **Включите автоматические чеки:** Settings → Emails → Successful payments.
+4. **Отправьте разработчику:**
+   - **Payment Link URL** (начинается с `https://buy.stripe.com/...`)
+   - **Live Secret Key** из Dashboard → Developers → API keys → **Reveal live key** (`sk_live_...`)
+   - Webhook Signing Secret настроится после деплоя (см. Часть 2, шаг «После деплоя»).
 
 ### Инструкция: Google OAuth (10 минут)
 
-1. Откройте [Google Cloud Console](https://console.cloud.google.com)
-2. Создайте проект → **APIs & Services** → **Credentials** → **Create OAuth Client ID**
-3. Тип: **Web application**
-4. Redirect URI: `https://ваш-домен.com/auth/google_oauth2/callback`
-5. Отправьте разработчику: **Client ID** и **Client Secret**
+1. [Google Cloud Console](https://console.cloud.google.com) → создайте проект.
+2. **APIs & Services** → **OAuth consent screen** → External → заполните (название, email, логотип).
+3. **Credentials** → **+ Create Credentials** → **OAuth client ID** → Web application.
+4. **Authorized redirect URI:** `https://ваш-домен.com/auth/google_oauth2/callback`
+5. Отправьте разработчику **Client ID** и **Client Secret**.
 
 ### Инструкция: Facebook OAuth — опционально (10 минут, бесплатно)
 
-1. Откройте [developers.facebook.com](https://developers.facebook.com) и войдите
-2. **My Apps** → **Create App** → тип **Consumer**
-3. Добавьте продукт **Facebook Login** → **Web**
-4. Site URL: `https://ваш-домен.com`
-5. **Facebook Login** → **Settings** → Valid OAuth Redirect URIs:
-   `https://ваш-домен.com/auth/facebook/callback`
-6. **Settings** → **Basic** → скопируйте **App ID** и **App Secret**
-7. Отправьте разработчику: **App ID** и **App Secret**
+1. [developers.facebook.com](https://developers.facebook.com) → My Apps → Create App → **Consumer**.
+2. Добавьте продукт **Facebook Login** → Web.
+3. **Valid OAuth Redirect URIs:** `https://ваш-домен.com/auth/facebook/callback`
+4. **Settings** → Basic → скопируйте **App ID** и **App Secret**.
+5. Чтобы логин работал для всех (не только админов) — в верхней панели кнопка **Go Live**.
+6. Отправьте разработчику **App ID** и **App Secret**.
 
-> Приложение будет в режиме Development (работает только для администраторов).
-> Чтобы все пользователи могли входить — нажмите **Go Live** в верхней панели.
+### Инструкция: Email / SMTP
 
-### Инструкция: Email (SMTP)
+**Gmail (бесплатно, подходит для старта):**
 
-**Вариант Gmail (бесплатно):**
-1. Откройте [myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords)
-2. Создайте App Password для "Mail"
-3. Отправьте разработчику: ваш Gmail и сгенерированный пароль
+1. [myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords) → создайте App Password для "Mail".
+2. Отправьте разработчику: адрес Gmail + сгенерированный пароль (16 символов).
 
-**Вариант Postmark/Mailgun (для бизнеса):**
-Отправьте разработчику SMTP-адрес, логин и пароль от провайдера.
+**Postmark / Mailgun / Resend (для бизнеса):** отправьте SMTP host, port (587), login, password.
+
+> **Важно для deliverability:** после деплоя настройте SPF / DKIM / DMARC DNS-записи для домена, иначе письма полетят в спам. Разработчик подскажет точные значения для вашего SMTP-провайдера.
 
 ---
 
 ## Часть 2. Для разработчика
 
-### Файлы, которые нужно обновить перед деплоем
+### Что уже настроено в репозитории
 
-Всего **3 файла**. Остальные конфиги (database.yml, cable.yml, storage.yml и т.д.) уже настроены и не требуют изменений.
+- **Dockerfile** — production-ready, multi-stage (Node + Vite + Rails).
+- **`config/deploy.yml`** — Kamal-конфиг, нужно заполнить IP, домен, registry.
+- **`.kamal/secrets`** — уже содержит `RAILS_MASTER_KEY=$(cat config/master.key)`. **НЕ перезаписывайте файл целиком** — дополняйте через `>>`.
+- **`config/environments/production.rb`** — SSL / force_ssl / host authorization / SMTP включаются, когда установлен `APP_HOST`.
+- **`bin/setup`** — для локальной разработки копирует `.env.example` → `.env`. В **production** `.env` **не используется** — переменные идут через Kamal (`deploy.yml` → `env.clear` и `.kamal/secrets`).
+- **Аліасы Kamal** (`bin/kamal console/logs/shell/dbc/backup`) — уже определены в `deploy.yml`.
+- **`DatabaseBackupJob`** — запускается через `bin/kamal backup`.
+- **SQLite + Solid Queue/Cache/Cable** — без внешних БД. Данные в volume `homologation_app_storage:/rails/storage`.
 
-#### 1. `.env` — контакты и Stripe ссылка
-```bash
-cp .env.example .env && nano .env
-```
-```env
-VITE_CONTACT_WHATSAPP=34663689393        # ← реальный номер
-VITE_CONTACT_EMAIL=info@spaceforedu.com  # ← реальный email
-VITE_SUPPORT_EMAIL=support@spaceforedu.com
-VITE_CONTACT_TELEGRAM=spaceforedu        # ← реальный username
-VITE_STRIPE_CONSULTATION_LINK=https://buy.stripe.com/xxx  # ← из Stripe Dashboard
-```
+### Что нужно заполнить перед первым деплоем
 
-#### 2. `config/deploy.yml` — сервер и домен
+Три места: **`config/deploy.yml`**, **Rails credentials**, **`.kamal/secrets`** (если нужен Sentry backend).
+
+#### Шаг 1. `config/deploy.yml` — сервер, домен, registry, env
+
 ```yaml
+# Строка 10: IP сервера
 servers:
   web:
-    - 123.45.67.89              # ← реальный IP сервера
+    - 123.45.67.89          # ← РЕАЛЬНЫЙ IP сервера
 
+# Строки 19–21: раскомментировать и заполнить
 proxy:
   ssl: true
-  host: spaceforedu.com         # ← ваш домен
+  host: spaceforedu.com     # ← РЕАЛЬНЫЙ домен
 
+# Строки 27–31: Docker registry (где будут храниться образы)
+registry:
+  server: ghcr.io           # или hub.docker.com
+  username: your-gh-user    # ← ВАШ логин registry
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+# Строки 40–59: раскомментировать нужные переменные env.clear
 env:
+  secret:
+    - RAILS_MASTER_KEY
+    # - SENTRY_DSN_BACKEND   # раскомментировать, если используете Sentry
   clear:
-    APP_HOST: spaceforedu.com   # ← тот же домен (активирует SSL, SMTP, host protection)
+    APP_HOST: spaceforedu.com                  # ← активирует SSL, SMTP, host protection
+    APP_HOST_URL: https://spaceforedu.com      # ← для canonical / sitemap / structured data
+    SOLID_QUEUE_IN_PUMA: true
+
+    # Опционально:
+    # GOOGLE_SITE_VERIFICATION: ""
+    # YANDEX_VERIFICATION: ""
+    # GTM_ID: GTM-XXXXXXX
+    # SENTRY_DSN_FRONTEND: "https://xxx@oYYY.ingest.sentry.io/ZZZ"
+    # SENTRY_ENVIRONMENT: production
+    # SENTRY_TRACES_SAMPLE_RATE: "0.1"
 ```
 
-#### 3. `config/credentials.yml.enc` — секреты (API-ключи, пароли)
+> **Полный список env-переменных:** см. `.env.example` (single source of truth, с комментариями).
+
+#### Шаг 2. Rails credentials (API-ключи, пароли)
+
 ```bash
 EDITOR="nano" bin/rails credentials:edit
 ```
+
 ```yaml
-# ── Обязательное ──
+# ── ОБЯЗАТЕЛЬНОЕ ──
 stripe:
-  secret_key: sk_live_...         # Stripe Dashboard → Developers → API keys
-  webhook_secret: whsec_...       # Stripe Dashboard → Webhooks → Signing secret
-  base_url: https://spaceforedu.com
+  secret_key: sk_live_...              # Stripe Dashboard → Developers → API keys
+  webhook_secret: whsec_...            # добавить ПОСЛЕ деплоя (см. ниже)
+  base_url: https://spaceforedu.com    # для return-URL в Checkout Session
 
 google:
-  client_id: ...apps.googleusercontent.com   # Google Cloud Console → Credentials
+  client_id: ...apps.googleusercontent.com
   client_secret: GOCSPX-...
 
 smtp:
-  user_name: info@spaceforedu.com  # Gmail или ваш SMTP-провайдер
-  password: xxxx xxxx xxxx xxxx    # Gmail → App Password
-  address: smtp.gmail.com
-  port: 587
+  user_name: info@spaceforedu.com
+  password: xxxx xxxx xxxx xxxx        # Gmail App Password (16 символов без пробелов тоже ок)
+  address: smtp.gmail.com              # опционально — дефолт smtp.gmail.com
+  port: 587                            # опционально — дефолт 587
 
-# ── Опционально ──
+# ── ОПЦИОНАЛЬНОЕ ──
 facebook:
-  app_id: ...                      # developers.facebook.com → App Settings
+  app_id: ...
   app_secret: ...
 
 telegram:
-  bot_token: "123456:ABC..."       # @BotFather в Telegram
+  bot_token: "123456:ABC..."
   bot_name: "SpaceForEduBot"
-  webhook_secret: "любая-случайная-строка"
+  webhook_secret: "любая-случайная-строка-32+-символа"
 
 amo_crm:
   base_url: https://....amocrm.com
   client_id: ...
   client_secret: ...
-  redirect_uri: ...
+  redirect_uri: https://spaceforedu.com/admin/integrations/amo_crm/callback
   homologation_pipeline_id: ...
   new_status_id: ...
   responsible_user_id: ...
@@ -193,50 +220,147 @@ amo_crm:
     service_type: ...
 ```
 
-> **Всё остальное трогать не нужно.** Файлы `database.yml`, `cable.yml`, `queue.yml`,
-> `cache.yml`, `storage.yml`, `puma.rb`, `select_options/*.yml` — уже настроены правильно.
+> **Важно:** `VITE_STRIPE_CONSULTATION_LINK` — это **Payment Link** (начинается с `https://buy.stripe.com/`), **не** secret key. Он Vite-переменная (встраивается в JS-бандл), задаётся через `deploy.yml` → `env.clear` или пробрасывается в build args. Если оставить пустым, кнопка консультации фолбэкнется на WhatsApp.
+
+#### Шаг 3. `.kamal/secrets` — только если используете Sentry backend
+
+```bash
+# Откройте редактором и раскомментируйте/добавьте строку:
+# SENTRY_DSN_BACKEND=https://xxx@oYYY.ingest.sentry.io/ZZZ
+```
+
+> ⚠️ **НЕ используйте `echo ... > .kamal/secrets`** — это затрёт существующий `RAILS_MASTER_KEY=$(cat config/master.key)`. Редактируйте файл вручную или через `>>`.
+
+#### Шаг 4. Registry-пароль (экспорт в shell)
+
+```bash
+# GitHub Container Registry:
+export KAMAL_REGISTRY_PASSWORD=$(gh auth token)
+
+# Docker Hub:
+export KAMAL_REGISTRY_PASSWORD="ваш-docker-hub-token"
+```
+
+Чтобы не прописывать каждый раз — добавьте в `.zshrc` / `.bashrc` или используйте password manager.
 
 ---
 
-### Что уже настроено
-
-- **Dockerfile** — production-ready, multi-stage build, Node.js + Vite + Rails
-- **Kamal** — `config/deploy.yml` готов, нужно только заполнить IP и домен
-- **production.rb** — env-driven: SSL, SMTP, host protection активируются через `APP_HOST`
-- **bin/setup** — автоматически копирует `.env.example` → `.env`
-- **SQLite** — не нужен внешний PostgreSQL/MySQL. Всё в одном файле, volume в Docker
-
-### Деплой
+### Первый деплой
 
 ```bash
-# 1. Заполнить 3 файла выше (.env, deploy.yml, credentials)
+# 1. Убедиться что Kamal установлен
+bin/kamal version     # 2.x+
 
-# 2. Добавить RAILS_MASTER_KEY в .kamal/secrets
-echo "RAILS_MASTER_KEY=$(cat config/master.key)" > .kamal/secrets
+# 2. Registry password экспортирован (см. Шаг 4 выше)
+echo $KAMAL_REGISTRY_PASSWORD | head -c 10     # проверка, что не пусто
 
-# 3. Первый деплой
-kamal setup
+# 3. Первый деплой (создаёт сервер, ставит Docker, пушит образ, запускает)
+bin/kamal setup
 
-# 4. Создать super_admin
-kamal console
-# → User.create!(name: "...", email_address: "...", password: "...", password_confirmation: "...", role: "super_admin")
-
-# Все последующие деплои:
-kamal deploy
+# 4. Создать первого super_admin
+bin/kamal console
 ```
 
-### Полезные команды
-
-```bash
-kamal console       # Rails console на сервере
-kamal logs          # Логи в реальном времени
-kamal shell         # SSH в контейнер
-kamal deploy        # Деплой новой версии
+```ruby
+User.create!(
+  name: "Admin Name",
+  email_address: "admin@spaceforedu.com",
+  password: "secure-password-16+-chars",
+  password_confirmation: "secure-password-16+-chars",
+  role: "super_admin"
+)
 ```
 
-### После деплоя: Stripe Webhook
+### После деплоя: обязательные действия
 
-1. Stripe Dashboard → Developers → Webhooks → **+ Add endpoint**
-2. URL: `https://yourdomain.com/webhooks/stripe`
+#### 1. Stripe Webhook (5 минут)
+
+1. Stripe Dashboard → Developers → **Webhooks** → **+ Add endpoint**
+2. URL: `https://spaceforedu.com/webhooks/stripe`
 3. Events: `checkout.session.completed`, `payment_intent.succeeded`
-4. Скопировать Signing secret → добавить в credentials как `stripe.webhook_secret`
+4. **Signing secret** (`whsec_...`) → добавить в credentials как `stripe.webhook_secret`:
+   ```bash
+   EDITOR="nano" bin/rails credentials:edit
+   ```
+5. Передеплой, чтобы подтянуть новые credentials:
+   ```bash
+   bin/kamal deploy
+   ```
+6. **Проверка:** Stripe Dashboard → Webhooks → Send test webhook → статус `200 OK`.
+
+#### 2. Смоук-тест (10 минут)
+
+- [ ] `https://spaceforedu.com` открывается, HTTPS валиден
+- [ ] Регистрация нового пользователя работает
+- [ ] Логин через Google OAuth
+- [ ] Письмо после регистрации дошло (проверить также в спам-папке)
+- [ ] Реальный платёж €1 через Payment Link консультации → редирект на thank-you → письмо о платеже
+- [ ] Создание homologation-заявки из личного кабинета
+- [ ] Оплата заявки через Stripe Checkout → webhook сработал → статус обновился в БД
+
+#### 3. DNS-записи для email deliverability
+
+Настройте у регистратора домена (зависит от SMTP-провайдера):
+- **SPF** (TXT-запись на `@`): `v=spf1 include:_spf.google.com ~all` (для Gmail) / `include:spf.mtasv.net` (Postmark) / и т.д.
+- **DKIM** (TXT-запись): провайдер даст точное значение и имя селектора.
+- **DMARC** (TXT на `_dmarc`): `v=DMARC1; p=none; rua=mailto:info@spaceforedu.com`
+
+Проверить корректность: [mail-tester.com](https://mail-tester.com) — отправьте письмо на их адрес, получите оценку.
+
+#### 4. Бэкапы БД
+
+```bash
+# Ручной запуск бэкапа:
+bin/kamal backup
+
+# Для ежедневного автобэкапа — добавьте cron на сервере или в Solid Queue recurring jobs.
+# Бэкапы лежат в volume — периодически копируйте их off-server (rsync / S3).
+```
+
+---
+
+### Команды на каждый день
+
+```bash
+bin/kamal deploy        # задеплоить новую версию
+bin/kamal logs          # логи в реальном времени (Ctrl+C для выхода)
+bin/kamal console       # Rails console на сервере
+bin/kamal dbc           # database console (SQLite)
+bin/kamal shell         # bash внутри контейнера
+bin/kamal app details   # статус контейнеров
+bin/kamal backup        # запустить бэкап БД
+```
+
+### Откат к предыдущей версии
+
+```bash
+# Посмотреть доступные версии:
+bin/kamal app versions
+
+# Откатиться на конкретную версию (SHA первые 7 символов):
+bin/kamal rollback <VERSION>
+```
+
+---
+
+### Troubleshooting
+
+| Симптом | Что проверить |
+|---------|---------------|
+| `kamal setup` висит на "Logging into registry" | `KAMAL_REGISTRY_PASSWORD` экспортирован? Правильный `username`? |
+| `502 Bad Gateway` | `bin/kamal logs` → посмотреть стек-трейс Rails. Часто — не установлен `APP_HOST` или `RAILS_MASTER_KEY`. |
+| SSL-сертификат не выпускается | DNS A-запись указывает на правильный IP? Порт 80 открыт у провайдера? |
+| Email не уходит | SMTP credentials заполнены? Gmail App Password — не обычный пароль аккаунта. |
+| Stripe webhook возвращает 400 | `stripe.webhook_secret` соответствует Signing secret из Dashboard? После изменения — передеплой. |
+| OAuth "redirect_uri_mismatch" | В Google/Facebook console добавьте **точный** URI: `https://spaceforedu.com/auth/google_oauth2/callback` (без trailing slash). |
+| Письма в спам | Настройте SPF / DKIM / DMARC (см. выше) — без них 80% писем попадают в спам. |
+| Разные поведения `dev` vs `prod` | В dev читается `.env`, в prod — `deploy.yml` → `env.clear` + `.kamal/secrets`. Это разные источники. |
+
+---
+
+### Связанные документы
+
+- `.env.example` — полный справочник всех env-переменных с комментариями
+- `docs/20_SEO_ANALYTICS.md` — настройка GTM / GA4 / Яндекс.Метрика / Sentry
+- `docs/12_SECURITY_GDPR.md` — соответствие GDPR, cookie consent
+- `docs/06_AMOCRM_INTEGRATION.md` — подключение AmoCRM (опционально)
