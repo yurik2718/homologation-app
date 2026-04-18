@@ -222,23 +222,8 @@ export default function Homologacion() {
         <TimelineSection translationPrefix="public.homologacion" count={4} />
       </PublicSection>
 
-      {/* Documents needed */}
-      <PublicSection className="bg-white">
-        <SectionHeading title={t("public.homologacion.docs_title")} />
-        <div className="max-w-2xl mx-auto space-y-4">
-          {Array.from({ length: 6 }, (_, i) => (
-            <Reveal key={i} direction="left" delay={i * 80}>
-              <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-slate-50 transition-colors">
-                <CheckCircle2 className="h-5 w-5 text-[#2D7FF9] mt-0.5 shrink-0" />
-                <span className="text-sm">{t(`public.homologacion.doc_${i + 1}`)}</span>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-      </PublicSection>
-
       {/* Testimonials */}
-      <PublicSection className="bg-slate-50" dots>
+      <PublicSection className="bg-white">
         <SectionHeading
           title={t("public.homologacion.testimonials_title")}
           subtitle={t("public.homologacion.testimonials_subtitle")}
@@ -247,7 +232,7 @@ export default function Homologacion() {
       </PublicSection>
 
       {/* Social proof */}
-      <PublicSection className="bg-white">
+      <PublicSection className="bg-slate-50" dots>
         <SectionHeading
           title={t("public.homologacion.proof_title")}
           subtitle={t("public.homologacion.proof_subtitle")}
@@ -271,7 +256,7 @@ export default function Homologacion() {
       </PublicSection>
 
       {/* Costs & timelines */}
-      <PublicSection className="bg-slate-50" dots>
+      <PublicSection className="bg-white">
         <SectionHeading title={t("public.homologacion.costs_title")} />
         <div className="grid gap-6 sm:grid-cols-2 max-w-2xl mx-auto">
           {[
@@ -313,9 +298,9 @@ export default function Homologacion() {
       </PublicSection>
 
       {/* FAQ */}
-      <PublicSection className="bg-white">
+      <PublicSection className="bg-slate-50" dots>
         <SectionHeading title={t("public.homologacion.faq_title")} />
-        <FaqSection translationPrefix="public.homologacion" count={5} />
+        <FaqSection translationPrefix="public.homologacion" count={6} />
       </PublicSection>
 
       {/* CTA */}
