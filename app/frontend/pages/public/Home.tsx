@@ -10,10 +10,6 @@ import {
   BookOpen,
   Briefcase,
   Building2,
-  UserCheck,
-  Award,
-  Monitor,
-  Handshake,
   ArrowRight,
 } from "lucide-react"
 import { PublicLayout } from "@/components/layout/PublicLayout"
@@ -32,8 +28,6 @@ import { UniversityLogoBar } from "@/components/public/UniversityLogoBar"
 import { publicRoute, publicPages } from "@/lib/routes"
 import type { SharedProps } from "@/types"
 import type { PublicPageProps } from "@/types/pages"
-
-const APPROACH_ICONS = [UserCheck, Award, Monitor, Handshake] as const
 
 export default function Home() {
   const { seo } = usePage<SharedProps & PublicPageProps>().props
@@ -213,19 +207,22 @@ function ApproachSection({ t }: { t: (key: string) => string }) {
         subtitle={t("public.home.approach_subtitle")}
       />
       <div className="grid gap-6 sm:grid-cols-2 max-w-4xl mx-auto">
-        {APPROACH_ICONS.map((Icon, i) => (
-          <Reveal key={i} direction="up" delay={i * 100}>
+        {[1, 2, 3, 4].map((n, i) => (
+          <Reveal key={n} direction="up" delay={i * 100}>
             <Card className="border bg-white h-full transition-all duration-300 hover:shadow-lg">
-              <CardContent className="p-6 flex gap-4">
-                <div className="shrink-0 rounded-lg bg-gradient-to-br from-[#E8453C]/10 to-[#2D7FF9]/10 p-2.5 self-start">
-                  <Icon className="h-5 w-5 text-[#2D7FF9]" />
+              <CardContent className="p-6 flex gap-5">
+                <div
+                  className="shrink-0 text-4xl sm:text-5xl font-bold tracking-tighter leading-none bg-gradient-to-br from-[#E8453C] to-[#2D7FF9] bg-clip-text text-transparent select-none w-12 sm:w-14"
+                  aria-hidden="true"
+                >
+                  {String(n).padStart(2, "0")}
                 </div>
                 <div>
                   <h3 className="font-semibold text-base mb-1.5">
-                    {t(`public.home.approach_${i + 1}_title`)}
+                    {t(`public.home.approach_${n}_title`)}
                   </h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">
-                    {t(`public.home.approach_${i + 1}_desc`)}
+                    {t(`public.home.approach_${n}_desc`)}
                   </p>
                 </div>
               </CardContent>

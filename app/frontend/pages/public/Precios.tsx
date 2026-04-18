@@ -57,12 +57,6 @@ const comparisonMatrix: [boolean, boolean, boolean][] = [
   [false, false, true],
 ]
 
-const heroStats = [
-  { value: 1700, suffix: "+", key: "clients" },
-  { value: 98, suffix: "%", key: "success" },
-  { value: 15, suffix: "+", key: "years" },
-]
-
 const testimonialAvatarColors = [
   "bg-[#2D7FF9]",
   "bg-[#E8453C]",
@@ -162,24 +156,6 @@ export default function Precios() {
           ))}
         </div>
       </PublicSection>
-
-      {/* ── 2c. Trust strip — stats inline, no visual weight ────────────────── */}
-      <section className="py-6 bg-slate-50 border-y border-slate-200">
-        <Container>
-          <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-sm text-muted-foreground">
-            {heroStats.map(({ value, suffix, key }, i) => (
-              <div key={key} className="flex items-baseline gap-2">
-                {i > 0 && <span className="text-border hidden sm:inline">·</span>}
-                <span className="font-bold text-foreground text-base">
-                  {value}
-                  {suffix}
-                </span>
-                <span>{t(`public.precios.hero_stat_${key}`)}</span>
-              </div>
-            ))}
-          </div>
-        </Container>
-      </section>
 
       {/* ── 3. Pricing cards ───────────────────────────────────────────────────── */}
       <PublicSection id="plans" className="bg-white">

@@ -1,4 +1,4 @@
-import { usePage } from "@inertiajs/react"
+import { Link, usePage } from "@inertiajs/react"
 import { Trans, useTranslation } from "react-i18next"
 import {
   FileCheck,
@@ -15,6 +15,7 @@ import {
   MessageSquare,
   Bell,
   Shield,
+  ArrowRight,
 } from "lucide-react"
 import { PublicLayout } from "@/components/layout/PublicLayout"
 import { Card, CardContent } from "@/components/ui/card"
@@ -33,6 +34,7 @@ import { FaqSection } from "@/components/public/FaqSection"
 import { TimelineSection } from "@/components/public/TimelineSection"
 import { TestimonialsSection } from "@/components/public/TestimonialsSection"
 import { FeatureCardGrid } from "@/components/public/FeatureCardGrid"
+import { publicRoute, publicPages } from "@/lib/routes"
 import type { SharedProps } from "@/types"
 import type { PublicPageProps } from "@/types/pages"
 
@@ -53,6 +55,7 @@ const DASHBOARD_FEATURES = [
 export default function Homologacion() {
   const { seo } = usePage<SharedProps & PublicPageProps>().props
   const { t } = useTranslation()
+  const preciosHref = publicRoute(publicPages.precios, seo.locale)
 
   return (
     <PublicLayout>
@@ -261,19 +264,40 @@ export default function Homologacion() {
         <SectionHeading title={t("public.homologacion.costs_title")} />
         <div className="grid gap-6 sm:grid-cols-2 max-w-2xl mx-auto">
           {[
-            { icon: Clock, iconClass: "text-[#2D7FF9]", titleKey: "timeline_title", descKey: "timeline_desc" },
-            { icon: FileText, iconClass: "text-[#E8453C]", titleKey: "cost_title", descKey: "cost_desc" },
-          ].map(({ icon: Icon, iconClass, titleKey, descKey }, i) => (
-            <Reveal key={titleKey} direction="up" delay={i * 120}>
-              <Card className="border transition-all duration-300 hover:shadow-lg hover:shadow-[#2D7FF9]/5 group">
-                <CardContent className="p-6 text-center">
+            { icon: Clock, iconClass: "text-[#2D7FF9]", titleKey: "timeline_title", descKey: "timeline_desc", href: null as string | null },
+            { icon: FileText, iconClass: "text-[#E8453C]", titleKey: "cost_title", descKey: "cost_desc", href: preciosHref },
+          ].map(({ icon: Icon, iconClass, titleKey, descKey, href }, i) => {
+            const card = (
+              <Card
+                className={`h-full border transition-all duration-300 hover:shadow-lg hover:shadow-[#2D7FF9]/5 group ${
+                  href ? "hover:-translate-y-1" : ""
+                }`}
+              >
+                <CardContent className="p-6 text-center flex flex-col h-full">
                   <Icon className={`h-8 w-8 ${iconClass} mx-auto mb-3 transition-transform duration-300 group-hover:scale-110`} />
                   <h3 className="font-semibold mb-1">{t(`public.homologacion.${titleKey}`)}</h3>
-                  <p className="text-sm text-muted-foreground">{t(`public.homologacion.${descKey}`)}</p>
+                  <p className="text-sm text-muted-foreground flex-1">{t(`public.homologacion.${descKey}`)}</p>
+                  {href && (
+                    <span className="mt-4 inline-flex items-center justify-center text-sm font-medium text-[#2D7FF9]">
+                      {t("public.homologacion.see_pricing")}
+                      <ArrowRight className="ml-1.5 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    </span>
+                  )}
                 </CardContent>
               </Card>
-            </Reveal>
-          ))}
+            )
+            return (
+              <Reveal key={titleKey} direction="up" delay={i * 120}>
+                {href ? (
+                  <Link href={href} className="block h-full">
+                    {card}
+                  </Link>
+                ) : (
+                  card
+                )}
+              </Reveal>
+            )
+          })}
         </div>
       </PublicSection>
 
