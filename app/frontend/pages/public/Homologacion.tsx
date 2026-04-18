@@ -63,6 +63,7 @@ export default function Homologacion() {
 
       {/* Hero */}
       <PublicHero
+        fullBleed
         title1={t("public.homologacion.hero_title_1")}
         titleAccent={t("public.homologacion.hero_title_accent")}
         subtitle={

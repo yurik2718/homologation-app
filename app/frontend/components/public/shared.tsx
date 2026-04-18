@@ -87,7 +87,12 @@ export function PublicHero({
     <section
       className={cn(
         "relative bg-gradient-to-br from-slate-50 via-white to-blue-50 py-16 sm:py-24 lg:py-32 overflow-hidden flex items-center",
-        fullBleed ? "min-h-screen" : "min-h-[60vh] sm:min-h-[80vh]",
+        // fullBleed: subtract sticky header (h-16 = 4rem) so hero exactly fills
+        // the visible viewport — content centers correctly and bottom-anchored
+        // ScrollHint stays visible. dvh (not vh) handles mobile URL bar.
+        fullBleed
+          ? "min-h-[calc(100dvh-4rem)]"
+          : "min-h-[60vh] sm:min-h-[80vh]",
       )}
     >
       <Spotlight />
