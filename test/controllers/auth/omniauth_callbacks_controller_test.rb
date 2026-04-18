@@ -128,6 +128,60 @@ module Auth
       assert_equal "https://graph.facebook.com/123/picture", user.avatar_url
     end
 
+    # ─── Session / security ──────────────────────────────────────────────────
+
+    test "successful OAuth login creates a persisted session and signed cookie" do
+      mock_google(email: "sess_#{Process.pid}@example.com", name: "Session User")
+
+      assert_difference -> { Session.count }, 1 do
+        post "/auth/google_oauth2"
+        follow_redirect!
+      end
+
+      # Cookie present → user is effectively signed in for subsequent requests
+      assert_not_nil cookies["session_id"], "session cookie must be set after OAuth"
+    end
+
+    test "OAuth email match normalizes case (uppercase payload matches lowercase stored)" do
+      # User.email_address is normalized to lowercase via `normalizes :email_address`.
+      # OAuth providers sometimes return uppercased / mixed-case emails.
+      mock_google(email: @existing_student.email_address.upcase, name: @existing_student.name)
+
+      assert_no_difference "User.count" do
+        post "/auth/google_oauth2"
+        follow_redirect!
+      end
+
+      @existing_student.reload
+      assert_equal "google_oauth2", @existing_student.provider
+    end
+
+    test "OmniAuth invalid_credentials triggers failure flow without creating user" do
+      OmniAuth.config.mock_auth[:google_oauth2] = :invalid_credentials
+
+      assert_no_difference "User.count" do
+        post "/auth/google_oauth2"
+        # OmniAuth middleware redirects to /auth/failure; follow and let the
+        # controller's failure action redirect to login with a flash.
+        follow_redirect! while response.redirect? && response.location !~ %r{/session/new\z}
+      end
+
+      assert_match %r{/session/new\z}, response.location
+    end
+
+    test "re-login via same provider+uid does not overwrite stored uid" do
+      # Defense: once a provider+uid is bound, we must not silently update it.
+      # (The model only touches uid when it was blank.)
+      @existing_student.update_columns(provider: "google_oauth2", uid: "original_uid")
+      mock_google(uid: "different_uid_attack", email: @existing_student.email_address, name: @existing_student.name)
+
+      post "/auth/google_oauth2"
+      follow_redirect!
+
+      @existing_student.reload
+      assert_equal "original_uid", @existing_student.uid, "stored uid must not be overwritten by a second login"
+    end
+
     private
 
     def mock_google(email:, name:, uid: "google_uid_456", image: nil)
