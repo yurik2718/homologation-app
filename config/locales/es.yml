@@ -105,6 +105,13 @@ es:
         subject: "Pago confirmado para: %{request_subject}"
       status_changed:
         subject: "Estado actualizado: %{request_subject}"
+    passwords_mailer:
+      subject: "Restablecer tu contraseña"
+      greeting: "Hola %{name},"
+      body: "Recibimos una solicitud para restablecer tu contraseña. Haz clic en el botón de abajo para establecer una nueva."
+      cta: "Restablecer contraseña"
+      expires_note: "Este enlace expira en %{time}."
+      ignore_note: "Si no solicitaste esto, puedes ignorar este correo."
     chat_digest:
       subject:
         one: "Tienes 1 mensaje nuevo en %{title}"

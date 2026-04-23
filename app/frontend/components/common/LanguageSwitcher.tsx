@@ -52,9 +52,11 @@ export function LanguageSwitcher({
         router.visit(path)
       }
     } else {
-      i18n.changeLanguage(code)
       if (page.props.auth?.user) {
+        // Server is source of truth; AuthenticatedLayout useEffect applies i18n after response.
         router.patch(routes.profile, { locale: code }, { preserveState: true })
+      } else {
+        void i18n.changeLanguage(code)
       }
     }
   }
@@ -73,7 +75,9 @@ export function LanguageSwitcher({
       : ""
 
   return (
-    <DropdownMenu>
+    // modal={false}: modal mode locks body.style.pointerEvents="none" via a module-level
+    // var in @radix-ui/react-dismissable-layer; a re-render on close (i18n) leaves it stuck.
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"

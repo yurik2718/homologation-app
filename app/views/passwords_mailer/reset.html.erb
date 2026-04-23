@@ -1,6 +1,37 @@
-<p>
-  You can reset your password on
-  <%= link_to "this password reset page", edit_password_url(@user.password_reset_token) %>.
+<!-- Greeting -->
+<p style="margin:0 0 8px;font-size:15px;color:#71717a;">
+  <%= t("mailers.passwords_mailer.greeting", name: @user.name) %>
+</p>
 
-  This link will expire in <%= distance_of_time_in_words(0, @user.password_reset_token_expires_in) %>.
+<!-- Title -->
+<h2 style="margin:0 0 16px;font-size:22px;font-weight:700;color:#09090b;line-height:1.3;">
+  <%= t("mailers.passwords_mailer.subject") %>
+</h2>
+
+<!-- Body -->
+<p style="margin:0 0 32px;font-size:15px;color:#3f3f46;line-height:1.7;">
+  <%= t("mailers.passwords_mailer.body") %>
+</p>
+
+<!-- CTA Button -->
+<table role="presentation" cellspacing="0" cellpadding="0" border="0">
+  <tr>
+    <td style="border-radius:8px;background-color:#E8453C;">
+      <a href="<%= edit_password_url(@user.password_reset_token) %>"
+         style="display:inline-block;padding:13px 28px;font-size:14px;font-weight:600;color:#ffffff;text-decoration:none;letter-spacing:0.1px;">
+        <%= t("mailers.passwords_mailer.cta") %>
+      </a>
+    </td>
+  </tr>
+</table>
+
+<!-- Expires note -->
+<p style="margin:24px 0 8px;font-size:13px;color:#71717a;line-height:1.6;">
+  <%= t("mailers.passwords_mailer.expires_note",
+        time: distance_of_time_in_words(0, @user.password_reset_token_expires_in)) %>
+</p>
+
+<!-- Ignore note -->
+<p style="margin:0;font-size:13px;color:#a1a1aa;line-height:1.6;">
+  <%= t("mailers.passwords_mailer.ignore_note") %>
 </p>

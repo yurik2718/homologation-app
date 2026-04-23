@@ -105,6 +105,13 @@ en:
         subject: "Payment confirmed for: %{request_subject}"
       status_changed:
         subject: "Status updated: %{request_subject}"
+    passwords_mailer:
+      subject: "Reset your password"
+      greeting: "Hi %{name},"
+      body: "We received a request to reset your password. Click the button below to set a new one."
+      cta: "Reset password"
+      expires_note: "This link expires in %{time}."
+      ignore_note: "If you didn't request this, you can safely ignore this email."
     chat_digest:
       subject:
         one: "You have 1 new message in %{title}"

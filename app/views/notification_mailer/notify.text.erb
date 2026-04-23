@@ -1,3 +1,8 @@
+<%= t("mailers.chat_digest.greeting", name: @user.name) %>
+
 <%= @notification.title %>
 
 <%= @notification.body %>
+
+<%= t("mailers.chat_digest.cta") %>
+<%= ENV.fetch("APP_HOST_URL", "https://spaceforedu.com") %>

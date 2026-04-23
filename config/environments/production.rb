@@ -54,17 +54,25 @@ Rails.application.configure do
   config.solid_queue.connects_to = { database: { writing: :queue } }
 
   # ─── Email (SMTP) ──────────────────────────────────────────────────────────
-  # Activated when smtp credentials are present in Rails credentials.
-  config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST", "localhost") }
+  # All SMTP settings are read from ENV so the client can configure them
+  # without touching code or credentials:
+  #
+  #   SMTP_ADDRESS      — mail server host (default: smtp.gmail.com)
+  #   SMTP_PORT         — port (default: 587)
+  #   SMTP_USER         — login / email address
+  #   SMTP_PASSWORD     — password or app-specific password
+  #   MAIL_FROM         — "From:" header, e.g. "Space for Edu <noreply@spaceforedu.com>"
+  #
+  config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST_URL", "localhost") }
 
-  if (smtp_user = Rails.application.credentials.dig(:smtp, :user_name))
+  if (smtp_user = ENV["SMTP_USER"]).present?
     config.action_mailer.raise_delivery_errors = true
     config.action_mailer.delivery_method = :smtp
     config.action_mailer.smtp_settings = {
       user_name: smtp_user,
-      password: Rails.application.credentials.dig(:smtp, :password),
-      address: Rails.application.credentials.dig(:smtp, :address) || "smtp.gmail.com",
-      port: Rails.application.credentials.dig(:smtp, :port) || 587,
+      password: ENV.fetch("SMTP_PASSWORD"),
+      address: ENV.fetch("SMTP_ADDRESS", "smtp.gmail.com"),
+      port: ENV.fetch("SMTP_PORT", 587).to_i,
       authentication: :plain,
       enable_starttls_auto: true
     }

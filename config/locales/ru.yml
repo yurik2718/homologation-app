@@ -105,6 +105,13 @@ ru:
         subject: "Оплата подтверждена: %{request_subject}"
       status_changed:
         subject: "Статус обновлён: %{request_subject}"
+    passwords_mailer:
+      subject: "Сброс пароля"
+      greeting: "Здравствуйте, %{name}!"
+      body: "Мы получили запрос на сброс пароля. Нажмите кнопку ниже, чтобы задать новый пароль."
+      cta: "Сбросить пароль"
+      expires_note: "Ссылка действительна в течение %{time}."
+      ignore_note: "Если вы не запрашивали сброс пароля, просто проигнорируйте это письмо."
     chat_digest:
       subject:
         one: "У вас 1 новое сообщение в %{title}"
