@@ -1,6 +1,7 @@
 class AmoCrmSyncJob < ApplicationJob
   queue_as :default
-  retry_on StandardError, wait: :polynomially_longer, attempts: 3
+  MAX_ATTEMPTS = 3
+  retry_on StandardError, wait: :polynomially_longer, attempts: MAX_ATTEMPTS
 
   def perform(request_id)
     request = HomologationRequest.find(request_id)
@@ -22,6 +23,24 @@ class AmoCrmSyncJob < ApplicationJob
     Rails.logger.info("AmoCRM sync OK: Lead ##{lead_id} for Request ##{request.id}")
   rescue => e
     request&.update_columns(amo_crm_sync_error: e.message)
+    # Alert admins only after the final attempt — otherwise transient failures
+    # would page them three times per sync.
+    notify_super_admins(request, e) if request && executions >= MAX_ATTEMPTS
     raise
+  end
+
+  private
+
+  def notify_super_admins(request, error)
+    User.super_admins.kept.find_each do |admin|
+      NotificationJob.perform_later(
+        user_id: admin.id,
+        title_key:   "notifications.amo_crm_sync_failed",
+        title_params: { subject: request.subject },
+        body_key:    "notifications.amo_crm_sync_failed_body",
+        body_params: { error: error.message.to_s.truncate(200) },
+        notifiable: request
+      )
+    end
   end
 end

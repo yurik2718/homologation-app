@@ -94,13 +94,14 @@ class SettingsController < InertiaController
 
     @user.update!(deletion_requested_at: Time.current)
 
-    super_admins = User.super_admins.kept
-    super_admins.each do |admin|
+    # Notifiable points at the user requesting deletion so admins can jump
+    # straight to their profile from the notification.
+    User.super_admins.kept.each do |admin|
       NotificationJob.perform_later(
         user_id: admin.id,
-        title: t("notifications.deletion_requested", name: @user.name),
-        body: @user.email_address,
-        notifiable: nil
+        title_key: "notifications.deletion_requested",
+        title_params: { name: @user.name },
+        notifiable: @user
       )
     end
 

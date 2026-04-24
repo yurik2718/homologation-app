@@ -100,8 +100,7 @@ class User < ApplicationRecord
 
   def purge_everything!
     transaction do
-      # Null out coordinator/admin references on other users' records
-      HomologationRequest.where(coordinator_id: id).update_all(coordinator_id: nil)
+      # Null out admin references on other users' records
       HomologationRequest.where(payment_confirmed_by: id).update_all(payment_confirmed_by: nil)
       HomologationRequest.where(status_changed_by: id).update_all(status_changed_by: nil)
       TeacherStudent.where(assigned_by: id).update_all(assigned_by: nil)

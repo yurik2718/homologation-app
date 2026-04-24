@@ -30,7 +30,6 @@ class HomologationRequest < ApplicationRecord
   DEFAULT_DOCUMENT_CHECKLIST = CHECKLIST_KEYS.index_with { false }.freeze
 
   belongs_to :user
-  belongs_to :coordinator, class_name: "User", optional: true
 
   has_one :conversation, dependent: :destroy
 

@@ -41,4 +41,32 @@ class NotificationsControllerTest < ActionDispatch::IntegrationTest
     assert_response :redirect
     assert_equal 0, @student.notifications.unread.count
   end
+
+  test "TeacherStudent notifiable redirects to the pair's conversation" do
+    teacher = create(:user, :teacher)
+    create(:teacher_profile, user: teacher)
+    coordinator = create(:user, :coordinator)
+    ts = create(:teacher_student, teacher: teacher, student: @student, assigned_by: coordinator.id)
+    conversation = Conversation.create!(teacher_student_id: ts.id)
+    conversation.conversation_participants.create!(user: teacher)
+    conversation.conversation_participants.create!(user: @student)
+    notification = create(:notification, user: @student, notifiable: ts)
+
+    sign_in @student
+    patch notification_path(notification)
+    assert_redirected_to conversation_path(conversation.id)
+  end
+
+  test "TeacherStudent notifiable falls back to /notifications if conversation is gone" do
+    teacher = create(:user, :teacher)
+    create(:teacher_profile, user: teacher)
+    coordinator = create(:user, :coordinator)
+    ts = create(:teacher_student, teacher: teacher, student: @student, assigned_by: coordinator.id)
+    # No Conversation created for this pair — simulates a torn-down pairing.
+    notification = create(:notification, user: @student, notifiable: ts)
+
+    sign_in @student
+    patch notification_path(notification)
+    assert_redirected_to notifications_path
+  end
 end

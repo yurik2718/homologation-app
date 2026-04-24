@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_09_172103) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_24_120002) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -74,7 +74,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_09_172103) do
     t.string "amo_crm_lead_id"
     t.text "amo_crm_sync_error"
     t.datetime "amo_crm_synced_at"
-    t.integer "coordinator_id"
+    t.datetime "awaiting_reply_reminded_at"
     t.datetime "created_at", null: false
     t.text "description"
     t.datetime "discarded_at"
@@ -104,7 +104,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_09_172103) do
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.integer "year"
-    t.index ["coordinator_id"], name: "index_homologation_requests_on_coordinator_id"
     t.index ["discarded_at"], name: "index_homologation_requests_on_discarded_at"
     t.index ["pipeline_stage"], name: "index_homologation_requests_on_pipeline_stage"
     t.index ["status"], name: "index_homologation_requests_on_status"
@@ -118,6 +117,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_09_172103) do
     t.integer "duration_minutes", default: 60, null: false
     t.string "meeting_link"
     t.text "notes"
+    t.datetime "reminded_1h_at"
+    t.datetime "reminded_24h_at"
     t.datetime "scheduled_at", null: false
     t.string "status", default: "scheduled", null: false
     t.integer "student_id", null: false
@@ -249,7 +250,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_09_172103) do
   add_foreign_key "conversations", "homologation_requests"
   add_foreign_key "conversations", "teacher_students"
   add_foreign_key "homologation_requests", "users"
-  add_foreign_key "homologation_requests", "users", column: "coordinator_id"
   add_foreign_key "homologation_requests", "users", column: "payment_confirmed_by"
   add_foreign_key "homologation_requests", "users", column: "status_changed_by"
   add_foreign_key "lessons", "users", column: "student_id"

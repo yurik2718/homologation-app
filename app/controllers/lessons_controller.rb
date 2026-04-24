@@ -63,11 +63,19 @@ class LessonsController < InertiaController
     authorize @lesson
 
     if @lesson.save
-      NotificationJob.perform_later(
-        user_id: @lesson.student_id,
-        title: I18n.t("notifications.lesson_scheduled", date: @lesson.scheduled_at.strftime("%d/%m/%Y %H:%M")),
-        notifiable: @lesson
-      )
+      # Notify the student always. Notify the teacher too if someone else scheduled
+      # the lesson (coordinator/super_admin) — otherwise they'd first learn about
+      # a lesson in their calendar only when glancing at it.
+      recipients = [ @lesson.student_id ]
+      recipients << @lesson.teacher_id if @lesson.teacher_id != current_user.id
+      recipients.each do |user_id|
+        NotificationJob.perform_later(
+          user_id: user_id,
+          title_key: "notifications.lesson_scheduled",
+          title_params: { date: @lesson.scheduled_at.strftime("%d/%m/%Y %H:%M") },
+          notifiable: @lesson
+        )
+      end
       redirect_to lesson_path(@lesson), notice: t("flash.lesson_created")
     else
       redirect_to lessons_path, inertia: { errors: @lesson.errors }
@@ -89,7 +97,8 @@ class LessonsController < InertiaController
     [ @lesson.student_id, @lesson.teacher_id ].each do |user_id|
       NotificationJob.perform_later(
         user_id: user_id,
-        title: I18n.t("notifications.lesson_cancelled", date: @lesson.scheduled_at.strftime("%d/%m/%Y %H:%M")),
+        title_key: "notifications.lesson_cancelled",
+        title_params: { date: @lesson.scheduled_at.strftime("%d/%m/%Y %H:%M") },
         notifiable: @lesson
       )
     end

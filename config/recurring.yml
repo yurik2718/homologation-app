@@ -19,3 +19,6 @@ production:
   lesson_reminders:
     class: LessonReminderJob
     schedule: every 5 minutes
+  awaiting_reply_reminders:
+    class: AwaitingReplyReminderJob
+    schedule: every 4 hours

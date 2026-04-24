@@ -23,7 +23,7 @@ class HomologationRequestsController < InertiaController
     if @request.save
       msg = @request.status == "draft" ? t("flash.request_created") : t("flash.request_submitted")
       if @request.status == "submitted"
-        notify_coordinators_new_request(@request)
+        notify_admins_new_request(@request)
       end
       redirect_to homologation_request_path(@request), notice: msg
     else
@@ -155,12 +155,12 @@ class HomologationRequestsController < InertiaController
       byteSize: blob.byte_size, category: category }
   end
 
-  def notify_coordinators_new_request(request)
-    coordinators = User.super_admins
-    coordinators.find_each do |coordinator|
+  def notify_admins_new_request(request)
+    User.super_admins.kept.find_each do |admin|
       NotificationJob.perform_later(
-        user_id: coordinator.id,
-        title: I18n.t("notifications.new_request", name: request.user.name),
+        user_id: admin.id,
+        title_key: "notifications.new_request",
+        title_params: { name: request.user.name },
         notifiable: request
       )
     end
@@ -169,7 +169,8 @@ class HomologationRequestsController < InertiaController
   def notify_student_status_changed(request)
     NotificationJob.perform_later(
       user_id: request.user_id,
-      title: I18n.t("notifications.status_changed", status: request.status),
+      title_key: "notifications.status_changed",
+      title_params: { status: { i18n: "requests.status.#{request.status}" } },
       notifiable: request
     )
   end
@@ -177,9 +178,8 @@ class HomologationRequestsController < InertiaController
   def notify_student_payment_confirmed(request)
     NotificationJob.perform_later(
       user_id: request.user_id,
-      title: I18n.t("notifications.payment_confirmed",
-                     amount: request.payment_amount.to_f,
-                     subject: request.subject),
+      title_key: "notifications.payment_confirmed",
+      title_params: { amount: request.payment_amount.to_f, subject: request.subject },
       notifiable: request
     )
   end

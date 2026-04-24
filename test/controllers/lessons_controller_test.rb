@@ -49,6 +49,26 @@ class LessonsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to lesson_path(Lesson.last)
   end
 
+  test "teacher-created lesson notifies student only (teacher is the actor)" do
+    sign_in @teacher
+    assert_enqueued_jobs 1, only: NotificationJob do
+      post lessons_path, params: {
+        lesson: { student_id: @student.id, scheduled_at: 1.week.from_now,
+                  duration_minutes: 60 }
+      }
+    end
+  end
+
+  test "admin-created lesson notifies both student and teacher" do
+    sign_in @admin
+    assert_enqueued_jobs 2, only: NotificationJob do
+      post lessons_path, params: {
+        lesson: { teacher_id: @teacher.id, student_id: @student.id,
+                  scheduled_at: 1.week.from_now, duration_minutes: 60 }
+      }
+    end
+  end
+
   test "teacher cannot create lesson for non-assigned student" do
     sign_in @teacher
     assert_no_difference "Lesson.count" do

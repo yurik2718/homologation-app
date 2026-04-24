@@ -272,14 +272,6 @@ class UserTest < ActiveSupport::TestCase
     assert_equal 0, HomologationRequest.where(user_id: user.id).count
   end
 
-  test "purge_everything! nulls out coordinator_id references on other requests" do
-    coordinator = create(:user, :coordinator)
-    student = create(:user, :student)
-    request = create(:homologation_request, :submitted, user: student, coordinator: coordinator)
-    coordinator.purge_everything!
-    assert_nil request.reload.coordinator_id
-  end
-
   test "purge_everything! nulls out teacher_student assigner references" do
     coordinator = create(:user, :coordinator)
     teacher = create(:user, :teacher)

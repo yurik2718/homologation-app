@@ -50,6 +50,21 @@ class TeachersController < InertiaController
     conv.conversation_participants.create!(user: @teacher)
     conv.conversation_participants.create!(user_id: params[:student_id])
 
+    # Both parties get a direct heads-up with the other's name; otherwise the
+    # pairing is silent until one of them stumbles into the calendar or chat.
+    NotificationJob.perform_later(
+      user_id: @teacher.id,
+      title_key: "notifications.new_student_assigned",
+      title_params: { name: ts.student.name },
+      notifiable: ts
+    )
+    NotificationJob.perform_later(
+      user_id: ts.student_id,
+      title_key: "notifications.new_teacher_assigned",
+      title_params: { name: @teacher.name },
+      notifiable: ts
+    )
+
     redirect_to teachers_path, notice: t("flash.student_assigned")
   end
 

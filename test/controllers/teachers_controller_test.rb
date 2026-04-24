@@ -45,6 +45,22 @@ class TeachersControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to teachers_path
   end
 
+  test "assign_student notifies both teacher and student" do
+    sign_in @coordinator
+    assert_enqueued_jobs 2, only: NotificationJob do
+      post assign_student_teacher_path(@teacher), params: { student_id: @other_student.id }
+    end
+  end
+
+  test "assign_student notification targets are the teacher and the student" do
+    sign_in @coordinator
+    perform_enqueued_jobs do
+      post assign_student_teacher_path(@teacher), params: { student_id: @other_student.id }
+    end
+    assert_equal 1, @teacher.notifications.where(notifiable_type: "TeacherStudent").count
+    assert_equal 1, @other_student.notifications.where(notifiable_type: "TeacherStudent").count
+  end
+
   test "coordinator can remove student from teacher" do
     sign_in @coordinator
     assert_difference "TeacherStudent.count", -1 do

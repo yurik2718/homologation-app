@@ -101,6 +101,18 @@ class SettingsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "request_deletion notifications actually deliver" do
+    admin = create(:user, :super_admin)
+    sign_in @student
+    assert_difference -> { admin.notifications.count }, 1 do
+      perform_enqueued_jobs do
+        post settings_request_deletion_path
+      end
+    end
+    notification = admin.notifications.last
+    assert_equal @student, notification.notifiable
+  end
+
   test "request_deletion does not enqueue notification when already requested" do
     admin = create(:user, :super_admin)
     @student.update!(deletion_requested_at: Time.current)

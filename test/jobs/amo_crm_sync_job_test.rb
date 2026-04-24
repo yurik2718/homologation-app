@@ -64,4 +64,65 @@ class AmoCrmSyncJobTest < ActiveJob::TestCase
 
     assert @request.reload.amo_crm_sync_error.present?
   end
+
+  test "does not alert super_admins on non-final attempts" do
+    admin = create(:user, :super_admin)
+    # Simulate attempt 1 of 3: executions will be 1 inside perform.
+    assert_no_difference -> { admin.notifications.count } do
+      perform_enqueued_jobs(only: NotificationJob) do
+        begin
+          job = AmoCrmSyncJob.new(@request.id)
+          job.instance_variable_set(:@executions, 1)
+          job.send(:perform, @request.id)
+        rescue StandardError
+          # expected — perform re-raises
+        end
+      end
+    end
+  end
+
+  test "alerts every super_admin once on final attempt" do
+    admin_1 = create(:user, :super_admin)
+    admin_2 = create(:user, :super_admin)
+
+    WebMock.reset!
+    stub_request(:get, /api\/v4\/contacts/).to_return(status: 500, body: "boom")
+
+    @request.update!(status: "payment_confirmed", payment_amount: 100, payment_confirmed_at: Time.current)
+
+    # Drive the job to the final attempt directly (retry_on would take 3 runs;
+    # we just want to assert the "last attempt" branch fires the alert).
+    assert_difference -> { Notification.where(user_id: [ admin_1.id, admin_2.id ]).count }, 2 do
+      perform_enqueued_jobs(only: NotificationJob) do
+        begin
+          job = AmoCrmSyncJob.new(@request.id)
+          job.instance_variable_set(:@executions, AmoCrmSyncJob::MAX_ATTEMPTS)
+          job.send(:perform, @request.id)
+        rescue StandardError
+          # expected — perform re-raises
+        end
+      end
+    end
+  end
+
+  test "does not alert discarded super_admins" do
+    admin_active   = create(:user, :super_admin)
+    admin_discarded = create(:user, :super_admin, discarded_at: Time.current)
+
+    WebMock.reset!
+    stub_request(:get, /api\/v4\/contacts/).to_return(status: 500, body: "boom")
+    @request.update!(status: "payment_confirmed", payment_amount: 100, payment_confirmed_at: Time.current)
+
+    perform_enqueued_jobs(only: NotificationJob) do
+      begin
+        job = AmoCrmSyncJob.new(@request.id)
+        job.instance_variable_set(:@executions, AmoCrmSyncJob::MAX_ATTEMPTS)
+        job.send(:perform, @request.id)
+      rescue StandardError
+      end
+    end
+
+    assert_equal 1, admin_active.notifications.count
+    assert_equal 0, admin_discarded.notifications.count
+  end
 end

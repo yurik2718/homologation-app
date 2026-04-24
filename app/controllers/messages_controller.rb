@@ -29,7 +29,8 @@ class MessagesController < InertiaController
     conversation.participants.where.not(id: current_user.id).find_each do |participant|
       NotificationJob.perform_later(
         user_id: participant.id,
-        title: I18n.t("notifications.new_message", name: current_user.name),
+        title_key: "notifications.new_message",
+        title_params: { name: current_user.name },
         notifiable: message
       )
     end

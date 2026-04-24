@@ -50,17 +50,15 @@ class StripeWebhooksController < ActionController::API
     # Notify student
     NotificationJob.perform_later(
       user_id: hr.user_id,
-      title: I18n.t("notifications.payment_confirmed",
-                     amount: hr.payment_amount.to_f,
-                     subject: hr.subject),
+      title_key: "notifications.payment_confirmed",
+      title_params: { amount: hr.payment_amount.to_f, subject: hr.subject },
       notifiable: hr
     )
     # Notify admin/coordinator who created the Stripe link
     NotificationJob.perform_later(
       user_id: confirmer.id,
-      title: I18n.t("notifications.stripe_payment_received",
-                     amount: hr.payment_amount.to_f,
-                     student: hr.user.name),
+      title_key: "notifications.stripe_payment_received",
+      title_params: { amount: hr.payment_amount.to_f, student: hr.user.name },
       notifiable: hr
     )
   end

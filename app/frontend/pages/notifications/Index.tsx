@@ -14,30 +14,13 @@ import type { NotificationsIndexProps, NotificationItem } from "@/types/pages"
 
 type FilterTab = "unread" | "all"
 
-function notificationUrl(n: NotificationItem): string | null {
-  switch (n.notifiableType) {
-    case "HomologationRequest":
-      return routes.request(n.notifiableId)
-    case "Lesson":
-      return routes.lesson(n.notifiableId)
-    case "Message":
-      return routes.conversations
-    default:
-      return null
-  }
-}
-
 function NotificationRow({ notification }: { notification: NotificationItem }) {
   const isUnread = !notification.readAt
-  const url = notificationUrl(notification)
 
+  // Always delegate to the controller: it marks as read (idempotent) and
+  // computes the correct destination based on role + notifiable state.
   function handleClick() {
-    if (isUnread) {
-      // Controller marks as read and redirects to the resource
-      router.patch(routes.notification(notification.id))
-    } else if (url) {
-      router.visit(url)
-    }
+    router.patch(routes.notification(notification.id))
   }
 
   return (
