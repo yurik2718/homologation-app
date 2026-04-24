@@ -1,8 +1,0 @@
-# Fuentes de referencia / Referral sources / Откуда узнали
-
-- { key: "google", label: "Google" }
-- { key: "instagram", label: "Instagram" }
-- { key: "facebook", label: "Facebook" }
-- { key: "friend", label_es: "Amigo", label_en: "Friend", label_ru: "Друг" }
-- { key: "university", label_es: "Universidad", label_en: "University", label_ru: "Университет" }
-- { key: "other", label_es: "Otro", label_en: "Other", label_ru: "Другое" }

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_24_120002) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_24_120003) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -90,7 +90,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_24_120002) do
     t.text "pipeline_notes"
     t.string "pipeline_stage"
     t.boolean "privacy_accepted", default: false, null: false
-    t.string "referral_source"
     t.string "service_type", null: false
     t.string "status", default: "draft", null: false
     t.datetime "status_changed_at"

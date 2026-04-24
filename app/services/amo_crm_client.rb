@@ -81,9 +81,6 @@ class AmoCrmClient
       custom_field(:language_certificate, request.language_certificate)
     ]
 
-    fields << custom_field(:referral, request.referral_source) if request.referral_source.present?
-    fields << custom_field(:acceso, request.referral_source) if request.referral_source.present?
-
     fields.compact
   end
 

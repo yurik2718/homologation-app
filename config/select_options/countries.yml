@@ -1,25 +1,25 @@
 # Países / Countries / Страны
 
-- { key: "AR", label: "Argentina" }
-- { key: "BO", label: "Bolivia" }
-- { key: "BR", label_es: "Brasil", label_en: "Brazil", label_ru: "Бразилия" }
-- { key: "CL", label: "Chile" }
-- { key: "CN", label_es: "China", label_en: "China", label_ru: "Китай" }
-- { key: "CO", label: "Colombia" }
-- { key: "CU", label: "Cuba" }
-- { key: "DE", label_es: "Alemania", label_en: "Germany", label_ru: "Германия" }
-- { key: "EC", label: "Ecuador" }
-- { key: "ES", label_es: "España", label_en: "Spain", label_ru: "Испания" }
-- { key: "FR", label_es: "Francia", label_en: "France", label_ru: "Франция" }
-- { key: "GB", label_es: "Reino Unido", label_en: "United Kingdom", label_ru: "Великобритания" }
-- { key: "IN", label_es: "India", label_en: "India", label_ru: "Индия" }
-- { key: "IT", label_es: "Italia", label_en: "Italy", label_ru: "Италия" }
-- { key: "KZ", label_es: "Kazajistán", label_en: "Kazakhstan", label_ru: "Казахстан" }
-- { key: "MX", label: "México" }
-- { key: "PE", label: "Perú" }
-- { key: "RU", label_es: "Rusia", label_en: "Russia", label_ru: "Россия" }
-- { key: "TR", label_es: "Turquía", label_en: "Turkey", label_ru: "Турция" }
-- { key: "UA", label_es: "Ucrania", label_en: "Ukraine", label_ru: "Украина" }
+- { key: "AR", label_es: "Argentina",     label_en: "Argentina",      label_ru: "Аргентина" }
+- { key: "BO", label_es: "Bolivia",       label_en: "Bolivia",        label_ru: "Боливия" }
+- { key: "BR", label_es: "Brasil",        label_en: "Brazil",         label_ru: "Бразилия" }
+- { key: "CL", label_es: "Chile",         label_en: "Chile",          label_ru: "Чили" }
+- { key: "CN", label_es: "China",         label_en: "China",          label_ru: "Китай" }
+- { key: "CO", label_es: "Colombia",      label_en: "Colombia",       label_ru: "Колумбия" }
+- { key: "CU", label_es: "Cuba",          label_en: "Cuba",           label_ru: "Куба" }
+- { key: "DE", label_es: "Alemania",      label_en: "Germany",        label_ru: "Германия" }
+- { key: "EC", label_es: "Ecuador",       label_en: "Ecuador",        label_ru: "Эквадор" }
+- { key: "ES", label_es: "España",        label_en: "Spain",          label_ru: "Испания" }
+- { key: "FR", label_es: "Francia",       label_en: "France",         label_ru: "Франция" }
+- { key: "GB", label_es: "Reino Unido",   label_en: "United Kingdom", label_ru: "Великобритания" }
+- { key: "IN", label_es: "India",         label_en: "India",          label_ru: "Индия" }
+- { key: "IT", label_es: "Italia",        label_en: "Italy",          label_ru: "Италия" }
+- { key: "KZ", label_es: "Kazajistán",    label_en: "Kazakhstan",     label_ru: "Казахстан" }
+- { key: "MX", label_es: "México",        label_en: "Mexico",         label_ru: "Мексика" }
+- { key: "PE", label_es: "Perú",          label_en: "Peru",           label_ru: "Перу" }
+- { key: "RU", label_es: "Rusia",         label_en: "Russia",         label_ru: "Россия" }
+- { key: "TR", label_es: "Turquía",       label_en: "Turkey",         label_ru: "Турция" }
+- { key: "UA", label_es: "Ucrania",       label_en: "Ukraine",        label_ru: "Украина" }
 - { key: "US", label_es: "Estados Unidos", label_en: "United States", label_ru: "США" }
-- { key: "VE", label: "Venezuela" }
-- { key: "other", label_es: "Otro", label_en: "Other", label_ru: "Другое" }
+- { key: "VE", label_es: "Venezuela",     label_en: "Venezuela",      label_ru: "Венесуэла" }
+- { key: "other", label_es: "Otro",       label_en: "Other",          label_ru: "Другое" }

@@ -164,8 +164,7 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
       studies_spain: "Ingeniería Informática",
       university: "ucm",
       language_knowledge: "b2",
-      language_certificate: "dele",
-      referral_source: "google"
+      language_certificate: "dele"
     }
     r = HomologationRequest.last
     assert_equal "submitted", r.status
@@ -177,7 +176,6 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "ucm", r.university
     assert_equal "b2", r.language_knowledge
     assert_equal "dele", r.language_certificate
-    assert_equal "google", r.referral_source
   end
 
   test "create with only required fields leaves optional fields nil" do
@@ -432,7 +430,7 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
   EXPECTED_SHOW_KEYS = %i[
     id subject serviceType status description identityCard passport
     educationSystem studiesFinished studyTypeSpain studiesSpain
-    university referralSource languageKnowledge languageCertificate
+    university languageKnowledge languageCertificate
     paymentAmount paymentConfirmedAt amoCrmLeadId amoCrmSyncedAt amoCrmSyncError
     createdAt updatedAt user conversation files
   ].freeze

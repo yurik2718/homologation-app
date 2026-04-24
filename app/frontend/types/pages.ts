@@ -116,7 +116,6 @@ export interface RequestDetail extends RequestListItem {
   studyTypeSpain: string | null
   studiesSpain: string | null
   university: string | null
-  referralSource: string | null
   languageKnowledge: string | null
   languageCertificate: string | null
   paymentAmount: number | null

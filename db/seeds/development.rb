@@ -44,7 +44,6 @@ STUDY_TYPES   = %w[bachillerato fp_medio fp_superior grado master doctorado].fre
 UNIVERSITIES  = %w[ucm uam ceu ue other].freeze
 LANG_LEVELS   = %w[a1 a2 b1 b2 c1 c2 none].freeze
 LANG_CERTS    = %w[dele siele other none].freeze
-REFERRALS     = %w[google instagram facebook friend university other].freeze
 COUNTRIES     = %w[AR CO MX PE VE RU UA US ES DE FR IT BR EC KZ].freeze
 
 SUBJECTS = [
@@ -249,7 +248,6 @@ students.each do |student|
       study_type_spain:    STUDY_TYPES.sample,
       studies_spain:       "yes",
       university:          UNIVERSITIES.sample,
-      referral_source:     REFERRALS.sample,
       language_knowledge:  LANG_LEVELS.sample,
       language_certificate: LANG_CERTS.sample,
       identity_card:       Faker::IdNumber.spanish_citizen_number,
@@ -450,7 +448,6 @@ PIPELINE_STUDENTS.each do |data|
     study_type_spain:      STUDY_TYPES.sample,
     studies_spain:         "yes",
     university:            UNIVERSITIES.sample,
-    referral_source:       REFERRALS.sample,
     language_knowledge:    LANG_LEVELS.sample,
     language_certificate:  LANG_CERTS.sample,
     identity_card:         Faker::Number.number(digits: 8).to_s,

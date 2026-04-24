@@ -11,12 +11,22 @@ import { Separator } from "@/components/ui/separator"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { routes } from "@/lib/routes"
 import { GUARDIAN_FIELDS } from "@/lib/guardian-fields"
+import { getOptionLabel, countryFlag } from "@/lib/utils"
 import type { SharedProps } from "@/types"
 import type { SettingsProfileProps } from "@/types/pages"
 
 export default function SettingsProfile() {
   const { t } = useTranslation()
-  const { profile, selectOptions } = usePage<SharedProps & SettingsProfileProps>().props
+  const { auth, profile, selectOptions } = usePage<SharedProps & SettingsProfileProps>().props
+  const locale = auth.user?.locale ?? "es"
+
+  // Sort countries alphabetically in the user's locale; "other" always last
+  // so the catch-all doesn't get buried in the middle of the alphabet.
+  const countries = [ ...(selectOptions.countries ?? []) ].sort((a, b) => {
+    if (a.key === "other") return 1
+    if (b.key === "other") return -1
+    return getOptionLabel(a, locale).localeCompare(getOptionLabel(b, locale), locale)
+  })
 
   const { data, setData, patch, processing, errors } = useForm({
     name: profile.name ?? "",
@@ -118,9 +128,9 @@ export default function SettingsProfile() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {(selectOptions.countries ?? []).map((opt) => (
+                    {countries.map((opt) => (
                       <SelectItem key={opt.key} value={opt.key}>
-                        {opt.label}
+                        {countryFlag(opt.key)} {getOptionLabel(opt, locale)}
                       </SelectItem>
                     ))}
                   </SelectContent>

@@ -120,7 +120,7 @@ class HomologationRequestsController < InertiaController
       :subject, :service_type, :description,
       :identity_card, :passport,
       :education_system, :studies_finished, :study_type_spain, :studies_spain,
-      :university, :referral_source, :language_knowledge, :language_certificate,
+      :university, :language_knowledge, :language_certificate,
       :privacy_accepted,
       application: [], originals: [], documents: []
     )
@@ -131,7 +131,7 @@ class HomologationRequestsController < InertiaController
       description: r.description, identityCard: r.identity_card, passport: r.passport,
       educationSystem: r.education_system, studiesFinished: r.studies_finished,
       studyTypeSpain: r.study_type_spain, studiesSpain: r.studies_spain,
-      university: r.university, referralSource: r.referral_source,
+      university: r.university,
       languageKnowledge: r.language_knowledge, languageCertificate: r.language_certificate,
       paymentAmount: r.payment_amount&.to_f, paymentConfirmedAt: r.payment_confirmed_at&.iso8601,
       amoCrmLeadId: r.amo_crm_lead_id, amoCrmSyncedAt: r.amo_crm_synced_at&.iso8601,

@@ -157,8 +157,7 @@ export default function RequestsShow() {
 
   const hasAdditional =
     request.languageKnowledge ||
-    request.languageCertificate ||
-    request.referralSource
+    request.languageCertificate
 
   const filesByCategory = useMemo(() => {
     const grouped: Record<string, FileInfo[]> = {}
@@ -407,12 +406,6 @@ export default function RequestsShow() {
                             <DetailRow
                               label={t("requests.form.language_certificate")}
                               value={resolveOption(request.languageCertificate, "language_certificates")}
-                            />
-                          )}
-                          {request.referralSource && (
-                            <DetailRow
-                              label={t("requests.form.referral_source")}
-                              value={resolveOption(request.referralSource, "referral_sources")}
                             />
                           )}
                         </div>

@@ -50,7 +50,6 @@ export default function RequestsNew() {
     university: "",
     language_knowledge: "",
     language_certificate: "",
-    referral_source: "",
     privacy_accepted: false,
     application: [] as string[],
     originals: [] as string[],
@@ -330,23 +329,6 @@ export default function RequestsNew() {
                     </Select>
                   </FormField>
 
-                  <FormField label={t("requests.form.referral_source")}>
-                    <Select
-                      value={data.referral_source}
-                      onValueChange={(v) => setData("referral_source", v)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder={t("requests.form.placeholder_referral_source")} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {(selectOptions.referral_sources ?? []).map((opt) => (
-                          <SelectItem key={opt.key} value={opt.key}>
-                            {getOptionLabel(opt, locale)}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormField>
                 </CardContent>
               )}
             </Card>
