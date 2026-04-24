@@ -5,14 +5,14 @@ class ChatsController < InertiaController
 
   LIST_INCLUDES = [
     :homologation_request, :teacher_student_link,
-    :conversation_participants,
+    :conversation_participants, :participants,
     teacher_student_link: [ :teacher, :student ],
     latest_message: :user
   ].freeze
 
   DETAIL_INCLUDES = [
     :homologation_request, :teacher_student_link,
-    :conversation_participants,
+    :conversation_participants, :participants,
     teacher_student_link: [ :teacher, :student ],
     latest_message: :user,
     messages: :user,
@@ -21,13 +21,10 @@ class ChatsController < InertiaController
 
   def index
     authorize :chats
-
-    conversations = policy_scope(Conversation, policy_scope_class: ChatsPolicy::Scope)
-      .includes(LIST_INCLUDES)
-      .order(last_message_at: :desc)
+    conversations = list_conversations
 
     render inertia: "chats/Index", props: {
-      conversations: conversations.map { |c| conversation_list_json(c, current_user: current_user) }
+      conversations: serialize_list(conversations)
     }
   end
 
@@ -41,17 +38,27 @@ class ChatsController < InertiaController
     participant = @conversation.conversation_participants.find_or_create_by!(user: current_user)
     participant.update_columns(last_read_at: Time.current)
 
-    conversations = policy_scope(Conversation, policy_scope_class: ChatsPolicy::Scope)
-      .includes(LIST_INCLUDES)
-      .order(last_message_at: :desc)
+    conversations = list_conversations
 
     render inertia: "chats/Index", props: {
-      conversations: conversations.map { |c| conversation_list_json(c, current_user: current_user) },
+      conversations: serialize_list(conversations),
       selectedConversation: chat_detail_json(@conversation)
     }
   end
 
   private
+
+  def list_conversations
+    policy_scope(Conversation, policy_scope_class: ChatsPolicy::Scope)
+      .includes(LIST_INCLUDES)
+      .order(last_message_at: :desc)
+      .to_a
+  end
+
+  def serialize_list(conversations)
+    counts = unread_counts_for(conversations, current_user)
+    conversations.map { |c| conversation_list_json(c, current_user: current_user, unread_count: counts[c.id] || 0) }
+  end
 
   def chat_detail_json(c)
     base = conversation_detail_json(c, current_user: current_user)

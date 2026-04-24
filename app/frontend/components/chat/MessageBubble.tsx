@@ -1,3 +1,4 @@
+import { Fragment } from "react"
 import { Paperclip } from "lucide-react"
 import { FormattedDate } from "@/components/common/FormattedDate"
 import { cn } from "@/lib/utils"
@@ -6,6 +7,35 @@ import type { ChatMessage } from "@/types/models.d"
 interface MessageBubbleProps {
   message: ChatMessage
   isOwn: boolean
+}
+
+// Exclude commas/semicolons/angle brackets from the URL body so that
+// "a.com, b.com" and "<a.com>" don't end up inside a single link.
+const URL_RE = /(https?:\/\/[^\s<>,;]+)/g
+const TRAILING_PUNCT_RE = /[.,;:!?)\]}]+$/
+
+// React escapes text content, so URLs placed in href are safe. Trailing punctuation
+// is stripped because "visit https://foo.com." should link to foo.com (no dot).
+function linkify(text: string): React.ReactNode {
+  return text.split(URL_RE).map((part, i) => {
+    if (i % 2 === 0) return <Fragment key={i}>{part}</Fragment>
+    const trailMatch = part.match(TRAILING_PUNCT_RE)
+    const trailing = trailMatch ? trailMatch[0] : ""
+    const url = trailing ? part.slice(0, -trailing.length) : part
+    return (
+      <Fragment key={i}>
+        <a
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline underline-offset-2 break-all"
+        >
+          {url}
+        </a>
+        {trailing}
+      </Fragment>
+    )
+  })
 }
 
 export function MessageBubble({ message, isOwn }: MessageBubbleProps) {
@@ -23,7 +53,7 @@ export function MessageBubble({ message, isOwn }: MessageBubbleProps) {
           {message.user.name}
         </span>
       )}
-      <p className="whitespace-pre-wrap">{message.body}</p>
+      <p className="whitespace-pre-wrap">{linkify(message.body)}</p>
       {message.attachments.length > 0 && (
         <div className="mt-2 space-y-1">
           {message.attachments.map((a) => (

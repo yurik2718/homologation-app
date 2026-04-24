@@ -293,7 +293,10 @@
     "no_conversations": "Нет разговоров",
     "select_chat": "Выберите чат, чтобы начать",
     "your_messages": "Ваши сообщения",
-    "yesterday": "Вчера"
+    "yesterday": "Вчера",
+    "you_prefix": "Вы: {{body}}",
+    "teacher_chat_label": "Чат с учителем",
+    "unread_count_sr": "Непрочитано: {{count}}"
   },
   "teachers": {
     "title": "Учителя",

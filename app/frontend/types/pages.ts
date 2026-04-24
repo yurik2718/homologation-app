@@ -149,9 +149,16 @@ export interface InboxConversation {
   id: number
   type: "request" | "teacher_student"
   title: string
-  lastMessage: { body: string; createdAt: string } | null
+  otherUser: { id: number; name: string; avatarUrl: string | null } | null
+  lastMessage: {
+    body: string
+    createdAt: string
+    authorIsMe: boolean
+  } | null
   unread: boolean
+  unreadCount: number
   lastMessageAt: string | null
+  requestStatus: string | null
 }
 
 export interface InboxConversationDetail extends InboxConversation {

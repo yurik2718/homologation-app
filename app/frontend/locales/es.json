@@ -293,7 +293,10 @@
     "no_conversations": "No hay conversaciones",
     "select_chat": "Selecciona un chat para empezar",
     "your_messages": "Tus mensajes",
-    "yesterday": "Ayer"
+    "yesterday": "Ayer",
+    "you_prefix": "Tú: {{body}}",
+    "teacher_chat_label": "Chat de profesor",
+    "unread_count_sr": "{{count}} sin leer"
   },
   "teachers": {
     "title": "Profesores",

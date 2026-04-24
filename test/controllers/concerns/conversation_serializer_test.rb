@@ -14,24 +14,25 @@ class ConversationSerializerTest < ActiveSupport::TestCase
   # --- conversation_list_json ---
 
   test "conversation_list_json returns expected keys" do
-    json = conversation_list_json(@conversation, current_user: @coordinator)
+    json = conversation_list_json(@conversation, current_user: @coordinator, unread_count: 0)
     assert_equal @conversation.id, json[:id]
     assert_equal "request", json[:type]
     assert_equal @conversation.title, json[:title]
     assert json.key?(:otherUser)
     assert json.key?(:lastMessage)
     assert json.key?(:unread)
+    assert json.key?(:unreadCount)
     assert json.key?(:lastMessageAt)
   end
 
   test "conversation_list_json shows other user (not current_user)" do
-    json = conversation_list_json(@conversation, current_user: @coordinator)
+    json = conversation_list_json(@conversation, current_user: @coordinator, unread_count: 0)
     assert_equal @student.id, json[:otherUser][:id]
     assert_equal @student.name, json[:otherUser][:name]
   end
 
   test "conversation_list_json with no messages returns nil lastMessage" do
-    json = conversation_list_json(@conversation, current_user: @coordinator)
+    json = conversation_list_json(@conversation, current_user: @coordinator, unread_count: 0)
     assert_nil json[:lastMessage]
   end
 
@@ -40,7 +41,7 @@ class ConversationSerializerTest < ActiveSupport::TestCase
     create(:message, conversation: @conversation, user: @student, body: long_body)
     @conversation.reload
 
-    json = conversation_list_json(@conversation, current_user: @coordinator)
+    json = conversation_list_json(@conversation, current_user: @coordinator, unread_count: 0)
     assert json[:lastMessage][:body].length <= 80
     assert json[:lastMessage][:createdAt].present?
   end
@@ -52,15 +53,20 @@ class ConversationSerializerTest < ActiveSupport::TestCase
     conv.add_participant!(teacher)
     conv.add_participant!(@student)
 
-    json = conversation_list_json(conv, current_user: @student)
+    json = conversation_list_json(conv, current_user: @student, unread_count: 0)
     assert_equal "teacher_student", json[:type]
   end
 
   test "conversation_list_json with no other participant returns nil otherUser" do
     # Remove all participants except current_user
     @conversation.conversation_participants.where.not(user: @coordinator).destroy_all
-    json = conversation_list_json(@conversation, current_user: @coordinator)
+    json = conversation_list_json(@conversation, current_user: @coordinator, unread_count: 0)
     assert_nil json[:otherUser]
+  end
+
+  test "conversation_list_json surfaces the passed unread_count verbatim" do
+    json = conversation_list_json(@conversation, current_user: @coordinator, unread_count: 5)
+    assert_equal 5, json[:unreadCount]
   end
 
   # --- conversation_detail_json ---

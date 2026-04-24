@@ -8,17 +8,22 @@ class ConversationsController < InertiaController
     @conversations = current_user_conversations
       .includes(:conversation_participants, :participants,
                 :homologation_request, teacher_student_link: [ :teacher, :student ],
-                messages: :user)
+                latest_message: :user)
       .order(last_message_at: :desc)
+      .to_a
+
+    counts = unread_counts_for(@conversations, current_user)
 
     render inertia: "chat/Index", props: {
-      conversations: @conversations.map { |c| conversation_list_json(c, current_user: current_user) }
+      conversations: @conversations.map { |c|
+        conversation_list_json(c, current_user: current_user, unread_count: counts[c.id] || 0)
+      }
     }
   end
 
   def show
     @conversation = Conversation
-      .includes(:conversation_participants, :homologation_request,
+      .includes(:conversation_participants, :participants, :homologation_request,
                 teacher_student_link: [ :teacher, :student ], messages: :user)
       .find(params[:id])
     authorize @conversation, :show?

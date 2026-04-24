@@ -15,6 +15,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { useChannel } from "@/hooks/useActionCable"
 import { MessageBubble } from "@/components/chat/MessageBubble"
 import { ContextPanel } from "@/components/chats/ContextPanel"
+import { StatusBadge } from "@/components/common/StatusBadge"
 import { routes } from "@/lib/routes"
 import type { SharedProps } from "@/types/index"
 import type { InboxIndexProps, InboxConversation, InboxConversationDetail } from "@/types/pages"
@@ -58,6 +59,68 @@ export default function ChatsIndex() {
     el.style.height = "0"
     el.style.height = `${Math.min(el.scrollHeight, 120)}px`
   }, [msgBody])
+
+  // Persist each chat's draft under its own key. Immediate write on switch so we
+  // capture the outgoing chat's text before loading the new one; debounced write
+  // on keystroke to avoid hitting localStorage per character.
+  const currentChatIdRef = useRef<number | null>(null)
+  const persistHandleRef = useRef<number | null>(null)
+  const msgBodyRef = useRef(msgBody)
+  msgBodyRef.current = msgBody
+
+  useEffect(() => {
+    const prevId = currentChatIdRef.current
+    const newId = selected?.id ?? null
+
+    if (prevId !== newId) {
+      if (persistHandleRef.current !== null) {
+        window.clearTimeout(persistHandleRef.current)
+        persistHandleRef.current = null
+      }
+      if (prevId !== null) {
+        const prevKey = `chatDraft:${prevId}`
+        if (msgBody) localStorage.setItem(prevKey, msgBody)
+        else localStorage.removeItem(prevKey)
+      }
+      currentChatIdRef.current = newId
+      setMsgBody(newId !== null ? (localStorage.getItem(`chatDraft:${newId}`) ?? "") : "")
+    } else if (newId !== null) {
+      if (persistHandleRef.current !== null) window.clearTimeout(persistHandleRef.current)
+      const key = `chatDraft:${newId}`
+      persistHandleRef.current = window.setTimeout(() => {
+        if (msgBody) localStorage.setItem(key, msgBody)
+        else localStorage.removeItem(key)
+        persistHandleRef.current = null
+      }, 300)
+    }
+  }, [selected?.id, msgBody])
+
+  // Flush pending draft on tab close / unmount so a fast close after typing
+  // doesn't drop the last 300ms of keystrokes.
+  useEffect(() => {
+    const flush = () => {
+      if (persistHandleRef.current === null) return
+      window.clearTimeout(persistHandleRef.current)
+      persistHandleRef.current = null
+      const id = currentChatIdRef.current
+      if (id === null) return
+      const key = `chatDraft:${id}`
+      if (msgBodyRef.current) localStorage.setItem(key, msgBodyRef.current)
+      else localStorage.removeItem(key)
+    }
+    window.addEventListener("beforeunload", flush)
+    return () => {
+      window.removeEventListener("beforeunload", flush)
+      flush()
+    }
+  }, [])
+
+  // Autofocus on chat open — but not on touch devices, where it opens the soft keyboard.
+  useEffect(() => {
+    if (!selected || loading) return
+    if (!window.matchMedia("(pointer: fine)").matches) return
+    textareaRef.current?.focus()
+  }, [selected?.id, loading])
 
   // Subscribe to real-time messages (only when a conversation is selected)
   useChannel<ChatMessage>(
@@ -150,6 +213,17 @@ export default function ChatsIndex() {
     return true
   })
 
+  const filterCounts = useMemo(() => {
+    const counts = { all: 0, requests: 0, teacher_chats: 0, unread: 0 }
+    for (const c of conversations) {
+      counts.all++
+      if (c.type === "request") counts.requests++
+      else if (c.type === "teacher_student") counts.teacher_chats++
+      if (c.unread) counts.unread++
+    }
+    return counts
+  }, [conversations])
+
   const filters: { key: FilterType; label: string }[] = [
     { key: "all", label: t("chats.all") },
     { key: "requests", label: t("chats.requests_filter") },
@@ -170,10 +244,17 @@ export default function ChatsIndex() {
     [messages, loc],
   )
 
-  const subtitle = selected
-    ? selected.context.type === "request"
-      ? selected.context.subject
-      : [selected.context.teacherName, selected.context.studentName].filter(Boolean).join(" — ")
+  // For teacher_student chats the title already reads "Teacher — Student",
+  // so we don't repeat it as the subtitle.
+  const headerPrimary = selected
+    ? (selected.context.type === "request"
+        ? (selected.otherUser?.name ?? selected.title)
+        : selected.title)
+    : null
+  const headerSubtitle = selected
+    ? (selected.context.type === "request"
+        ? selected.context.subject
+        : t("chats.teacher_chat_label"))
     : null
 
   return (
@@ -221,6 +302,11 @@ export default function ChatsIndex() {
                   onClick={() => setFilter(f.key)}
                 >
                   {f.label}
+                  {filterCounts[f.key] > 0 && (
+                    <span className="ml-1 text-muted-foreground">
+                      {filterCounts[f.key]}
+                    </span>
+                  )}
                 </Button>
               ))}
             </div>
@@ -233,7 +319,15 @@ export default function ChatsIndex() {
                 <div className="px-1.5">
                   {filtered.map((c) => {
                     const isActive = selected?.id === c.id
-                    const initials = getInitials(c.title)
+                    // Prefer the other person's name — request-subject initials repeat
+                    // across chats, so they're hard to scan by face.
+                    const displayName = c.otherUser?.name ?? c.title
+                    const initials = getInitials(displayName)
+                    const preview = c.lastMessage
+                      ? (c.lastMessage.authorIsMe
+                          ? t("chats.you_prefix", { body: c.lastMessage.body })
+                          : c.lastMessage.body)
+                      : t("chat.no_messages")
                     return (
                       <button
                         key={c.id}
@@ -246,21 +340,16 @@ export default function ChatsIndex() {
                         )}
                         onClick={() => handleSelect(c)}
                       >
-                        <div className="relative shrink-0">
-                          <Avatar className="size-10">
-                            <AvatarFallback className="text-xs font-medium">{initials}</AvatarFallback>
-                          </Avatar>
-                          {c.unread && (
-                            <span className="absolute -top-0.5 -right-0.5 size-3 rounded-full bg-primary ring-2 ring-background" />
-                          )}
-                        </div>
+                        <Avatar className="size-10 shrink-0">
+                          <AvatarFallback className="text-xs font-medium">{initials}</AvatarFallback>
+                        </Avatar>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-baseline justify-between gap-2">
                             <span className={cn(
                               "truncate text-sm",
                               c.unread ? "font-semibold" : "font-medium"
                             )}>
-                              {c.title}
+                              {displayName}
                             </span>
                             {c.lastMessage && (
                               <span className="shrink-0 text-[11px] text-muted-foreground">
@@ -268,14 +357,27 @@ export default function ChatsIndex() {
                               </span>
                             )}
                           </div>
-                          <p className={cn(
-                            "mt-0.5 truncate text-xs",
-                            c.unread
-                              ? "font-medium text-foreground/80"
-                              : "text-muted-foreground"
-                          )}>
-                            {c.lastMessage?.body ?? t("chat.no_messages")}
-                          </p>
+                          <div className="mt-0.5 flex items-center justify-between gap-2">
+                            <p className={cn(
+                              "truncate text-xs",
+                              c.unread
+                                ? "font-medium text-foreground/80"
+                                : "text-muted-foreground"
+                            )}>
+                              {preview}
+                            </p>
+                            {c.unreadCount > 0 && (
+                              <span
+                                role="status"
+                                aria-label={t("chats.unread_count_sr", { count: c.unreadCount })}
+                                className="shrink-0 inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-primary text-[11px] font-semibold text-primary-foreground"
+                              >
+                                <span aria-hidden="true">
+                                  {c.unreadCount > 99 ? "99+" : c.unreadCount}
+                                </span>
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </button>
                     )
@@ -328,16 +430,21 @@ export default function ChatsIndex() {
                       </Button>
                       <Avatar className="size-9 lg:size-10">
                         <AvatarFallback className="text-xs font-medium">
-                          {getInitials(selected.title)}
+                          {getInitials(headerPrimary ?? selected.title)}
                         </AvatarFallback>
                       </Avatar>
-                      <div className="min-w-0">
-                        <p className="truncate text-sm font-semibold lg:text-base">
-                          {selected.title}
-                        </p>
-                        {subtitle && (
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <p className="truncate text-sm font-semibold lg:text-base">
+                            {headerPrimary}
+                          </p>
+                          {selected.context.type === "request" && (
+                            <StatusBadge status={selected.context.status} />
+                          )}
+                        </div>
+                        {headerSubtitle && (
                           <p className="truncate text-xs text-muted-foreground lg:text-sm">
-                            {subtitle}
+                            {headerSubtitle}
                           </p>
                         )}
                       </div>
