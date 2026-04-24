@@ -2,7 +2,7 @@ import { useState } from "react"
 import { Link, router, usePage } from "@inertiajs/react"
 import { useTranslation } from "react-i18next"
 import type { ColumnDef } from "@tanstack/react-table"
-import { Plus, FileText } from "lucide-react"
+import { Plus, FileText, Download } from "lucide-react"
 import { AuthenticatedLayout } from "@/components/layout/AuthenticatedLayout"
 import { Main } from "@/components/layout/Main"
 import { DataTable } from "@/components/data-table"
@@ -43,6 +43,8 @@ export default function RequestsIndex() {
     return matchSearch && matchStatus
   })
 
+  const showDownload = features.canSeeAllRequests
+
   const columns: ColumnDef<RequestListItem>[] = [
     {
       accessorKey: "subject",
@@ -75,6 +77,14 @@ export default function RequestsIndex() {
       cell: ({ row }) => <StatusBadge status={row.original.status} />,
       enableSorting: false,
     },
+    ...(showDownload
+      ? [ {
+          id: "download",
+          header: "",
+          cell: ({ row }) => <DownloadCell request={row.original} />,
+          enableSorting: false,
+        } as ColumnDef<RequestListItem> ]
+      : []),
   ]
 
   return (
@@ -103,7 +113,7 @@ export default function RequestsIndex() {
             onRowClick={(r) => router.visit(routes.request(r.id))}
             searchColumn="subject"
             searchValue={search}
-            renderMobileCard={(r) => <RequestCard request={r} />}
+            renderMobileCard={(r) => <RequestCard request={r} showDownload={showDownload} />}
             toolbarContent={
               <div className="flex flex-col gap-2 sm:flex-row">
                 <SearchInput
@@ -155,7 +165,7 @@ function EmptyState({ canCreate }: { canCreate: boolean }) {
   )
 }
 
-function RequestCard({ request }: { request: RequestListItem }) {
+function RequestCard({ request, showDownload }: { request: RequestListItem; showDownload: boolean }) {
   const { t } = useTranslation()
   return (
     <Card
@@ -167,14 +177,35 @@ function RequestCard({ request }: { request: RequestListItem }) {
           <p className="font-medium leading-tight">{request.subject}</p>
           <StatusBadge status={request.status} />
         </div>
-        <div className="flex gap-4 text-xs text-muted-foreground">
-          <span>#{request.id}</span>
-          <span>
-            {t("requests.table.last_activity")}:{" "}
-            <FormattedDate date={request.updatedAt} />
-          </span>
+        <div className="flex items-center justify-between gap-4 text-xs text-muted-foreground">
+          <div className="flex gap-4">
+            <span>#{request.id}</span>
+            <span>
+              {t("requests.table.last_activity")}:{" "}
+              <FormattedDate date={request.updatedAt} />
+            </span>
+          </div>
+          {showDownload && <DownloadCell request={request} />}
         </div>
       </CardContent>
     </Card>
+  )
+}
+
+function DownloadCell({ request }: { request: RequestListItem }) {
+  const { t } = useTranslation()
+  if (!request.filesCount) return null
+  return (
+    <a
+      href={routes.downloadAll(request.id)}
+      download
+      onClick={(e) => e.stopPropagation()}
+      className="inline-flex items-center gap-1.5 px-3 rounded-md border border-input bg-background text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground transition-colors min-h-[44px] whitespace-nowrap cursor-pointer"
+      aria-label={t("requests.files.download_all")}
+    >
+      <Download className="h-4 w-4" />
+      <span>{t("requests.files.download_all")}</span>
+      <span className="text-xs text-muted-foreground">({request.filesCount})</span>
+    </a>
   )
 }

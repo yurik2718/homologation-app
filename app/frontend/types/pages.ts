@@ -87,6 +87,7 @@ export interface RequestListItem {
   createdAt: string
   updatedAt: string
   user: { id: number; name: string }
+  filesCount?: number
 }
 
 export interface RequestsIndexProps {

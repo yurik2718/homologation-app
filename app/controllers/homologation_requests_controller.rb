@@ -6,7 +6,10 @@ class HomologationRequestsController < InertiaController
   def index
     authorize HomologationRequest
     @requests = policy_scope(HomologationRequest).kept.includes(:user).order(updated_at: :desc)
-    render inertia: "requests/Index", props: { requests: @requests.map { |r| request_list_json(r) } }
+    counts = request_files_counts(@requests.map(&:id))
+    render inertia: "requests/Index", props: {
+      requests: @requests.map { |r| request_list_json(r, files_count: counts.fetch(r.id, 0)) }
+    }
   end
 
   def new

@@ -36,14 +36,14 @@ Open **http://localhost:3000**
 
 Password for all accounts: **`password123`**
 
-| Role | Email | What you'll see |
-|------|-------|-----------------|
-| **Super Admin** | `boss@example.com` | Dashboard, user management, reports, CRM pipeline |
-| **Coordinator** | `maria@example.com` | Request inbox, chat, payment confirmation, pipeline |
-| **Coordinator** | `carlos@example.com` | Same role, different assigned requests |
-| **Teacher** | `ivan@example.com` | Lesson calendar, student chat, meeting links |
-| **Student** | `ana@example.com` | Requests, document uploads, status tracking, chat |
-| **Student** | `pedro@example.com` | Same role, different request history |
+| Role            | Email                | What you'll see                                     |
+| --------------- | -------------------- | --------------------------------------------------- |
+| **Super Admin** | `boss@example.com`   | Dashboard, user management, reports, CRM pipeline   |
+| **Coordinator** | `maria@example.com`  | Request inbox, chat, payment confirmation, pipeline |
+| **Coordinator** | `carlos@example.com` | Same role, different assigned requests              |
+| **Teacher**     | `ivan@example.com`   | Lesson calendar, student chat, meeting links        |
+| **Student**     | `ana@example.com`    | Requests, document uploads, status tracking, chat   |
+| **Student**     | `pedro@example.com`  | Same role, different request history                |
 
 To switch accounts: avatar in the sidebar → **Sign out**.
 
@@ -66,7 +66,7 @@ See `config/select_options/README.md` for format details and examples.
 
 Pipeline stages, document checklist, and country routing are configured in `config/pipeline.yml`. This is the single source of truth for both backend and frontend.
 
-- **Stages** — add/remove/reorder pipeline stages, set display mode (kanban column or horizontal row), colors, icons
+- **Stages** — addreact /remove/reorder pipeline stages, set display mode (kanban column or horizontal row), colors, icons
 - **Document checklist** — documents to collect per request (shown as toggleable tags on pipeline cards)
 - **Country routing** — which countries route to ministerio vs delegación after RedSARA
 

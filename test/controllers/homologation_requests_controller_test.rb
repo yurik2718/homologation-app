@@ -35,6 +35,16 @@ class HomologationRequestsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "requests/Index", inertia.component
   end
 
+  test "index props include filesCount per request for super_admin quick-download icon" do
+    sign_in @admin
+    request_with_file # attaches 1 original to @submitted_request
+    get homologation_requests_path
+    props = inertia.props[:requests].find { |r| r[:id] == @submitted_request.id }
+    assert_equal 1, props[:filesCount]
+    draft_props = inertia.props[:requests].find { |r| r[:id] == @draft_request.id }
+    assert_equal 0, draft_props[:filesCount]
+  end
+
   test "teacher cannot access requests" do
     sign_in @teacher
     get homologation_requests_path
